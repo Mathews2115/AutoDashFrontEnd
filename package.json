@@ -1,0 +1,33 @@
+{
+  "name": "AutoDashFrontEnd",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack --mode development",
+    "start": "webpack serve",
+    "build": "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mathews2115/AutoDashFrontEnd.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mathews2115/AutoDashFrontEnd/issues"
+  },
+  "homepage": "https://github.com/Mathews2115/AutoDashFrontEnd#readme",
+  "devDependencies": {
+    "css-loader": "^5.0.2",
+    "html-webpack-plugin": "^5.1.0",
+    "sass": "^1.32.7",
+    "sass-loader": "^11.0.1",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.21.2",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "description": ""
+}
