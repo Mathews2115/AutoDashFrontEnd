@@ -45,6 +45,6 @@
   },
   "description": "",
   "dependencies": {
-    "two.js": "^0.7.3"
+    "pixi.js": "^6.0.1"
   }
 }
