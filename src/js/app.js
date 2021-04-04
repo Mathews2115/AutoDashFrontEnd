@@ -9,23 +9,35 @@ import { SCREEN } from "./appConfig";
 //Aliases
 let Container = PIXI.Container;
 
+const DEFAULT_COLORS = {
+  gaugeBgColor: 0x2b2b2b,
+  gaugeActiveColor: 0xFFFFFF,
+  dangerColor: 0xF00,
+  warningColor: 0xff7c00,
+  nominalColor: 0x121BE0
+}
+
 export class DashApp {
   /**
-   * @param { PIXI.Application } renderer
+   * @param { PIXI.Application } app
    */
-  constructor(renderer) {
-    this.renderer = renderer;
-
-    this.gaugeBgColor = "0xFFFFFF";
-    this.gaugeActiveColor = "0xFFFFFF";
-    this.dangerColor = "0xFFFFFF";
-    this.warningColor = "0xFFFFFF";
-    this.nominalColor = "0xFFFFFF";
+  constructor(app) {
+    this.app = app;
+    this.setColors();
 
     this.pedalGauge = new PedalGauge({
       backgroundColor: this.gaugeBgColor,
       activeColor: this.gaugeActiveColor,
+      renderer: this.app.renderer
     });
+  }
+
+  setColors() {
+    this.gaugeBgColor = DEFAULT_COLORS.gaugeBgColor;
+    this.gaugeActiveColor = DEFAULT_COLORS.gaugeActiveColor;
+    this.dangerColor = DEFAULT_COLORS.dangerColor;
+    this.warningColor = DEFAULT_COLORS.warningColor;
+    this.nominalColor = DEFAULT_COLORS.nominalColor;
   }
 
   start() {
@@ -36,7 +48,7 @@ export class DashApp {
 
     rpmCluster.addChild(this.pedalGauge);
 
-    this.renderer.stage.addChild(rpmCluster);
+    this.app.stage.addChild(rpmCluster);
 
     //  RPM Gauge (container)
     //   rmp background
