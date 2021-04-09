@@ -11,3 +11,8 @@ export const SCREEN = {
   CONTENT_WIDTH: CONTENT_WIDTH,
   CONTENT_HEIGHT: CONTENT_HEIGHT
 }
+
+export const PEDAL_CONFIG = {
+  MIN: 0,
+  MAX: 100
+}
