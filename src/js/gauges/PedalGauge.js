@@ -8,9 +8,10 @@ let Container = PIXI.Container,
   Graphics = PIXI.Graphics;
 
 export class PedalGauge extends Container {
-  constructor({ renderer, backgroundColor, activeColor }) {
+  constructor({ backgroundColor, activeColor }) {
     super();
 
+    this._transformHeight = 0;
     this.activeColor = activeColor;
 
     // Value to be rendered
@@ -77,17 +78,17 @@ export class PedalGauge extends Container {
 
   // TODO: use delta to gradually get there...but only if it is a small amount
 
-  update(delta) {
+  update(_delta) {
     if (this._value != this.renderedValue) {
       // A) redraw the new size
       // B) or make active gauge a bitmap and resize it
 
-      let transformHeight = (this._value/PEDAL_CONFIG.MAX) * this.gaugeHeight
+      this._transformHeight = (this._value/PEDAL_CONFIG.MAX) * this.gaugeHeight
       
       this.pedalGaugeActive
         .clear()
         .beginFill(this.activeColor)
-        .drawRect(0, this.gaugeHeight-transformHeight, this.gaugeWidth+1, transformHeight)
+        .drawRect(0, this.gaugeHeight-this._transformHeight, this.gaugeWidth+1, this._transformHeight)
         .endFill();
       this.renderedValue = this._value;
     } 
