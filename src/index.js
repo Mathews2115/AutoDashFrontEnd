@@ -3,17 +3,21 @@ import * as PIXI from "pixi.js";
 import { DashApp } from "./js/app";
 import { SCREEN } from "./js/appConfig";
 
-//Aliases
-let Application = PIXI.Application;
-
-const renderer = new Application({
+// setup renderer and ticker
+const renderer = new PIXI.Renderer({
   width: SCREEN.WIDTH,
   height: SCREEN.HEIGHT,
-  antialias: true, // default: false
-  resolution: 1,
   backgroundColor: 0x000000,
 });
-const dashApp = new DashApp(renderer);
 document.body.appendChild(renderer.view);
 
-dashApp.start();
+const ticker = new PIXI.Ticker();
+const dash = new DashApp(renderer, ticker);
+dash.initialize();
+
+// setup main ticker
+ticker.add(() => {
+  renderer.render(dash.stage);
+}, PIXI.UPDATE_PRIORITY.LOW);
+ticker.start();
+

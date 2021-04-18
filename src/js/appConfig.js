@@ -21,5 +21,17 @@ export const PEDAL_CONFIG = {
 export const RPM_CONFIG = {
   MIN: 0,
   MAX: 5000,
-  SEGMENTS: 10
+  DANGER_LOW: 550,
+  WARNING_LOW: 1000,
+  DANGER_HIGH: 4500,
+  WARNING_HIGH: 3600,
+  SEGMENTS: 10 // or 5??
 }
+
+export const DEFAULT_COLORS = {
+  gaugeBgColor: 0x2b2b2b,
+  gaugeActiveColor: 0xffffff,
+  dangerColor: 0xf00000,
+  warningColor: 0xff7c00,
+  nominalColor: 0x121be0,
+};

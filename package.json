@@ -45,6 +45,7 @@
   },
   "description": "",
   "dependencies": {
+    "@pixi/filter-color-overlay": "^4.0.0",
     "@pixi/filter-drop-shadow": "^4.0.0",
     "@pixi/filter-glitch": "^4.0.0",
     "@pixi/filter-glow": "^4.0.0",

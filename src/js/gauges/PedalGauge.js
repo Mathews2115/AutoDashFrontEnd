@@ -1,59 +1,21 @@
 import * as PIXI from "pixi.js";
 import { PEDAL_CONFIG, SCREEN } from "../appConfig";
-import {GlowFilter} from "@pixi/filter-glow";
-import {DropShadowFilter} from "@pixi/filter-drop-shadow"
+import { GlowFilter } from "@pixi/filter-glow";
 
 //Aliases
 let Container = PIXI.Container,
   Graphics = PIXI.Graphics;
 
 export class PedalGauge extends Container {
-  constructor({ backgroundColor, activeColor }) {
+  constructor({ renderer, theme }) {
     super();
-
+    this.interactiveChildren = false;
+    this.renderer = renderer;
     this._transformHeight = 0;
-    this.activeColor = activeColor;
-
-    // Value to be rendered
+    this.activeColor = theme.gaugeActiveColor;
+    this.backgroundColor = theme.gaugeBgColor;
     this._value = PEDAL_CONFIG.MIN;
-
-    // What value the gauge rendered last
     this.renderedValue = this._value;
-
-    // construct graphics
-    this.pedalGaugeBackground = new Graphics();
-    this.pedalGaugeBackground
-      .beginFill(backgroundColor)
-      .lineStyle(5, backgroundColor)
-      .drawRect(1, 0, this.gaugeWidth, this.gaugeHeight-1)
-      .endFill();
-    this.pedalGaugeBackground.cacheAsBitmap = true;
-    this.addChild(this.pedalGaugeBackground);
-
-    this.pedalGaugeActive = new Graphics();
-    this.pedalGaugeActive
-      .beginFill(activeColor)
-      .drawRect(0, 0, this.gaugeWidth, 0)
-      .endFill();
-    this.addChild(this.pedalGaugeActive);
-
-    this.pedalGaugeActive.filters = [
-      new GlowFilter({
-        distance: 10,
-        outerStrength: 2,
-        innerStrength: 0,
-        color: 0xF0F0F0,
-        quality: 0.9
-      })
-      // new DropShadowFilter({
-      //   rotation: 0,
-      //   distance: 0.1,
-      //   color:0xFFFFFF,
-      //   alpha:0.7,
-      //   blur:2,
-      //   quality:20
-      // })
-    ];
   }
 
   get gaugeWidth() {
@@ -64,35 +26,67 @@ export class PedalGauge extends Container {
   }
 
   get value() {
-    return this._value
+    return this._value;
   }
   set value(newValue) {
-    if (newValue <  PEDAL_CONFIG.MIN) {
-      this._value =  PEDAL_CONFIG.MIN;
-    } else if (newValue >  PEDAL_CONFIG.MAX) {
-      this._value =  PEDAL_CONFIG.MAX
+    if (newValue < PEDAL_CONFIG.MIN) {
+      this._value = PEDAL_CONFIG.MIN;
+    } else if (newValue > PEDAL_CONFIG.MAX) {
+      this._value = PEDAL_CONFIG.MAX;
     } else {
       this._value = newValue;
     }
   }
 
-  // TODO: use delta to gradually get there...but only if it is a small amount
+  initialize() {
+    const background = new Graphics();
+    background
+      .beginFill(this.backgroundColor)
+      .lineStyle(0)
+      .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
+      .endFill();
+    this.addChild(background);
+
+    this.pedalGaugeActive = new Graphics();
+    this.pedalGaugeActive
+      .beginFill(this.activeColor)
+      .lineStyle(0)
+      .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
+      .endFill();
+    this.addChild(this.pedalGaugeActive);
+
+    this.pedalGaugeActive.filterArea = this.getBounds();
+    this.pedalGaugeActive.filters = [
+      new GlowFilter({
+        distance: 10,
+        outerStrength: 2,
+        innerStrength: 0,
+        color: 0xf0f0f0,
+        quality: 0.9,
+      }),
+    ];
+
+    // set the rotate this puppy so we can scale it up and down
+    this.pedalGaugeActive.position.set(this.gaugeWidth, this.gaugeHeight)
+    this.pedalGaugeActive.angle = 180;
+  }
 
   update(_delta) {
     if (this._value != this.renderedValue) {
-      // A) redraw the new size
-      // B) or make active gauge a bitmap and resize it
-
-      this._transformHeight = (this._value/PEDAL_CONFIG.MAX) * this.gaugeHeight
-      
-      this.pedalGaugeActive
-        .clear()
-        .beginFill(this.activeColor)
-        .drawRect(0, this.gaugeHeight-this._transformHeight, this.gaugeWidth+1, this._transformHeight)
-        .endFill();
+      this.pedalGaugeActive.scale.set(1, (this._value / PEDAL_CONFIG.MAX));
+      // this._transformHeight =
+      //   (this._value / PEDAL_CONFIG.MAX) * this.gaugeHeight;
+      // this.pedalGaugeActive
+      //   .clear()
+      //   .beginFill(this.activeColor)
+      //   .drawRect(
+      //     0,
+      //     this.gaugeHeight - this._transformHeight,
+      //     this.gaugeWidth + 1,
+      //     this._transformHeight
+      //   )
+      //   .endFill();
       this.renderedValue = this._value;
-    } 
-    
-    //pullsate glow?
+    }
   }
 }
