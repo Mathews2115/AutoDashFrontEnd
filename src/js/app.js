@@ -70,6 +70,7 @@ export class DashApp {
 
     // start rendering
     this.state = this.stateTesting; //this.stateStartup;
+    this.ticker.maxFPS = 46;
     this.ticker.add((delta) => this.drawLoop(delta));
   }
 

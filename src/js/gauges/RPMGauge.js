@@ -22,7 +22,7 @@ export class RPMGauge extends PIXI.Container {
     // What value the gauge rendered last
     this.renderedValue = this._value;
 
-    this.foregroundTextures = new Array(3);
+    this._foregroundTextures = new Array(3);
     this._storedfilters = new Array(3);
     this._activeColors = new Array(3);
     this._gaugeDisplayState = STATE_ENUM.DANGER;
@@ -63,41 +63,41 @@ export class RPMGauge extends PIXI.Container {
     foreground.mask = new PIXI.Graphics(background.geometry);
 
     // create normal sprite
-    this.foregroundTextures[STATE_ENUM.NORMAL] = this.renderer.generateTexture(foreground);
+    this._foregroundTextures[STATE_ENUM.NORMAL] = this.renderer.generateTexture(foreground);
 
     // create warning sprite
     foreground.tint = this.theme.warningColor;
-    this.foregroundTextures[STATE_ENUM.WARNING] = this.renderer.generateTexture(foreground);
+    this._foregroundTextures[STATE_ENUM.WARNING] = this.renderer.generateTexture(foreground);
 
     // create danger sprite
     foreground.tint = this.theme.dangerColor;
-    this.foregroundTextures[STATE_ENUM.DANGER] = this.renderer.generateTexture(foreground);
+    this._foregroundTextures[STATE_ENUM.DANGER] = this.renderer.generateTexture(foreground);
     foreground.mask.destroy(true);
     foreground.destroy(true);// remove grafic ref and cache texture
 
-    this.foregroundSprite = new PIXI.Sprite(this.foregroundTextures[STATE_ENUM.DANGER])
+    this.foregroundSprite = new PIXI.Sprite(this._foregroundTextures[STATE_ENUM.DANGER])
 
     ////////// FILTERS
     this._storedfilters[STATE_ENUM.NORMAL] = new GlowFilter({
-        distance: 10,
+        distance: 15,
         outerStrength: 1,
         innerStrength: 0,
         color: this._activeColors[STATE_ENUM.NORMAL],
-        quality: 0.9,
+        quality: 0.5,
       });
     this._storedfilters[STATE_ENUM.WARNING] = new GlowFilter({
-      distance: 10,
+      distance: 15,
       outerStrength: 1,
       innerStrength: 0,
       color: this._activeColors[STATE_ENUM.WARNING],
-      quality: 0.9,
+      quality: 0.5,
     });
     this._storedfilters[STATE_ENUM.DANGER] = new GlowFilter({
-      distance: 10,
+      distance: 15,
       outerStrength: 1,
       innerStrength: 0,
       color: this._activeColors[STATE_ENUM.DANGER],
-      quality: 0.9,
+      quality: 0.5,
     });
 
     // create the active stencil for the gauge (show/hide the foreground as the gauge changes)
@@ -113,17 +113,7 @@ export class RPMGauge extends PIXI.Container {
   }
 
   get activeColor() {
-    if (this.value <= RPM_CONFIG.DANGER_LOW) {
-      return this.theme.dangerColor;
-    } else if (this.value <= RPM_CONFIG.WARNING_LOW) {
-      return this.theme.warningColor;
-    } else if (this.value >= RPM_CONFIG.DANGER_HIGH) {
-      return this.theme.dangerColor;
-    } else if (this.value >= RPM_CONFIG.WARNING_HIGH) {
-      return this.theme.warningColor;
-    } else {
-      return this.theme.gaugeActiveColor;
-    }
+    return this._activeColors[this._gaugeDisplayState];
   }
 
   get activeFilter() {
@@ -131,7 +121,7 @@ export class RPMGauge extends PIXI.Container {
   }
 
   get activeTexture(){
-    return this.foregroundTextures[this._gaugeDisplayState];
+    return this._foregroundTextures[this._gaugeDisplayState];
   }
 
   get gaugeWidth() {
@@ -145,21 +135,17 @@ export class RPMGauge extends PIXI.Container {
     return this._value;
   }
   set value(newValue) {
-    if (newValue < RPM_CONFIG.MIN) {
-      this._value = RPM_CONFIG.MIN;
-    } else if (newValue > RPM_CONFIG.MAX) {
-      this._value = RPM_CONFIG.MAX;
-    } else {
-      this._value = newValue;
-    }
-
-    if (this.value < RPM_CONFIG.DANGER_LOW) {
+    this._value = newValue;
+    
+    if (this._value < RPM_CONFIG.DANGER_LOW) {
       this._gaugeDisplayState = STATE_ENUM.DANGER;
-    } else if (this.value < RPM_CONFIG.WARNING_LOW) {
+      if (newValue < RPM_CONFIG.MIN) this._value = RPM_CONFIG.MIN; // cap the min
+    } else if (this._value < RPM_CONFIG.WARNING_LOW) {
       this._gaugeDisplayState = STATE_ENUM.WARNING;
-    } else if (this.value >= RPM_CONFIG.DANGER_HIGH) {
+    } else if (this._value >= RPM_CONFIG.DANGER_HIGH) {
       this._gaugeDisplayState = STATE_ENUM.DANGER;
-    } else if (this.value >= RPM_CONFIG.WARNING_HIGH) {
+      if (newValue > RPM_CONFIG.MAX) this._value = RPM_CONFIG.MAX; // cap the max
+    } else if (this._value >= RPM_CONFIG.WARNING_HIGH) {
       this._gaugeDisplayState = STATE_ENUM.WARNING;
     } else {
       this._gaugeDisplayState = STATE_ENUM.NORMAL;
@@ -177,6 +163,3 @@ export class RPMGauge extends PIXI.Container {
     }
   }
 }
-
-//TODO:
-// add in LIMIT drawing
