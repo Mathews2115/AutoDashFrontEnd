@@ -53,11 +53,11 @@ export class RPMGauge extends PIXI.Container {
     ///////// foreground shape
     const foreground = new PIXI.Graphics();
     const segments = RPM_CONFIG.SEGMENTS;
-    const segmentHeight = this.gaugeHeight / segments;
+    let segmentHeight = this.gaugeHeight / segments;
     foreground.beginFill(this.theme.gaugeActiveColor)
       .lineStyle(0);
     for (let index = 0; index < segments; index++) {
-      foreground.drawRect(0, segmentHeight * index, this.gaugeWidth, segmentHeight - 4);
+      foreground.drawRect(0, segmentHeight * index, this.gaugeWidth, segmentHeight - (index == segments-1 ? 0 : 4));
     }
     foreground.endFill();
     foreground.mask = new PIXI.Graphics(background.geometry);
