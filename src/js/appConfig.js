@@ -21,7 +21,7 @@ export const PEDAL_CONFIG = {
 export const RPM_CONFIG = {
   MIN: 0,
   MAX: 5000,
-  DANGER_LOW: 550,
+  DANGER_LOW: 600,
   WARNING_LOW: 1000,
   DANGER_HIGH: 4500,
   WARNING_HIGH: 3600,

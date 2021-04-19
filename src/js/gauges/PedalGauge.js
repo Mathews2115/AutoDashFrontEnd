@@ -74,18 +74,6 @@ export class PedalGauge extends Container {
   update(_delta) {
     if (this._value != this.renderedValue) {
       this.pedalGaugeActive.scale.set(1, (this._value / PEDAL_CONFIG.MAX));
-      // this._transformHeight =
-      //   (this._value / PEDAL_CONFIG.MAX) * this.gaugeHeight;
-      // this.pedalGaugeActive
-      //   .clear()
-      //   .beginFill(this.activeColor)
-      //   .drawRect(
-      //     0,
-      //     this.gaugeHeight - this._transformHeight,
-      //     this.gaugeWidth + 1,
-      //     this._transformHeight
-      //   )
-      //   .endFill();
       this.renderedValue = this._value;
     }
   }

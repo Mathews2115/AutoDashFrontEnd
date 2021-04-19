@@ -1,7 +1,6 @@
 import * as PIXI from "pixi.js";
 import { RPM_CONFIG, SCREEN, DEFAULT_COLORS } from "../appConfig";
 import { GlowFilter } from "@pixi/filter-glow";
-import { ColorOverlayFilter } from "@pixi/filter-color-overlay";
 
 const STATE_ENUM = {
   DANGER: 0,
@@ -100,14 +99,15 @@ export class RPMGauge extends PIXI.Container {
       quality: 0.5,
     });
 
-    // create the active stencil for the gauge (show/hide the foreground as the gauge changes)
     this.gaugeStencil = new PIXI.Graphics();
     this.gaugeStencil.drawRect(0, 0, this.gaugeWidth, this.gaugeHeight);
+    // rotate gauge so it grows from bottom to top
     this.gaugeStencil.position.set(this.gaugeWidth, this.gaugeHeight)
     this.gaugeStencil.angle = 180;
     this.activeContainer = new PIXI.Container();
-    this.activeContainer.addChild(this.foregroundSprite)
-    this.activeContainer.mask = this.gaugeStencil 
+    this.activeContainer.addChild(this.foregroundSprite);
+    this.activeContainer.mask = this.gaugeStencil;       // set foreground stenciling for when guage "grows" and "shrinks"
+    this.activeContainer.filterArea = this.getBounds();  // optimize and save off filtered area
 
     this.addChild(this.gaugeStencil, this.activeContainer);
   }
