@@ -22,7 +22,7 @@ export class PedalGauge extends Container {
     return 50;
   }
   get gaugeHeight() {
-    return SCREEN.CONTENT_HEIGHT;
+    return SCREEN.RPM_CLUSTER_HEIGHT;
   }
 
   get value() {

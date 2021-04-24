@@ -128,7 +128,7 @@ export class RPMGauge extends PIXI.Container {
     return 200;
   }
   get gaugeHeight() {
-    return SCREEN.CONTENT_HEIGHT;
+    return SCREEN.RPM_CLUSTER_HEIGHT;
   }
 
   get value() {

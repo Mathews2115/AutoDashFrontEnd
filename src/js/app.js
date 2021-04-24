@@ -12,6 +12,43 @@ let Container = PIXI.Container;
 
 const MODES = { TEST: "test", LIVE: "live" };
 
+function createRPMLogo() {
+  const slantStart = 5;
+  const totalWidth =
+    this.pedalGauge.gaugeWidth +
+    this.rpmGauge.gaugeWidth +
+    SCREEN.PADDING +
+    SCREEN.PADDING;
+  const firstEnd = totalWidth *.25
+  const secondStart = totalWidth * .75;
+  const rpmLogo = new PIXI.Graphics();
+  rpmLogo
+    .beginFill(this.theme.gaugeActiveColor)
+    .drawPolygon([
+      slantStart, 0,
+      0, SCREEN.PADDING,
+      firstEnd, SCREEN.PADDING,
+      firstEnd, 0,
+    ])
+    .drawPolygon([
+      secondStart, 0,
+      secondStart, SCREEN.PADDING,
+      totalWidth, SCREEN.PADDING,
+      totalWidth + slantStart, 0,
+    ])
+    .endFill();
+
+  const text =  new PIXI.BitmapText('RPM', { fontName: 'Orbitron', fontSize: 50, align: 'left' });
+  text.angle = 180;  // no idea what this is flipped??
+  text.x = firstEnd + 5;
+  text.y = -SCREEN.PADDING*2
+  rpmLogo.addChild(text);
+
+  const renderedTexture = this.renderer.generateTexture(rpmLogo);
+  rpmLogo.destroy(true);
+  return new PIXI.Sprite(renderedTexture);
+}
+
 export class DashApp {
   /**
    * @param { PIXI.Renderer } renderer
@@ -48,7 +85,7 @@ export class DashApp {
     // RPM container
     const rpmCluster = new Container();
     rpmCluster.x = SCREEN.BORDER_WIDTH;
-    rpmCluster.y = SCREEN.BORDER_WIDTH;
+    rpmCluster.y = SCREEN.RPM_CLUSTER_Y;
 
     this.pedalGauge = new PedalGauge({
       renderer: this.renderer,
@@ -58,9 +95,14 @@ export class DashApp {
       renderer: this.renderer,
       theme: this.theme,
     });
+
+    const rpmLogoTexture = createRPMLogo.apply(this);
+    rpmLogoTexture.x = SCREEN.BORDER_WIDTH;
+    rpmLogoTexture.y = SCREEN.PADDING;
+    this.stage.addChild(rpmLogoTexture);
+
     this.rpmGauge.x = this.pedalGauge.gaugeWidth + SCREEN.PADDING;
     rpmCluster.addChild(this.pedalGauge, this.rpmGauge);
-
 
     // create other clusters...
     this.stage.addChild(rpmCluster);
@@ -70,7 +112,7 @@ export class DashApp {
 
     // start rendering
     this.state = this.stateTesting; //this.stateStartup;
-    this.ticker.maxFPS = 46;
+    this.ticker.maxFPS = 35;
     this.ticker.add((delta) => this.drawLoop(delta));
   }
 

@@ -49,6 +49,23 @@ module.exports = {
       // JavaScript: Use Babel to transpile JavaScript files
       //{ test: /\.js$/, use: ['babel-loader'] },
 
+      // {
+      //   type: 'javascript/auto',  // what am i doing? what even is this?  look at the documenteatitiontion?  nope.  doing it live
+      //   test: /\.(json|png|fnt)$/,
+      //   use: [{
+      //     loader: 'file-loader',
+      //     options: {
+      //       name: "[name].[ext]"
+      //     }
+      //   }]
+      // },
+      // {
+      //   test:  /\.(xml)$/, //give me the string value pleeaaase
+      //   use: 'raw-loader',
+      // },
+
+      { test: /\.(?:xml)$/i, type: 'asset/source' },
+      
       // Images: Copy image files to build folder
       { test: /\.(?:ico|gif|png|jpg|jpeg)$/i, type: 'asset/resource' },
 

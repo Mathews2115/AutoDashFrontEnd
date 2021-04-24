@@ -29,6 +29,7 @@
     "eslint-import-resolver-webpack": "^0.13.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-webpack-plugin": "^2.5.3",
+    "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.1.0",
     "mini-css-extract-plugin": "^1.0.0",
     "node-sass": "^4.14.1",
@@ -36,6 +37,7 @@
     "postcss-preset-env": "^6.7.0",
     "prettier": "^2.2.1",
     "prettier-eslint": "^12.0.0",
+    "raw-loader": "^4.0.2",
     "sass": "^1.32.7",
     "sass-loader": "^11.0.1",
     "style-loader": "^2.0.0",
@@ -49,6 +51,7 @@
     "@pixi/filter-drop-shadow": "^4.0.0",
     "@pixi/filter-glitch": "^4.0.0",
     "@pixi/filter-glow": "^4.0.0",
+    "fontfaceobserver": "^2.1.0",
     "pixi.js": "^6.0.1"
   }
 }
