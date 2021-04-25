@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack --mode development --config config/webpack.dev.js",
     "start": "webpack serve --mode development --config config/webpack.dev.js",
-    "build": "webpack --mode production --config config/webpack.prod.js"
+    "build": "webpack --mode production --config config/webpack.prod.js",
+    "web_server": "NODE_ENV=production node ./bin/www"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "eslint-import-resolver-webpack": "^0.13.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-webpack-plugin": "^2.5.3",
+    "express": "^4.17.1",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.1.0",
     "mini-css-extract-plugin": "^1.0.0",
