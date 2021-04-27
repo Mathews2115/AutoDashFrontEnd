@@ -6,6 +6,7 @@ import * as PIXI from "pixi.js";
 import { PedalGauge } from "../js/gauges/PedalGauge";
 import { PEDAL_CONFIG, RPM_CONFIG, SCREEN, DEFAULT_COLORS } from "./appConfig";
 import { RPMGauge } from "./gauges/RPMGauge";
+import PixiFps from "pixi-fps";
 
 //Aliases
 let Container = PIXI.Container;
@@ -112,7 +113,9 @@ export class DashApp {
 
     // start rendering
     this.state = this.stateTesting; //this.stateStartup;
-    this.ticker.maxFPS = 35;
+    const fpsCounter = new PixiFps();
+
+    this.stage.addChild(fpsCounter);
     this.ticker.add((delta) => this.drawLoop(delta));
   }
 

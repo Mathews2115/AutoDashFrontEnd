@@ -58,11 +58,11 @@ export class PedalGauge extends Container {
     this.pedalGaugeActive.filterArea = this.getBounds();
     this.pedalGaugeActive.filters = [
       new GlowFilter({
-        distance: 10,
+        distance: 8,
         outerStrength: 2,
         innerStrength: 0,
         color: 0xf0f0f0,
-        quality: 0.9,
+        quality: 0.2,
       }),
     ];
 

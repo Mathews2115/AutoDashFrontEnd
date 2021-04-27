@@ -78,25 +78,25 @@ export class RPMGauge extends PIXI.Container {
 
     ////////// FILTERS
     this._storedfilters[STATE_ENUM.NORMAL] = new GlowFilter({
-        distance: 15,
+        distance: 8,
         outerStrength: 1,
         innerStrength: 0,
         color: this._activeColors[STATE_ENUM.NORMAL],
-        quality: 0.5,
+        quality: 0.2,
       });
     this._storedfilters[STATE_ENUM.WARNING] = new GlowFilter({
-      distance: 15,
+      distance: 8,
       outerStrength: 1,
       innerStrength: 0,
       color: this._activeColors[STATE_ENUM.WARNING],
-      quality: 0.5,
+      quality: 0.2,
     });
     this._storedfilters[STATE_ENUM.DANGER] = new GlowFilter({
-      distance: 15,
+      distance: 8,
       outerStrength: 1,
       innerStrength: 0,
       color: this._activeColors[STATE_ENUM.DANGER],
-      quality: 0.5,
+      quality: 0.2,
     });
 
     this.gaugeStencil = new PIXI.Graphics();
@@ -108,7 +108,7 @@ export class RPMGauge extends PIXI.Container {
     this.activeContainer.addChild(this.foregroundSprite);
     this.activeContainer.mask = this.gaugeStencil;       // set foreground stenciling for when guage "grows" and "shrinks"
     this.activeContainer.filterArea = this.getBounds();  // optimize and save off filtered area
-
+    
     this.addChild(this.gaugeStencil, this.activeContainer);
   }
 
