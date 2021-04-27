@@ -5,6 +5,10 @@
 * Raspberry Pi 4
 * PiCAN 3
 
+## Old Stuff
+[rpi3](https://gist.github.com/Mathews2115/ed3dbd8623ee815a7bed363dbc7c73a6)
+
+
 ## Initial Pi setup  
 1. Download RPI's official [Imager](https://www.raspberrypi.org/software/)
 2. Flash a card with `Raspberry Pi OS Lite`, (the one without the Desktop Env)
@@ -18,7 +22,8 @@
 
 ### Make sure to update everything before proceeding
 1. `sudo apt-get -y update && sudo apt-get -y upgrade ; sudo apt-get autoremove`
-2. `sudo reboot`
+2. ` sudo apt-get dist-upgrade `
+3. `sudo reboot`
 
 ## Chromium on top of X11
 
@@ -80,8 +85,11 @@ Add this when/if you want chromium to start upon boot
    * `[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx -- -nocursor`
 
 
-### PiCAN 3
-[Documentation](http://skpang.co.uk/catalog/images/raspberrypi/pican/PICAN3_UGA_10.pdf)
+## PiCAN 3 / CAN Util
+### Helpful Links
+* [Documentation](http://skpang.co.uk/catalog/images/raspberrypi/pican/PICAN3_UGA_10.pdf)
+* [How to use can util](https://www.hackers-arise.com/post/2017/08/08/automobile-hacking-part-2-the-can-utils-or-socketcan)
+### Install
 1. Add the overlays by:
 2. `sudo nano /boot/config.txt`
 3. Add these 3 lines to the end of file:
@@ -90,6 +98,9 @@ Add this when/if you want chromium to start upon boot
     dtoverlay=mcp2515-can0,oscillator=16000000,interrupt=25
     dtoverlay=spi-bcm2835-overlay
 ```
+
+## Installing Node/NPM
+1. https://www.officialrajdeepsingh.dev/install-node-js-and-npm-latest-version-on-raspberry-pi-4/
 
 ## Shutting down things we dont care about
 
