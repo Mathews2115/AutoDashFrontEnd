@@ -17,7 +17,7 @@ const ticker = new PIXI.Ticker();
 const dash = new DashApp(renderer, ticker);
 const startDrawLoop = () => {
   // setup main ticker
-  ticker.add(() => renderer.render(dash.stage), PIXI.UPDATE_PRIORITY.LOW);
+  ticker.add(() => renderer.render(dash.stage));
   ticker.start();
 };
 

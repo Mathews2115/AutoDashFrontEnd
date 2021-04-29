@@ -113,9 +113,9 @@ export class DashApp {
 
     // start rendering
     this.state = this.stateTesting; //this.stateStartup;
-    const fpsCounter = new PixiFps();
+    // const fpsCounter = new PixiFps();
 
-    this.stage.addChild(fpsCounter);
+    // this.stage.addChild(s);
     this.ticker.add((delta) => this.drawLoop(delta));
   }
 
