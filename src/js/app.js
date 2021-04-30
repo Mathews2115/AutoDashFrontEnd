@@ -6,11 +6,9 @@ import * as PIXI from "pixi.js";
 import { PedalGauge } from "../js/gauges/PedalGauge";
 import { PEDAL_CONFIG, RPM_CONFIG, SCREEN, DEFAULT_COLORS } from "./appConfig";
 import { RPMGauge } from "./gauges/RPMGauge";
-import PixiFps from "pixi-fps";
 
 //Aliases
 let Container = PIXI.Container;
-
 const MODES = { TEST: "test", LIVE: "live" };
 
 function createRPMLogo() {
@@ -53,16 +51,14 @@ function createRPMLogo() {
 export class DashApp {
   /**
    * @param { PIXI.Renderer } renderer
-   * @param { PIXI.Ticker } ticker
    */
-  constructor(renderer, ticker) {
+  constructor(renderer) {
     this.renderer = renderer;
-    this.ticker = ticker;
     this.stage = new PIXI.Container();
     this.stage.interactiveChildren = false; // dont bother checking anyone for interactions
 
     this.setColors();
-    this.state = (/** @type {Number} */ delta) => {};
+    this.state = (/** @type {Object} */ updatedGaugeData) => {};
   }
 
   setColors() {
@@ -110,34 +106,27 @@ export class DashApp {
 
     this.rpmGauge.initialize();
     this.pedalGauge.initialize();
-
+ 
     // start rendering
     this.state = this.stateTesting; //this.stateStartup;
-    // const fpsCounter = new PixiFps();
-
-    // this.stage.addChild(s);
-    this.ticker.add((delta) => this.drawLoop(delta));
   }
 
-  /**
-   * @param {number} delta - milliseconds passed since last update
-   */
-  stateRunning(delta) {
+  update(updatedGaugeData) {
+    this.state(updatedGaugeData);
+    this.renderer.render(this.stage);
+  }
+
+  stateRunning(updatedGaugeData) {
     //call gauges animation function
   }
 
-  /**
-   * @param {number} delta - milliseconds passed since last update
-   */
-  stateStartup(delta) {
+  stateStartup(updatedGaugeData) {
     // TODO; testing phase of gauages
     this.state = this.stateRunning;
   }
 
-  /**
-   * @param {number} delta - milliseconds passed since last update
-   */
-  stateTesting(delta) {
+
+  stateTesting(updatedGaugeData) {
     // like startup but it just keeps going and going
     if (this.pedalGauge.value == PEDAL_CONFIG.MAX) {
       this.pedalGauge.testGoBackwards = true;
@@ -147,7 +136,7 @@ export class DashApp {
 
     this.pedalGauge.value =
       this.pedalGauge.value + (this.pedalGauge.testGoBackwards ? -1 : 1);
-    this.pedalGauge.update(delta);
+    this.pedalGauge.update();
 
     if (this.rpmGauge.value == RPM_CONFIG.MAX) {
       this.rpmGauge.testGoBackwards = true;
@@ -156,20 +145,10 @@ export class DashApp {
     }
     this.rpmGauge.value =
       this.rpmGauge.value + (this.rpmGauge.testGoBackwards ? -50 : 50);
-    this.rpmGauge.update(delta);
+    this.rpmGauge.update();
   }
 
-  /**
-   * @param {number} delta - milliseconds passed since last update
-   */
-  stateShutdown(delta) {
+  stateShutdown(updatedGaugeData) {
     // show MPG stats?
-  }
-
-  /**
-   * @param {number} delta - milliseconds passed since last update
-   */
-  drawLoop(delta) {
-    this.state(delta);
   }
 }

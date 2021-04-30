@@ -152,7 +152,7 @@ export class RPMGauge extends PIXI.Container {
     }
   }
 
-  update(_delta) {
+  update() {
     if (this._value != this.renderedValue) {
       this.activeContainer.filters = [this.activeFilter];
       this.foregroundSprite.texture = this.activeTexture;

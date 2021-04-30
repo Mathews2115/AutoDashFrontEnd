@@ -20,3 +20,7 @@ Quick idea
 
 * Web Worker doesnt really need to know anything about the main app yet...
 * So we just need to pass the "updated data set" to the app every frame
+* * good example of this https://blog.logrocket.com/using-webworkers-for-safe-concurrent-javascript-3f33da4eb0b2/
+
+
+* we are purposly going to not do the transferable thing for now and see how it goes; well investiate it later if needed
