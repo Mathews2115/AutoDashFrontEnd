@@ -13,7 +13,7 @@ const renderer = new PIXI.Renderer({
   backgroundColor: 0x000000,
 });
 const dash = new DashApp(renderer);
-const dataWorker = new Worker(new URL('./js/drawDataWorker.js', import.meta.url));
+const dataWorker = new Worker(new URL('./js/comms/drawDataWorker.js', import.meta.url));
 const updateData = []; // however big the data is;
 
 const animationStep = () => {
