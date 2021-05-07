@@ -6,6 +6,7 @@ import * as PIXI from "pixi.js";
 import { PedalGauge } from "../js/gauges/PedalGauge";
 import { PEDAL_CONFIG, RPM_CONFIG, SCREEN, DEFAULT_COLORS } from "./appConfig";
 import { RPMGauge } from "./gauges/RPMGauge";
+import DATA_MAP from "./dataMap";
 
 //Aliases
 let Container = PIXI.Container;
@@ -128,23 +129,25 @@ export class DashApp {
 
   stateTesting(updatedGaugeData) {
     // like startup but it just keeps going and going
-    if (this.pedalGauge.value == PEDAL_CONFIG.MAX) {
-      this.pedalGauge.testGoBackwards = true;
-    } else if (this.pedalGauge.value == PEDAL_CONFIG.MIN) {
-      this.pedalGauge.testGoBackwards = false;
-    }
+    // if (this.pedalGauge.value == PEDAL_CONFIG.MAX) {
+    //   this.pedalGauge.testGoBackwards = true;
+    // } else if (this.pedalGauge.value == PEDAL_CONFIG.MIN) {
+    //   this.pedalGauge.testGoBackwards = false;
+    // }
 
-    this.pedalGauge.value =
-      this.pedalGauge.value + (this.pedalGauge.testGoBackwards ? -1 : 1);
+    // this.pedalGauge.value =
+    //   this.pedalGauge.value + (this.pedalGauge.testGoBackwards ? -1 : 1);
+    // this.pedalGauge.update();
+
+    // if (this.rpmGauge.value == RPM_CONFIG.MAX) {
+    //   this.rpmGauge.testGoBackwards = true;
+    // } else if (this.rpmGauge.value == RPM_CONFIG.MIN) {
+    //   this.rpmGauge.testGoBackwards = false;
+    // }
+    this.pedalGauge.value =  updatedGaugeData[DATA_MAP.PEDAL_POSITION];
+    this.rpmGauge.value = updatedGaugeData[DATA_MAP.RPM];
+    //   this.rpmGauge.value + (this.rpmGauge.testGoBackwards ? -50 : 50);
     this.pedalGauge.update();
-
-    if (this.rpmGauge.value == RPM_CONFIG.MAX) {
-      this.rpmGauge.testGoBackwards = true;
-    } else if (this.rpmGauge.value == RPM_CONFIG.MIN) {
-      this.rpmGauge.testGoBackwards = false;
-    }
-    this.rpmGauge.value =
-      this.rpmGauge.value + (this.rpmGauge.testGoBackwards ? -50 : 50);
     this.rpmGauge.update();
   }
 
