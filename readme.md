@@ -1,5 +1,7 @@
 # Quick How-To Raspberry Pi 4 Dashboard setup.
 
+**WARNING - BUILDING THIS WHILE WE ARE FLYING - EXPECT MASSIVE STUPID CHANGES ON A WHIM**
+
 ## My parts list
 * 7.9 Waveshare monitor
 * Raspberry Pi 4
@@ -98,9 +100,6 @@ Add this when/if you want chromium to start upon boot
     dtoverlay=mcp2515-can0,oscillator=16000000,interrupt=25
     dtoverlay=spi-bcm2835-overlay
 ```
-
-## Installing Node/NPM
-1. https://www.officialrajdeepsingh.dev/install-node-js-and-npm-latest-version-on-raspberry-pi-4/
 
 ## Shutting down things we dont care about
 

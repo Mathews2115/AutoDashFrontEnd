@@ -10,6 +10,9 @@ const PKT = {
   LENGTH: 1,
   BYTE_OFFSET: 2,
 };
+
+RobustWebSocket.prototype.binaryType = 'arraybuffer';
+
 const PACKET_ID_LENGTH = decoder.packetIdLength; //in bytes
 const createWS = () => {
   let ws = new RobustWebSocket("ws://localhost:3333", null, {
@@ -17,9 +20,6 @@ const createWS = () => {
     shouldReconnect: () => 0,
     ignoreConnectivityEvents: false,
   });
-  // Change binary type from "blob" to "arraybuffer"
-  ws.binaryType = "arraybuffer";
-
   // ws.addEventListener('open', function(event) {
   //   console.log('connected to dash backend');
   //   ws.send('Hello!')
