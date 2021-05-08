@@ -35,10 +35,10 @@ const racePackDecoder = {
    * @param {ArrayBuffer} canData
    */
   decode: (packet_id, canData) => {
-    const data = new DataView(canData);
+    
     const decodedId = packet_id & 0xfffff800;
     if (!!RACEPACK_CAN_MAP[decodedId]) {
-      return RACEPACK_CAN_MAP[decodedId ](data);
+      return RACEPACK_CAN_MAP[decodedId ](new DataView(canData));
     } else {
       return [];
     }
