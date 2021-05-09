@@ -1,4 +1,4 @@
-import DATA_MAP from "../dataMap";
+import {DATA_KEYS} from "../dataMap";
 
 const ecuSerial = 0x00007ad0 & 0x7ff; // used to decode message IDs
 
@@ -11,8 +11,8 @@ const RACEPACK_CAN_MAP = {
    */
    0x1E001000: (data) => {
     return [
-      { id: DATA_MAP.RTC, data: data.getUint32(0) },
-      { id: DATA_MAP.RPM, data: data.getUint32(4) / 256 },
+      { id: DATA_KEYS.RTC, data: data.getUint32(0) },
+      { id: DATA_KEYS.RPM, data: data.getUint32(4) / 256 },
     ];
   },
   /**
@@ -23,8 +23,8 @@ const RACEPACK_CAN_MAP = {
    */
    0x1E029000: (data) => {
     return [
-      { id: DATA_MAP.PEDAL_POSITION, data: data.getUint32(0) / 256 },
-      { id: DATA_MAP.FUEL_PRESSURE, data: data.getUint32(4) / 256 },
+      { id: DATA_KEYS.PEDAL_POSITION, data: data.getUint32(0) / 256 },
+      { id: DATA_KEYS.FUEL_PRESSURE, data: data.getUint32(4) / 256 },
     ];
   },
 };

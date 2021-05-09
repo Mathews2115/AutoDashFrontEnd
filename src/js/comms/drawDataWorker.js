@@ -1,8 +1,9 @@
 // https://github.com/nathanboktae/robust-websocket#usage
 import RobustWebSocket from "robust-websocket";
+import { createDataStore } from "../dataMap";
 import decoder from "./racePackDecoder";
 
-const processed_data = [];
+const processed_data = createDataStore();
 const pktHlpr = new Uint32Array(3);
 
 const PKT = {
@@ -33,7 +34,7 @@ const createWS = () => {
 /**
  * super ugly function but super optimized (lol) - Avoid as much GC / allocation as possible
  */
-const parsePacket = (event) => {
+const parsePacket = (/** @type {{ data: ArrayBuffer; }} */ event) => {
   try {
     const packet = event.data;
     let data = new DataView(packet);

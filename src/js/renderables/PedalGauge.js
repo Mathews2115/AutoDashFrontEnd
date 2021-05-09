@@ -1,21 +1,32 @@
 import * as PIXI from "pixi.js";
 import { PEDAL_CONFIG, SCREEN } from "../appConfig";
 import { GlowFilter } from "@pixi/filter-glow";
-
+import Renderable from "./Renderable";
+import { RENDER_KEYS } from "./Renderables";
+import { DATA_KEYS } from "../dataMap";
 //Aliases
-let Container = PIXI.Container,
-  Graphics = PIXI.Graphics;
+let Graphics = PIXI.Graphics;
 
-export class PedalGauge extends Container {
+const ID = RENDER_KEYS.PEDAL_GAUGE;
+/**
+ * Creates a new PedalGauge.
+ * @class PedalGauge
+ */
+class PedalGauge extends Renderable {
+
   constructor({ renderer, theme }) {
-    super();
-    this.interactiveChildren = false;
-    this.renderer = renderer;
+    super({ renderer, theme });
+    this._dashID = ID;
     this._transformHeight = 0;
     this.activeColor = theme.gaugeActiveColor;
     this.backgroundColor = theme.gaugeBgColor;
-    this._value = PEDAL_CONFIG.MIN;
+    this._value = PEDAL_CONFIG.MAX;
     this.renderedValue = this._value;
+  }
+
+  // the data store values we want to listen too
+  get dataKey() {
+    return DATA_KEYS.PEDAL_POSITION;
   }
 
   get gaugeWidth() {
@@ -25,11 +36,8 @@ export class PedalGauge extends Container {
     return SCREEN.RPM_CLUSTER_HEIGHT;
   }
 
-  get value() {
-    return this._value;
-  }
   set value(newValue) {
-    if (newValue < PEDAL_CONFIG.MIN) {
+    if (newValue == null || newValue < PEDAL_CONFIG.MIN) {
       this._value = PEDAL_CONFIG.MIN;
     } else if (newValue > PEDAL_CONFIG.MAX) {
       this._value = PEDAL_CONFIG.MAX;
@@ -67,14 +75,17 @@ export class PedalGauge extends Container {
     ];
 
     // set the rotate this puppy so we can scale it up and down
-    this.pedalGaugeActive.position.set(this.gaugeWidth, this.gaugeHeight)
+    this.pedalGaugeActive.position.set(this.gaugeWidth, this.gaugeHeight);
     this.pedalGaugeActive.angle = 180;
   }
 
-  update(_delta) {
+  update() {
     if (this._value != this.renderedValue) {
-      this.pedalGaugeActive.scale.set(1, (this._value / PEDAL_CONFIG.MAX));
+      this.pedalGaugeActive.scale.set(1, this._value / PEDAL_CONFIG.MAX);
       this.renderedValue = this._value;
     }
   }
 }
+
+PedalGauge.ID = ID;
+export default PedalGauge;
