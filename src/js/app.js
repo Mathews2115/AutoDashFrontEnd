@@ -6,8 +6,9 @@ import * as PIXI from "pixi.js";
 import PedalGauge from "./renderables/PedalGauge";
 import { DEFAULT_COLORS } from "./appConfig";
 import RPMGauge from "./renderables/RPMGauge";
-import { createRpmCluster } from "./renderHelpers";
+import { createRpmCluster, createSpeedoCluster } from "./renderHelpers";
 import { Renderables } from "./renderables/Renderables"
+import SpeedoSweep from "./renderables/SpeedoSweep";
 
 //Aliases
 const MODES = { TEST: "test", LIVE: "live" };
@@ -43,8 +44,11 @@ export class DashApp {
   initialize() {
     const pedalGauge = this.renderables.createRenderable(PedalGauge);
     const rpmGauge = this.renderables.createRenderable(RPMGauge);
+    const speedoSpeed = this.renderables.createRenderable(SpeedoSweep);
 
-    createRpmCluster(pedalGauge, rpmGauge, this);
+    const rpmCluster = createRpmCluster(pedalGauge, rpmGauge, this);
+    createSpeedoCluster(speedoSpeed, rpmGauge, this);
+
     this.renderables.initializeAll();
     
     // start rendering

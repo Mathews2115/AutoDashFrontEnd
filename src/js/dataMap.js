@@ -7,6 +7,7 @@ export const DATA_KEYS = {
   RPM: 1,
   RTC: 2,
   FUEL_PRESSURE: 3,
+  SPEEDO: 4,
 };
 
 export const createDataStore = () => {

@@ -40,14 +40,10 @@ class RPMGauge extends Renderable {
       .beginFill(0xffffff)
       .lineStyle(0)
       .drawPolygon([
-        0,
-        0,
-        this.gaugeWidth,
-        0,
-        this.gaugeWidth * 0.2,
-        this.gaugeHeight,
-        0,
-        this.gaugeHeight,
+        0, 0,
+        this.gaugeWidth, 0,
+        this.gaugeWidth * 0.2, this.gaugeHeight,
+        0, this.gaugeHeight,
       ])
       .endFill();
 
@@ -62,10 +58,8 @@ class RPMGauge extends Renderable {
     foreground.beginFill(this.theme.gaugeActiveColor).lineStyle(0);
     for (let index = 0; index < segments; index++) {
       foreground.drawRect(
-        0,
-        segmentHeight * index,
-        this.gaugeWidth,
-        segmentHeight - (index == segments - 1 ? 0 : 4)
+        0, segmentHeight * index,
+        this.gaugeWidth, segmentHeight - (index == segments - 1 ? 0 : 4)
       );
     }
     foreground.endFill();
@@ -148,7 +142,7 @@ class RPMGauge extends Renderable {
   }
 
   get gaugeWidth() {
-    return 200;
+    return SCREEN.RPM_WIDTH;
   }
   get gaugeHeight() {
     return SCREEN.RPM_CLUSTER_HEIGHT;

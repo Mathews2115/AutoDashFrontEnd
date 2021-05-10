@@ -22,24 +22,16 @@ export function createRPMLogo(app) {
   rpmLogo
     .beginFill(app.theme.gaugeActiveColor)
     .drawPolygon([
-      slantStart,
-      0,
-      0,
-      SCREEN.PADDING,
-      firstEnd,
-      SCREEN.PADDING,
-      firstEnd,
-      0,
+      slantStart, 0,
+      0, SCREEN.PADDING,
+      firstEnd, SCREEN.PADDING,
+      firstEnd, 0,
     ])
     .drawPolygon([
-      secondStart,
-      0,
-      secondStart,
-      SCREEN.PADDING,
-      totalWidth,
-      SCREEN.PADDING,
-      totalWidth + slantStart,
-      0,
+      secondStart, 0,
+      secondStart, SCREEN.PADDING,
+      totalWidth, SCREEN.PADDING,
+      totalWidth + slantStart, 0,
     ])
     .endFill();
 
@@ -77,4 +69,14 @@ export const createRpmCluster = (pedalGauge, rpmGauge, app) => {
   rpmCluster.addChild(pedalGauge, rpmGauge);
 
   app.stage.addChild(rpmLogoTexture, rpmCluster);
+  return rpmCluster
 };
+
+export const createSpeedoCluster = (speedGauge, rpmGauge, app) => {
+  const speedoCluster = new PIXI.Container();
+  speedoCluster.x = rpmGauge.x + rpmGauge.gaugeWidth * 0.45; //magic fudge mumber
+  speedoCluster.y = SCREEN.SPEEDO_CLUSTER_Y;
+
+  speedoCluster.addChild(speedGauge);
+  app.stage.addChild(speedoCluster);
+}

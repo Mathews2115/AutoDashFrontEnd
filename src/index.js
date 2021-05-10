@@ -12,6 +12,14 @@ const renderer = new PIXI.Renderer({
   height: SCREEN.HEIGHT,
   backgroundColor: 0x000000,
 });
+let ticker = PIXI.Ticker.shared;
+ // Set this to prevent starting this ticker when listeners are added.
+ // By default this is true only for the PIXI.Ticker.shared instance.
+ ticker.autoStart = false;
+ // FYI, call this to ensure the ticker is stopped. It should be stopped
+ // if you have not attempted to render anything yet.
+ ticker.stop();
+
 const dash = new DashApp(renderer);
 const dataWorker = new Worker(new URL('./js/comms/drawDataWorker.js', import.meta.url));
 const updateData = []; // however big the data is;

@@ -30,7 +30,7 @@ class PedalGauge extends Renderable {
   }
 
   get gaugeWidth() {
-    return 50;
+    return SCREEN.PEDAL_WIDTH;
   }
   get gaugeHeight() {
     return SCREEN.RPM_CLUSTER_HEIGHT;
