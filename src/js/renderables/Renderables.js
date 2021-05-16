@@ -2,6 +2,7 @@ export const RENDER_KEYS = {
   RPM_GAUGE: 0,
   PEDAL_GAUGE: 1,
   SPEEDO_SWEEP: 2,
+  SPEEDO_READOUT: 3
 }
 
 export class Renderables extends Array {

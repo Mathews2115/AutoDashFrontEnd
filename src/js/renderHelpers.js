@@ -3,6 +3,8 @@ import * as PIXI from "pixi.js";
 import PedalGauge from "./renderables/PedalGauge";
 import RPMGauge from "./renderables/RPMGauge";
 import { RENDER_KEYS } from "./renderables/Renderables";
+import SpeedoSweep from "./renderables/SpeedoSweep";
+import SpeedoReadout from "./renderables/SpeedoReadout";
 
 /**
  * Generates texture for  to draw the ====RPM==== logo
@@ -42,7 +44,7 @@ export function createRPMLogo(app) {
   });
   text.angle = 180; // no idea what app is flipped??
   text.x = firstEnd + 5;
-  text.y = -SCREEN.PADDING * 2;
+  text.y = -SCREEN.PADDING;
   rpmLogo.addChild(text);
 
   const renderedTexture = app.renderer.generateTexture(rpmLogo);
@@ -72,11 +74,32 @@ export const createRpmCluster = (pedalGauge, rpmGauge, app) => {
   return rpmCluster
 };
 
-export const createSpeedoCluster = (speedGauge, rpmGauge, app) => {
+/**
+ * 
+ * @param {SpeedoSweep} speedGauge 
+ * @param {SpeedoReadout} speedoReadout 
+ * @param {RPMGauge} rpmGauge 
+ * @param {*} app 
+ */
+export const createSpeedoCluster = (speedGauge, speedoReadout, rpmGauge, app) => {
   const speedoCluster = new PIXI.Container();
   speedoCluster.x = rpmGauge.x + rpmGauge.gaugeWidth * 0.45; //magic fudge mumber
   speedoCluster.y = SCREEN.SPEEDO_CLUSTER_Y;
 
-  speedoCluster.addChild(speedGauge);
+  const text = new PIXI.BitmapText("MPH", {
+    fontName: "Orbitron",
+    fontSize: 50,
+    align: "left",
+  });
+  text.angle = 180; // no idea what app is flipped??
+  text.x = speedGauge.gaugeWidth * .25
+  text.y = speedGauge.gaugeHeight - text.height- SCREEN.PADDING;
+
+  speedoReadout.x = text.x + text.width + SCREEN.PADDING + 50;
+  speedoReadout.y = speedGauge.sweepSize + SCREEN.PADDING;
+  speedoReadout.gaugeHeight = speedGauge.gaugeHeight - speedGauge.sweepSize - SCREEN.PADDING;;
+  
+  speedoCluster.addChild(speedGauge, speedoReadout, text);
+
   app.stage.addChild(speedoCluster);
 }

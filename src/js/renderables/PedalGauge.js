@@ -17,7 +17,6 @@ class PedalGauge extends Renderable {
   constructor({ renderer, theme }) {
     super({ renderer, theme });
     this._dashID = ID;
-    this._transformHeight = 0;
     this.activeColor = theme.gaugeActiveColor;
     this.backgroundColor = theme.gaugeBgColor;
     this._value = PEDAL_CONFIG.MAX;

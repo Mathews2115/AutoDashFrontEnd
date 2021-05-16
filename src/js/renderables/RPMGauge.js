@@ -15,7 +15,6 @@ class RPMGauge extends Renderable {
   constructor({ renderer, theme }) {
     super({ renderer, theme });
     this._dashID = ID;
-    this.transformHeight = 0;
 
     // Value to be rendered
     this._value = RPM_CONFIG.MAX;

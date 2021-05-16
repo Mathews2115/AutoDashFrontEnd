@@ -46,7 +46,8 @@ export const SPEEDO_CONFIG = {
   MIN: 0,
   MAX: 100,
   WARNING_HIGH: 70,
-  DANGER_HIGH: 90
+  DANGER_HIGH: 90,
+  SEGMENTS: 20
 }
 
 export const DEFAULT_COLORS = {

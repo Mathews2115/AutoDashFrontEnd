@@ -9,6 +9,7 @@ import RPMGauge from "./renderables/RPMGauge";
 import { createRpmCluster, createSpeedoCluster } from "./renderHelpers";
 import { Renderables } from "./renderables/Renderables"
 import SpeedoSweep from "./renderables/SpeedoSweep";
+import SpeedoReadout from "./renderables/SpeedoReadout";
 
 //Aliases
 const MODES = { TEST: "test", LIVE: "live" };
@@ -45,9 +46,9 @@ export class DashApp {
     const pedalGauge = this.renderables.createRenderable(PedalGauge);
     const rpmGauge = this.renderables.createRenderable(RPMGauge);
     const speedoSpeed = this.renderables.createRenderable(SpeedoSweep);
-
-    const rpmCluster = createRpmCluster(pedalGauge, rpmGauge, this);
-    createSpeedoCluster(speedoSpeed, rpmGauge, this);
+    const speedoReadout = this.renderables.createRenderable(SpeedoReadout);
+    createRpmCluster(pedalGauge, rpmGauge, this);
+    createSpeedoCluster(speedoSpeed, speedoReadout, rpmGauge, this);
 
     this.renderables.initializeAll();
     

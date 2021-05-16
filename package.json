@@ -35,7 +35,6 @@
     "html-webpack-plugin": "^5.1.0",
     "mini-css-extract-plugin": "^1.0.0",
     "node-sass": "^4.14.1",
-    "pixi-fps": "^2.0.1",
     "postcss-loader": "^4.0.4",
     "postcss-preset-env": "^6.7.0",
     "prettier": "^2.2.1",
@@ -54,6 +53,7 @@
     "@pixi/filter-drop-shadow": "^4.0.0",
     "@pixi/filter-glitch": "^4.0.0",
     "@pixi/filter-glow": "^4.0.0",
+    "@pixi/graphics-extras": "^6.0.4",
     "pixi.js": "^6.0.1",
     "robust-websocket": "^1.0.0"
   }
