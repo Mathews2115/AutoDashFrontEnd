@@ -27,6 +27,19 @@ const RACEPACK_CAN_MAP = {
       { id: DATA_KEYS.FUEL_PRESSURE, data: data.getUint32(4) / 256 },
     ];
   },
+
+    /**
+   *  Line Pressure xxx percent[0..3]
+   * Speed xxx MPH[4..7]
+   * @param {DataView} data
+   * @returns 
+   */
+     0x1E049000: (data) => {
+      return [
+        // { id: DATA_KEYS.LINE_PRESSURE, data: data.getUint32(0) / 256 },
+        { id: DATA_KEYS.SPEEDO, data: data.getUint32(4) / 256 },
+      ];
+    },
 };
 
 const racePackDecoder = {

@@ -170,7 +170,6 @@ class SpeedoSweep extends Renderable {
   }
 
   update() {
-    this.value = 65
     if (this._value != this.renderedValue) {
       this.activeContainer.filters = [this.activeFilter];
       this.foregroundSprite.texture = this.activeTexture;

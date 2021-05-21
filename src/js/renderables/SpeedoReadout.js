@@ -8,6 +8,8 @@ import { RENDER_KEYS } from "./Renderables";
 
 const FILTER_PADDING = 20;
 const PADDING_OFFSET = FILTER_PADDING/2;
+const NO_DISPLAY = 10;
+const SEGMENT_SLANT = -0.2;
 /**
  * Generate the Graphics needed for segments...
  * lmao im doing this the hard way arent i
@@ -89,7 +91,6 @@ const createNumber = (number,gaugeHeight) => {
   return graphics;
 };
 
-const SEGMENT_SLANT = -0.2;
 const ID = RENDER_KEYS.SPEEDO_READOUT;
 class SpeedoReadout extends Renderable {
   constructor({ renderer, theme }) {
@@ -111,6 +112,10 @@ class SpeedoReadout extends Renderable {
   set value(newValue) {
     if (newValue == null || newValue < SPEEDO_CONFIG.MIN) {
       this._value = SPEEDO_CONFIG.MIN;
+    } else if (newValue > SPEEDO_CONFIG.MAX) {
+      this._value = SPEEDO_CONFIG.MAX;
+    } else {
+      this._value = Math.floor(newValue);
     }
   }
 
@@ -172,8 +177,8 @@ class SpeedoReadout extends Renderable {
     }
   
     // create number textures
-    this.numberSprites.push(new PIXI.Sprite(this.numberTextures[10]));
-    this.numberSprites.push(new PIXI.Sprite(this.numberTextures[5]));
+    this.numberSprites.push(new PIXI.Sprite(this.numberTextures[8]));
+    this.numberSprites.push(new PIXI.Sprite(this.numberTextures[8]));
 
     this.numberSprites.forEach(sprite => {
       // give the numbers a slight and offset for the extra border we gave the textures
@@ -188,8 +193,14 @@ class SpeedoReadout extends Renderable {
   }
 
   update() {
+
     if (this._value != this.renderedValue) {
       this.renderedValue = this._value;
+      debugger
+      this.numberSprites[1].texture = this.numberTextures[this.renderedValue%10]
+
+      const tenthsDigit = Math.floor(this.renderedValue/10) || NO_DISPLAY
+      this.numberSprites[0].texture = this.numberTextures[tenthsDigit]
     }
   }
 }

@@ -44,7 +44,7 @@ export const RPM_CONFIG = {
 
 export const SPEEDO_CONFIG = {
   MIN: 0,
-  MAX: 100,
+  MAX: 99,
   WARNING_HIGH: 70,
   DANGER_HIGH: 90,
   SEGMENTS: 20

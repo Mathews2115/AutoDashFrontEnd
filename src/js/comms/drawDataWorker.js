@@ -1,6 +1,6 @@
 // https://github.com/nathanboktae/robust-websocket#usage
 import RobustWebSocket from "robust-websocket";
-import { createDataStore } from "../dataMap";
+import { createDataStore, DATA_KEYS } from "../dataMap";
 import decoder from "./racePackDecoder";
 
 const processed_data = createDataStore();
@@ -11,6 +11,12 @@ const PKT = {
   LENGTH: 1,
   BYTE_OFFSET: 2,
 };
+
+
+// TESTING STUFF
+let modifier = 1;
+let speed =0;
+//////////////////////////////////
 
 RobustWebSocket.prototype.binaryType = 'arraybuffer';
 
@@ -81,9 +87,14 @@ onmessage = (evt) => {
     case "process_update_data":
       // request for latest data
       let data = evt.data.updateData;
-      data = processed_data;
-      // copy processedData into data
 
+      // TEST DATA!!!! (yes I know, I'll make an actual test mode that will do this later shutup)
+      if (speed >= 99) modifier = -1;
+      else if (speed <= 0) modifier = 0.3;
+      speed += modifier;
+      processed_data[DATA_KEYS.SPEEDO] =speed;
+
+      data = processed_data;
       postMessage({ msg: "update_data_ready", updateData: data });
       break;
 
