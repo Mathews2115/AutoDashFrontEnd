@@ -196,7 +196,6 @@ class SpeedoReadout extends Renderable {
 
     if (this._value != this.renderedValue) {
       this.renderedValue = this._value;
-      debugger
       this.numberSprites[1].texture = this.numberTextures[this.renderedValue%10]
 
       const tenthsDigit = Math.floor(this.renderedValue/10) || NO_DISPLAY
