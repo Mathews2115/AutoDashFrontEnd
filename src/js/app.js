@@ -10,6 +10,7 @@ import { createRpmCluster, createSpeedoCluster } from "./renderHelpers";
 import { Renderables } from "./renderables/Renderables"
 import SpeedoSweep from "./renderables/SpeedoSweep";
 import SpeedoReadout from "./renderables/SpeedoReadout";
+import BorderWarnings from "./renderables/BorderWarnings";
 
 //Aliases
 const MODES = { TEST: "test", LIVE: "live" };
@@ -47,9 +48,10 @@ export class DashApp {
     const rpmGauge = this.renderables.createRenderable(RPMGauge);
     const speedoSpeed = this.renderables.createRenderable(SpeedoSweep);
     const speedoReadout = this.renderables.createRenderable(SpeedoReadout);
+    const borderWarnings = this.renderables.createRenderable(BorderWarnings);
     createRpmCluster(pedalGauge, rpmGauge, this);
     createSpeedoCluster(speedoSpeed, speedoReadout, rpmGauge, this);
-
+    this.stage.addChild(borderWarnings);
     this.renderables.initializeAll();
     
     // start rendering
@@ -63,7 +65,7 @@ export class DashApp {
 
   stateRunning(updatedGaugeData) {
     this.renderables.forEach(renderable => {
-      renderable.value = updatedGaugeData[renderable.dataKey];
+      renderable.value = renderable.dataKey ? updatedGaugeData[renderable.dataKey] : updatedGaugeData;
     });
 
     this.renderables.updateAll();

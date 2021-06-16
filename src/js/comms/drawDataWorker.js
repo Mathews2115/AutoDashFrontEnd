@@ -2,7 +2,8 @@
 import RobustWebSocket from "robust-websocket";
 import { createDataStore, DATA_KEYS } from "../dataMap";
 import decoder from "./racePackDecoder";
-
+import { processWarningData, processEconData, processSpeed } from "../store/DataProcessing";
+ 
 const processed_data = createDataStore();
 const pktHlpr = new Uint32Array(3);
 
@@ -12,25 +13,24 @@ const PKT = {
   BYTE_OFFSET: 2,
 };
 
-
 // TESTING STUFF
 let modifier = 1;
 let speed =0;
 //////////////////////////////////
 
 RobustWebSocket.prototype.binaryType = 'arraybuffer';
-
 const PACKET_ID_LENGTH = decoder.packetIdLength; //in bytes
 const createWS = () => {
+  processed_data[DATA_KEYS.COMM_ERROR] = true;
   let ws = new RobustWebSocket("ws://localhost:3333", null, {
     timeout: 30000,
     shouldReconnect: () => 0,
     ignoreConnectivityEvents: false,
   });
-  // ws.addEventListener('open', function(event) {
-  //   console.log('connected to dash backend');
-  //   ws.send('Hello!')
-  // })
+  ws.addEventListener('open', function(event) {
+    processed_data[DATA_KEYS.COMM_ERROR] = false;
+    // ws.send('Hello!')
+  })
 
   ws.addEventListener("message", (evt) => parsePacket(evt));
   console.log('start')
@@ -38,16 +38,16 @@ const createWS = () => {
 };
 
 /**
- * super ugly function but super optimized (lol) - Avoid as much GC / allocation as possible
+ * 
+ * @param {ArrayBuffer} buffer 
  */
-const parsePacket = (/** @type {{ data: ArrayBuffer; }} */ event) => {
+const parseCANData = (buffer) => {
   try {
-    const packet = event.data;
-    let data = new DataView(packet);
+    let data = new DataView(buffer);
 
     // here is some stupid memory allocation optimization that probably
     // doesn't work and looks goddamn gross
-    while (pktHlpr[PKT.BYTE_OFFSET] < packet.byteLength) {
+    while (pktHlpr[PKT.BYTE_OFFSET] < buffer.byteLength) {
       // get CAN ID
       pktHlpr[PKT.ID] = data.getUint32(pktHlpr[PKT.BYTE_OFFSET]); // TODO: make this dynamic??
       pktHlpr[PKT.BYTE_OFFSET] += PACKET_ID_LENGTH;
@@ -75,6 +75,34 @@ const parsePacket = (/** @type {{ data: ArrayBuffer; }} */ event) => {
   } catch (error) {
 
   }
+}
+
+/**
+ *  GPS Packet Data:
+  // Byte 0 - 0-255 speed in kph
+  // Byte 1 - Bit 0: signal acquired | Bit 1: Serial Error
+  // Byte 2 - 2 Bytes - odometer
+ * @param {ArrayBuffer} buffer 
+ */
+const parseGPSData = (buffer) => {
+  try {
+    let data = new DataView(buffer);
+    // processed_data[DATA_KEYS.SPEEDO] = data.getUint8(0);
+    let flags = data.getUint8(1);
+    processed_data[DATA_KEYS.GPS_ACQUIRED] = !!(flags & 0x1)
+    processed_data[DATA_KEYS.GPS_ERROR] = !!(flags & 0x2)
+    processed_data[DATA_KEYS.ODOMETER] = data.getUint16(2);
+  } catch (e) {
+
+  }
+}
+
+const parsePacket = (/** @type {{ data: ArrayBuffer; }} */ event) => {
+  let data = new DataView(event.data);
+  parseGPSData(data.buffer.slice(0,4));
+  parseCANData(data.buffer.slice(4));
+
+  processed_data[DATA_KEYS.ECON_DATA] = processEconData(processed_data); // figure out mpg data
 };
 
 let ws = null;

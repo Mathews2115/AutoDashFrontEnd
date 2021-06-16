@@ -12,7 +12,7 @@ export default class Renderable extends Container {
     this.theme = theme;
 
     // Value to be rendered
-    this._value = 0;
+    this._value = null;
 
     // What value the gauge rendered last
     this.renderedValue = this._value;

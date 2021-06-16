@@ -25,9 +25,18 @@ export const DATA_KEYS = {
   BAR_PRESSURE: 19,
   CTS: 20,
   OIL_PRESSURE: 21,
-  BATT_VOLTAGE: 22
+  BATT_VOLTAGE: 22,
+  ODOMETER: 23,
+  GPS_ACQUIRED: 24,
+  GPS_ERROR: 25,
+  ECON_DATA: 26,
+  COMM_ERROR: 27,
 };
 
+/**
+ * Once Source of truth - keyed by DATA_KEYS
+ * @returns 
+ */
 export const createDataStore = () => {
   let dataStore = [];
   for (const [_key, value] of Object.entries(DATA_KEYS)) {
