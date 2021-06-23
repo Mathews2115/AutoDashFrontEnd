@@ -2,7 +2,7 @@
 import RobustWebSocket from "robust-websocket";
 import { createDataStore, DATA_KEYS } from "../dataMap";
 import decoder from "./racePackDecoder";
-import { processWarningData, processEconData, processSpeed } from "../store/DataProcessing";
+import { processWarningData, processEconData } from "../store/DataProcessing";
  
 const processed_data = createDataStore();
 const pktHlpr = new Uint32Array(3);
@@ -31,9 +31,11 @@ const createWS = () => {
     processed_data[DATA_KEYS.COMM_ERROR] = false;
     // ws.send('Hello!')
   })
+  ws.addEventListener('close', (event) => {
+    processed_data[DATA_KEYS.COMM_ERROR] = true;
+  })
 
   ws.addEventListener("message", (evt) => parsePacket(evt));
-  console.log('start')
   return ws;
 };
 

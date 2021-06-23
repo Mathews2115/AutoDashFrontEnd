@@ -4,6 +4,8 @@ import { GlowFilter } from "@pixi/filter-glow";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
 import { DATA_KEYS } from "../dataMap";
+// import { gsap } from "gsap";
+
 //Aliases
 let Graphics = PIXI.Graphics;
 
@@ -41,6 +43,21 @@ class BorderWarnings extends Renderable {
     if (dataSet[DATA_KEYS.COMM_ERROR]) this._value |= COMM_ERROR;
   }
 
+  createTags() {
+    const tagGeomtry = new Graphics();
+    const tagSize = 80;
+    tagGeomtry
+      .beginFill(0xffffff)
+      .lineStyle(0)
+      .drawRect(SCREEN.WIDTH-tagSize, 0, SCREEN.WIDTH, tagSize) // tag sqaure
+      .drawPolygon([SCREEN.WIDTH-tagSize-(tagSize*.1), 0,       // tag edge
+        SCREEN.WIDTH-tagSize, 0,
+        SCREEN.WIDTH-tagSize, tagSize,
+        SCREEN.WIDTH-tagSize-(tagSize*.1),tagSize-(tagSize*.1),
+      ])
+      .endFill(); 
+  }
+
   initialize() {
     // draw initial border geometry
     const vert = new Graphics();
@@ -66,7 +83,10 @@ class BorderWarnings extends Renderable {
     this.borders[2].y = this.gaugeHeight - SCREEN.BORDER_WIDTH + 5;
     this.borders[3].x = this.gaugeWidth - SCREEN.BORDER_WIDTH + 5;
 
-    this.addChild(...this.borders);
+    this.tags = [];
+    
+
+    // this.addChild(this.tags, ...this.borders);
     // try initial tag geometry
     this.renderable = false;
   }
@@ -75,6 +95,7 @@ class BorderWarnings extends Renderable {
     if (this._value != this.renderedValue) {
       this.renderable = !!this._value;
       if (this._value) {
+        // make sure the border takes on the issue with the highest priority/severity
         const tint = this._value >= ERROR_FLAGS ? this.theme.dangerColor : 0x00FF00;
         this.borders.forEach(gfx => gfx.tint = tint);
       }
