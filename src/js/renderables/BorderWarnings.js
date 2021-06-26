@@ -1,10 +1,9 @@
 import * as PIXI from "pixi.js";
 import { SCREEN } from "../appConfig";
-import { GlowFilter } from "@pixi/filter-glow";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
 import { DATA_KEYS } from "../dataMap";
-// import { gsap } from "gsap";
+import { gsap } from "gsap";
 
 //Aliases
 let Graphics = PIXI.Graphics;
@@ -19,6 +18,10 @@ const ERROR_FLAGS = 0x10;     //
 const COMM_ERROR = 0x10       // 0001 0000
 const GPS_ERROR = 0x20;       // 0010 0000
 
+const tagRctSize = 80;
+const tagBump = tagRctSize*.1;
+const tagWidth = tagRctSize + tagBump;
+
 class BorderWarnings extends Renderable {
   constructor({ renderer, theme }) {
     super({ renderer, theme });
@@ -27,6 +30,7 @@ class BorderWarnings extends Renderable {
     this._value = 0;
     this.renderedValue = this._value;
     this.borders = [];
+    this.tags = {}
   }
 
   get gaugeWidth() {
@@ -43,19 +47,22 @@ class BorderWarnings extends Renderable {
     if (dataSet[DATA_KEYS.COMM_ERROR]) this._value |= COMM_ERROR;
   }
 
-  createTags() {
+  createTag() {
     const tagGeomtry = new Graphics();
-    const tagSize = 80;
+    
     tagGeomtry
       .beginFill(0xffffff)
       .lineStyle(0)
-      .drawRect(SCREEN.WIDTH-tagSize, 0, SCREEN.WIDTH, tagSize) // tag sqaure
-      .drawPolygon([SCREEN.WIDTH-tagSize-(tagSize*.1), 0,       // tag edge
-        SCREEN.WIDTH-tagSize, 0,
-        SCREEN.WIDTH-tagSize, tagSize,
-        SCREEN.WIDTH-tagSize-(tagSize*.1),tagSize-(tagSize*.1),
+      .drawPolygon([
+        0, 0,       // tag edge
+        tagBump, 0,
+        tagBump, tagRctSize,
+        0,tagRctSize-tagBump,
       ])
+      .drawRect(tagBump, 0, tagRctSize, tagRctSize) // tag sqaure
       .endFill(); 
+    tagGeomtry.renderable = false;
+    return tagGeomtry;  
   }
 
   initialize() {
@@ -74,6 +81,7 @@ class BorderWarnings extends Renderable {
       .drawRect(0, 0, this.gaugeWidth, SCREEN.BORDER_WIDTH-5)
       .endFill(); 
 
+    // left top
     this.borders = [
       horz,
       vert,
@@ -82,22 +90,67 @@ class BorderWarnings extends Renderable {
     ]
     this.borders[2].y = this.gaugeHeight - SCREEN.BORDER_WIDTH + 5;
     this.borders[3].x = this.gaugeWidth - SCREEN.BORDER_WIDTH + 5;
-
-    this.tags = [];
     
+    const gpsErrorTag = this.createTag();
+    gpsErrorTag.tint = 0xff7c00;
+    gpsErrorTag.x = SCREEN.WIDTH;
 
-    // this.addChild(this.tags, ...this.borders);
-    // try initial tag geometry
-    this.renderable = false;
+    const gpsNotAcquiredTag = new Graphics(gpsErrorTag.geometry);
+    gpsNotAcquiredTag.tint = 0x00FF00;
+    gpsNotAcquiredTag.x = SCREEN.WIDTH;
+
+    const commErrorTag = new Graphics(gpsErrorTag.geometry);
+    commErrorTag.tint = this.theme.dangerColor;
+    commErrorTag.x = SCREEN.WIDTH;
+
+    // order of severity
+    this.tags = {
+      commError: { mask: COMM_ERROR, tag: commErrorTag, tl: gsap.timeline()},
+      gpsError: { mask: GPS_ERROR, tag: gpsErrorTag, tl: gsap.timeline()},
+      gpsNotAcquired: { mask: GPS_NOT_ACQUIRED, tag: gpsNotAcquiredTag, tl: gsap.timeline()},
+    }
+
+    // reminder: last added is the last drawn (painters algorithm)
+    Object.values(this.tags).map(d => d.tag).reverse().forEach((g) => this.addChild(g));
+    this.addChild(...this.borders);
+
+    this.renderable = false; // start out not rendering;  logic will tell us when to show
   }
+
+  // TODO: Clean all this up buddy, jeez
 
   update() {
     if (this._value != this.renderedValue) {
-      this.renderable = !!this._value;
       if (this._value) {
+        this.renderable = true;
         // make sure the border takes on the issue with the highest priority/severity
         const tint = this._value >= ERROR_FLAGS ? this.theme.dangerColor : 0x00FF00;
         this.borders.forEach(gfx => gfx.tint = tint);
+      }
+     
+      // this only gets called if there is a change; so iterate through all tags
+      // and send them to their new spots
+      let offset = 0;
+      for (const [key, tagData] of Object.entries(this.tags)) {
+        if (this._value & tagData.mask) {
+          tagData.tl.clear();
+          tagData.tl.to(tagData.tag, { x: (SCREEN.WIDTH - tagWidth - offset), duration: 0.7, 
+                onStart:() => {
+                  tagData.tag.renderable = true; 
+                },
+                onComplete: () => {} 
+            });
+          offset += tagRctSize;
+        } else {
+          tagData.tl.clear();
+          tagData.tl.to(tagData.tag, { x: SCREEN.WIDTH, duration: 1, 
+            onStart:() => {},
+            onComplete: () => {
+              tagData.tag.renderable = false;
+              if (!this._value) this.renderable = false;  
+            } 
+        });
+        }
       }
       this.renderedValue = this._value;
     }

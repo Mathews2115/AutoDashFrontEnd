@@ -8,6 +8,10 @@ import orbitron50png2 from "./fonts/orbitron50_1.png";
 
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin.js";
+
+delete PIXI.Renderer.__plugins.interaction; // removing the interactoins manager; we dont need it
+// it also adds another RAF, which we dont need
+
 //without this line, PixiPlugin may get dropped by your bundler (tree shaking)...
 gsap.registerPlugin(PixiPlugin);
 // give the plugin a reference to the PIXI object
@@ -15,13 +19,6 @@ PixiPlugin.registerPIXI(PIXI);
 gsap.ticker.fps(45);
 
 
-// RENDERER and TICKER
-// setup renderer and ticker
-const renderer = new PIXI.Renderer({
-  width: SCREEN.WIDTH,
-  height: SCREEN.HEIGHT,
-  backgroundColor: 0x000000,
-});
 const ticker = PIXI.Ticker.shared;
 // Set this to prevent starting this ticker when listeners are added.
 // By default this is true only for the PIXI.Ticker.shared instance.
@@ -33,6 +30,13 @@ gsap.ticker.add((time,_deltaTime,_frame) => {
   ticker.update(time);
 })
 
+// RENDERER and TICKER
+// setup renderer and ticker
+const renderer = new PIXI.Renderer({
+  width: SCREEN.WIDTH,
+  height: SCREEN.HEIGHT,
+  backgroundColor: 0x000000,
+});
 const dash = new DashApp(renderer);
 const dataWorker = new Worker(new URL('./js/comms/drawDataWorker.js', import.meta.url));
 let updateData = []; // TODO: make this a typed array?  try transfer data in worker?
