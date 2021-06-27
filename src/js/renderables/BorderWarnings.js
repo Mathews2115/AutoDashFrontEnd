@@ -4,7 +4,6 @@ import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
 import { DATA_KEYS } from "../dataMap";
 import { gsap } from "gsap";
-
 //Aliases
 let Graphics = PIXI.Graphics;
 
@@ -14,10 +13,12 @@ const ID = RENDER_KEYS.WARNING_BORDER;
 // xxxx 0000 <= Critical flags
 // 0000 xxxx Warning and other status Flags
 const GPS_NOT_ACQUIRED = 0x01; // 0000 0001
-const ERROR_FLAGS = 0x10;     //
-const COMM_ERROR = 0x10       // 0001 0000
-const GPS_ERROR = 0x20;       // 0010 0000
-
+const LOW_FUEL = 0x02         //  0000 0010
+const BATTERY = 0x04          //  0000 0100
+const OIL = 0x08              //  0000 1000
+const TEMP = 0x10             //  0001
+const COMM_ERROR = 0x20       
+const GPS_ERROR = 0x40;      
 const tagRctSize = 50;
 const tagBump = tagRctSize*.1;
 const tagWidth = tagRctSize + tagBump;
@@ -83,9 +84,9 @@ class BorderWarnings extends Renderable {
     renderContainer.destroy(true); // clean up
 
     tag.renderable = false; // update logic determines if/when it needs to show
-    
     tag.x = SCREEN.WIDTH;
     tag.y = SCREEN.BORDER_WIDTH - 5;
+    tag.tint = tint; // save this off so that the borders can adopt this value in the update
     return tag;  
   }
 
@@ -118,11 +119,19 @@ class BorderWarnings extends Renderable {
     const gpsErrorTag = this.createTag(0xff7c00, resources.gpsErrorPng.texture);
     const gpsNotAcquiredTag = this.createTag(0x00FF00, resources.gpsNoSignalPng.texture);
     const commErrorTag = this.createTag(this.theme.dangerColor, resources.warningPng.texture);
+    const batteryTag = this.createTag(this.theme.dangerColor, resources.batteryPng.texture);
+    const fuelTag = this.createTag(this.theme.dangerColor, resources.fuelPng.texture);
+    const oilTag = this.createTag(this.theme.dangerColor, resources.oilPng.texture);
+    const tempTag = this.createTag(this.theme.dangerColor, resources.tempPng.texture);
     
     // order of severity
     this.tags = {
       commError: { mask: COMM_ERROR, tag: commErrorTag, tl: gsap.timeline()},
+      lowFuel: { mask: LOW_FUEL, tag: fuelTag, tl: gsap.timeline()},
+      oil: { mask: OIL, tag: oilTag, tl: gsap.timeline()},
+      temp: { mask: TEMP, tag: tempTag, tl: gsap.timeline()},
       gpsError: { mask: GPS_ERROR, tag: gpsErrorTag, tl: gsap.timeline()},
+      battery: { mask: BATTERY, tag: batteryTag, tl: gsap.timeline()},
       gpsNotAcquired: { mask: GPS_NOT_ACQUIRED, tag: gpsNotAcquiredTag, tl: gsap.timeline()},
     }
 
@@ -140,18 +149,13 @@ class BorderWarnings extends Renderable {
 
   update() {
     if (this._value != this.renderedValue) {
-      if (this._value) {
-        this.renderable = true;
-        // make sure the border takes on the issue with the highest priority/severity
-        const tint = this._value >= ERROR_FLAGS ? this.theme.dangerColor : 0x00FF00;
-        this.borders.forEach(gfx => gfx.tint = tint);
-      }
-     
       // this only gets called if there is a change; so iterate through all tags
       // and send them to their new spots
       let offset = 0;
+      let currentTint = null;
       for (const [key, tagData] of Object.entries(this.tags)) {
         if (this._value & tagData.mask) {
+          if (!currentTint) currentTint = tagData.tag.tint;
           tagData.tl.clear();
           tagData.tl.to(tagData.tag, { x: (SCREEN.WIDTH - tagWidth - offset), duration: 0.7, 
                 onStart:() => {
@@ -171,6 +175,13 @@ class BorderWarnings extends Renderable {
         });
         }
       }
+
+      if (this._value) {
+        this.renderable = true;
+        // make sure the border takes on the issue with the highest priority/severity
+        this.borders.forEach(gfx => gfx.tint = currentTint);
+      }
+
       this.renderedValue = this._value;
     }
   }

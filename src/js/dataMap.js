@@ -33,6 +33,12 @@ export const DATA_KEYS = {
   COMM_ERROR: 27,
 };
 
+export const WARNING_DATA_KEYS = {
+  BATTERY: 0,
+  OIL_PRESSURE: 1,
+  ENGINE_TEMPERATURE: 2
+}
+
 /**
  * Once Source of truth - keyed by DATA_KEYS
  * @returns 

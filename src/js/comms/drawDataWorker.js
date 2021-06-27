@@ -2,8 +2,7 @@
 import RobustWebSocket from "robust-websocket";
 import { createDataStore, DATA_KEYS } from "../dataMap";
 import decoder from "./racePackDecoder";
-import { processWarningData, processEconData } from "../store/DataProcessing";
- 
+
 const processed_data = createDataStore();
 const pktHlpr = new Uint32Array(3);
 
@@ -32,6 +31,9 @@ const createWS = () => {
     // ws.send('Hello!')
   })
   ws.addEventListener('close', (event) => {
+    processed_data[DATA_KEYS.COMM_ERROR] = true;
+  })
+  ws.addEventListener('error', (event) => {
     processed_data[DATA_KEYS.COMM_ERROR] = true;
   })
 
@@ -91,8 +93,8 @@ const parseGPSData = (buffer) => {
     let data = new DataView(buffer);
     // processed_data[DATA_KEYS.SPEEDO] = data.getUint8(0);
     let flags = data.getUint8(1);
-    processed_data[DATA_KEYS.GPS_ACQUIRED] = !!(flags & 0x1)
-    processed_data[DATA_KEYS.GPS_ERROR] = !!(flags & 0x2)
+    processed_data[DATA_KEYS.GPS_ACQUIRED] = !!(flags & 0x1);
+    processed_data[DATA_KEYS.GPS_ERROR] = !!(flags & 0x2);
     processed_data[DATA_KEYS.ODOMETER] = data.getUint16(2);
   } catch (e) {
 
@@ -103,8 +105,6 @@ const parsePacket = (/** @type {{ data: ArrayBuffer; }} */ event) => {
   let data = new DataView(event.data);
   parseGPSData(data.buffer.slice(0,4));
   parseCANData(data.buffer.slice(4));
-
-  processed_data[DATA_KEYS.ECON_DATA] = processEconData(processed_data); // figure out mpg data
 };
 
 let ws = null;
