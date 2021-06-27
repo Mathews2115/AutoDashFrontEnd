@@ -5,6 +5,13 @@ import { SCREEN } from "./js/appConfig";
 import orbitron50xml from "./fonts/orbitron50.xml";
 import orbitron50png1 from "./fonts/orbitron50_0.png";
 import orbitron50png2 from "./fonts/orbitron50_1.png";
+import batteryPng from "./images/battery.png";
+import fuelPng from "./images/fuel.png";
+import gpsErrorPng from "./images/GPS_error.png";
+import gpsSignalPng from "./images/GPS_no_signal.png";
+import oilPng from "./images/oil.png";
+import tempPng from "./images/temp.png";
+import warningPng from "./images/warning.png";
 
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin.js";
@@ -26,9 +33,7 @@ ticker.autoStart = false;
 // FYI, call this to ensure the ticker is stopped. It should be stopped
 // if you have not attempted to render anything yet.
 ticker.stop();
-gsap.ticker.add((time,_deltaTime,_frame) => {
-  ticker.update(time);
-})
+gsap.ticker.add((time,_deltaTime,_frame) => ticker.update(time))
 
 // RENDERER and TICKER
 // setup renderer and ticker
@@ -81,8 +86,15 @@ dataWorker.onmessage = (event) => {
 };
 
 document.body.appendChild(renderer.view);
-(new PIXI.Loader)
+PIXI.Loader.shared
   .add("OrbitronPng1", orbitron50png1)
   .add("OrbitronPng2", orbitron50png2)
+  .add("batteryPng", batteryPng)
+  .add("fuelPng", fuelPng)
+  .add("gpsErrorPng", gpsErrorPng)
+  .add("gpsNoSignalPng", gpsSignalPng)
+  .add("oilPng", oilPng)
+  .add("tempPng", tempPng)
+  .add("warningPng", warningPng)
   .load(initializeApp);
   

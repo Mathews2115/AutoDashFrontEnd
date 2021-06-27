@@ -18,9 +18,26 @@ const ERROR_FLAGS = 0x10;     //
 const COMM_ERROR = 0x10       // 0001 0000
 const GPS_ERROR = 0x20;       // 0010 0000
 
-const tagRctSize = 80;
+const tagRctSize = 50;
 const tagBump = tagRctSize*.1;
 const tagWidth = tagRctSize + tagBump;
+const resources = PIXI.Loader.shared.resources;
+
+const _createTagGeometry = () => {
+  const gfx = new Graphics();
+  gfx
+    .beginFill(0xffffff)
+    .lineStyle(0)
+    .drawPolygon([
+      0, 0,       // tag edge
+      tagBump, 0,
+      tagBump, tagRctSize,
+      0,tagRctSize-tagBump,
+    ])
+    .drawRect(tagBump, 0, tagRctSize, tagRctSize) // tag sqaure
+    .endFill();
+  return gfx;
+}
 
 class BorderWarnings extends Renderable {
   constructor({ renderer, theme }) {
@@ -47,22 +64,29 @@ class BorderWarnings extends Renderable {
     if (dataSet[DATA_KEYS.COMM_ERROR]) this._value |= COMM_ERROR;
   }
 
-  createTag() {
-    const tagGeomtry = new Graphics();
+  createTag(tint, texture) {
+    const renderContainer = new PIXI.Container();
+    const tagGeomtry = _createTagGeometry();
+    tagGeomtry.tint = tint;
+
+    let tx = new PIXI.Sprite(texture);
+    tx.anchor.set(0.5);
+    // tx.x = (tagRctSize/2);
+    // tx.y = (tagRctSize/2);
+    tx.setTransform(tagRctSize/2,tagRctSize/2,0.6,0.6,0, 0, 0,0,0); // TODO: reduce actual texture sizes and then remove scaling code
     
-    tagGeomtry
-      .beginFill(0xffffff)
-      .lineStyle(0)
-      .drawPolygon([
-        0, 0,       // tag edge
-        tagBump, 0,
-        tagBump, tagRctSize,
-        0,tagRctSize-tagBump,
-      ])
-      .drawRect(tagBump, 0, tagRctSize, tagRctSize) // tag sqaure
-      .endFill(); 
-    tagGeomtry.renderable = false;
-    return tagGeomtry;  
+    tagGeomtry.addChild(tx);
+    
+    renderContainer.addChild(tagGeomtry);
+    const renderTexture = this.appRenderer.generateTexture(renderContainer);
+    const tag = new PIXI.Sprite(renderTexture);
+    renderContainer.destroy(true); // clean up
+
+    tag.renderable = false; // update logic determines if/when it needs to show
+    
+    tag.x = SCREEN.WIDTH;
+    tag.y = SCREEN.BORDER_WIDTH - 5;
+    return tag;  
   }
 
   initialize() {
@@ -91,18 +115,10 @@ class BorderWarnings extends Renderable {
     this.borders[2].y = this.gaugeHeight - SCREEN.BORDER_WIDTH + 5;
     this.borders[3].x = this.gaugeWidth - SCREEN.BORDER_WIDTH + 5;
     
-    const gpsErrorTag = this.createTag();
-    gpsErrorTag.tint = 0xff7c00;
-    gpsErrorTag.x = SCREEN.WIDTH;
-
-    const gpsNotAcquiredTag = new Graphics(gpsErrorTag.geometry);
-    gpsNotAcquiredTag.tint = 0x00FF00;
-    gpsNotAcquiredTag.x = SCREEN.WIDTH;
-
-    const commErrorTag = new Graphics(gpsErrorTag.geometry);
-    commErrorTag.tint = this.theme.dangerColor;
-    commErrorTag.x = SCREEN.WIDTH;
-
+    const gpsErrorTag = this.createTag(0xff7c00, resources.gpsErrorPng.texture);
+    const gpsNotAcquiredTag = this.createTag(0x00FF00, resources.gpsNoSignalPng.texture);
+    const commErrorTag = this.createTag(this.theme.dangerColor, resources.warningPng.texture);
+    
     // order of severity
     this.tags = {
       commError: { mask: COMM_ERROR, tag: commErrorTag, tl: gsap.timeline()},
@@ -118,6 +134,9 @@ class BorderWarnings extends Renderable {
   }
 
   // TODO: Clean all this up buddy, jeez
+
+  // TODO:  if comm error; only show that warning since we know nowthing else?  or dim the rest??
+  //        GPS:  if gps error; dont show other GPS warnings
 
   update() {
     if (this._value != this.renderedValue) {
