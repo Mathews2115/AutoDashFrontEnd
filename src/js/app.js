@@ -11,9 +11,7 @@ import { Renderables } from "./renderables/Renderables"
 import SpeedoSweep from "./renderables/SpeedoSweep";
 import SpeedoReadout from "./renderables/SpeedoReadout";
 import BorderWarnings from "./renderables/BorderWarnings";
-
-//Aliases
-const MODES = { TEST: "test", LIVE: "live" };
+import { DATA_KEYS, createDataStore } from "./dataMap";
 
 export class DashApp {
   /**
@@ -63,9 +61,14 @@ export class DashApp {
     this.renderer.render(this.stage);
   }
 
+  /**
+   * 
+   * @param {Array} updatedGaugeData 
+   */
   stateRunning(updatedGaugeData) {
+    DATA_KEYS
     this.renderables.forEach(renderable => {
-      renderable.value = renderable.dataKey ? updatedGaugeData[renderable.dataKey] : updatedGaugeData;
+      renderable.value = renderable.dataKey != undefined ? updatedGaugeData[renderable.dataKey] : updatedGaugeData;
     });
 
     this.renderables.updateAll();

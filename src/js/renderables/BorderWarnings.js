@@ -2,23 +2,13 @@ import * as PIXI from "pixi.js";
 import { SCREEN } from "../appConfig";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
-import { DATA_KEYS } from "../dataMap";
+import { DATA_KEYS, WARNING_KEYS } from "../dataMap";
 import { gsap } from "gsap";
 //Aliases
 let Graphics = PIXI.Graphics;
 
 const ID = RENDER_KEYS.WARNING_BORDER;
-
-// this.value flags
-// xxxx 0000 <= Critical flags
-// 0000 xxxx Warning and other status Flags
-const GPS_NOT_ACQUIRED = 0x01; // 0000 0001
-const LOW_FUEL = 0x02         //  0000 0010
-const BATTERY = 0x04          //  0000 0100
-const OIL = 0x08              //  0000 1000
-const TEMP = 0x10             //  0001
-const COMM_ERROR = 0x20       
-const GPS_ERROR = 0x40;      
+   
 const tagRctSize = 50;
 const tagBump = tagRctSize*.1;
 const tagWidth = tagRctSize + tagBump;
@@ -57,12 +47,12 @@ class BorderWarnings extends Renderable {
   get gaugeHeight() {
     return SCREEN.HEIGHT;
   }
+  valueOf(mask) {
+    return !!(this._value & (128 >> mask % 8));
+  }
 
   set value(dataSet) {
-    this._value = 0;
-    if (dataSet[DATA_KEYS.GPS_ERROR]) this._value |= GPS_ERROR;
-    if (!dataSet[DATA_KEYS.GPS_ACQUIRED]) this._value |= GPS_NOT_ACQUIRED;
-    if (dataSet[DATA_KEYS.COMM_ERROR]) this._value |= COMM_ERROR;
+    this._value = dataSet[DATA_KEYS.WARNINGS];
   }
 
   createTag(tint, texture) {
@@ -124,15 +114,15 @@ class BorderWarnings extends Renderable {
     const oilTag = this.createTag(this.theme.dangerColor, resources.oilPng.texture);
     const tempTag = this.createTag(this.theme.dangerColor, resources.tempPng.texture);
     
-    // order of severity
+    // order of severity  //(128 >> i % 8)
     this.tags = {
-      commError: { mask: COMM_ERROR, tag: commErrorTag, tl: gsap.timeline()},
-      lowFuel: { mask: LOW_FUEL, tag: fuelTag, tl: gsap.timeline()},
-      oil: { mask: OIL, tag: oilTag, tl: gsap.timeline()},
-      temp: { mask: TEMP, tag: tempTag, tl: gsap.timeline()},
-      gpsError: { mask: GPS_ERROR, tag: gpsErrorTag, tl: gsap.timeline()},
-      battery: { mask: BATTERY, tag: batteryTag, tl: gsap.timeline()},
-      gpsNotAcquired: { mask: GPS_NOT_ACQUIRED, tag: gpsNotAcquiredTag, tl: gsap.timeline()},
+      commError: { mask: WARNING_KEYS.COMM_ERROR, tag: commErrorTag, tl: gsap.timeline()},
+      lowFuel: { mask: WARNING_KEYS.LOW_FUEL, tag: fuelTag, tl: gsap.timeline()},
+      oil: { mask: WARNING_KEYS.OIL_PRESSURE, tag: oilTag, tl: gsap.timeline()},
+      temp: { mask: WARNING_KEYS.ENGINE_TEMPERATURE, tag: tempTag, tl: gsap.timeline()},
+      gpsError: { mask: WARNING_KEYS.GPS_ERROR, tag: gpsErrorTag, tl: gsap.timeline()},
+      battery: { mask: WARNING_KEYS.BATT_VOLTAGE, tag: batteryTag, tl: gsap.timeline()},
+      gpsNotAcquired: { mask: WARNING_KEYS.GPS_ACQUIRED, tag: gpsNotAcquiredTag, tl: gsap.timeline()},
     }
 
     // reminder: last added is the last drawn (painters algorithm)
@@ -154,7 +144,7 @@ class BorderWarnings extends Renderable {
       let offset = 0;
       let currentTint = null;
       for (const [key, tagData] of Object.entries(this.tags)) {
-        if (this._value & tagData.mask) {
+        if (this.valueOf(tagData.mask)) {
           if (!currentTint) currentTint = tagData.tag.tint;
           tagData.tl.clear();
           tagData.tl.to(tagData.tag, { x: (SCREEN.WIDTH - tagWidth - offset), duration: 0.7, 
