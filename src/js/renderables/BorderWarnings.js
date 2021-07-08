@@ -35,8 +35,8 @@ class BorderWarnings extends Renderable {
     super({ renderer, theme });
     this._dashID = ID;
     this.theme = theme;
-    this._value = 0;
-    this.renderedValue = this._value;
+    this._value = 0xff;
+    this.renderedValue = 0;
     this.borders = [];
     this.tags = {}
   }
@@ -73,8 +73,7 @@ class BorderWarnings extends Renderable {
     const tag = new PIXI.Sprite(renderTexture);
     renderContainer.destroy(true); // clean up
 
-    tag.renderable = false; // update logic determines if/when it needs to show
-    tag.x = SCREEN.WIDTH;
+    tag.x = SCREEN.WIDTH - 5;
     tag.y = SCREEN.BORDER_WIDTH - 5;
     tag.tint = tint; // save this off so that the borders can adopt this value in the update
     return tag;  
@@ -128,8 +127,6 @@ class BorderWarnings extends Renderable {
     // reminder: last added is the last drawn (painters algorithm)
     Object.values(this.tags).map(d => d.tag).reverse().forEach((g) => this.addChild(g));
     this.addChild(...this.borders);
-
-    this.renderable = false; // start out not rendering;  logic will tell us when to show
   }
 
   // TODO: Clean all this up buddy, jeez
@@ -147,7 +144,8 @@ class BorderWarnings extends Renderable {
         if (this.valueOf(tagData.mask)) {
           if (!currentTint) currentTint = tagData.tag.tint;
           tagData.tl.clear();
-          tagData.tl.to(tagData.tag, { x: (SCREEN.WIDTH - tagWidth - offset), duration: 0.7, 
+          tagData.tl.to(tagData.tag, { 
+            x: (SCREEN.WIDTH - tagWidth - offset - 5), duration: 0.7, 
                 onStart:() => {
                   tagData.tag.renderable = true; 
                 },
@@ -156,7 +154,8 @@ class BorderWarnings extends Renderable {
           offset += tagRctSize;
         } else {
           tagData.tl.clear();
-          tagData.tl.to(tagData.tag, { x: SCREEN.WIDTH, duration: 1, 
+          tagData.tl.to(tagData.tag, { 
+            x: SCREEN.WIDTH, duration: 1, 
             onStart:() => {},
             onComplete: () => {
               tagData.tag.renderable = false;

@@ -4,9 +4,9 @@ import { createDataStore, DATA_KEYS, WARNING_KEYS } from "../dataMap";
 
 const dataStore = createDataStore();
 
-// TESTING STUFF
-let modifier = 1;
-let speed =0;
+// // TESTING STUFF
+// let modifier = 1;
+// let speed =0;
 //////////////////////////////////
 
 RobustWebSocket.prototype.binaryType = 'arraybuffer';
@@ -76,10 +76,10 @@ onmessage = (evt) => {
       // let data = evt.data.updateData;
 
       // TEST DATA!!!! (yes I know, I'll make an actual test mode that will do this later shutup)
-      if (speed >= 99) modifier = -1;
-      else if (speed <= 0) modifier = 0.3;
-      speed += modifier;
-      dataStore.set(DATA_KEYS.SPEEDO, speed);
+      // if (speed >= 99) modifier = -1;
+      // else if (speed <= 0) modifier = 0.3;
+      // speed += modifier;
+      // dataStore.set(DATA_KEYS.SPEEDO, speed);
 
       postMessage({ msg: "update_data_ready", updateData: dataStore.data });
       break;

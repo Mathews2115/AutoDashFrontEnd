@@ -74,9 +74,13 @@ export class DashApp {
     this.renderables.updateAll();
   }
 
-  stateStartup(updatedGaugeData) {
+  stateStartup(_updatedGaugeData) {
     // TODO; testing phase of gauages
-    this.state = this.stateRunning;
+    this.renderables.updateAll();
+    setTimeout(() => {
+      this.state = this.stateRunning;
+    }, 1000)
+    
   }
 
   stateShutdown(updatedGaugeData) {
