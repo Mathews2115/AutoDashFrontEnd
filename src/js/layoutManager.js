@@ -2,112 +2,129 @@ import { SCREEN } from "./appConfig";
 import * as PIXI from "pixi.js";
 import PedalGauge from "./renderables/PedalGauge";
 import RPMGauge from "./renderables/RPMGauge";
-import { RENDER_KEYS } from "./renderables/Renderables";
+import { Renderables, RENDER_KEYS } from "./renderables/Renderables";
 import SpeedoSweep from "./renderables/SpeedoSweep";
 import SpeedoReadout from "./renderables/SpeedoReadout";
 import FuelGauge from "./renderables/FuelGauge";
+import BorderWarnings from "./renderables/BorderWarnings";
+import theme from "./common/theme";
+
 
 /**
- * Generates texture for  to draw the ====RPM==== logo
- * @param {*} app
- * @returns {PIXI.Sprite}
+ *  @param {Object} config
+ *  @param {PIXI.Renderer } config.renderer
+ *  @param {PIXI.Container} config.stage
  */
-export function createRPMLogo(app) {
-  const slantStart = 5;
-  const totalWidth =
-    app.renderables[RENDER_KEYS.PEDAL_GAUGE].gaugeWidth +
-    app.renderables[RENDER_KEYS.RPM_GAUGE].gaugeWidth +
-    SCREEN.PADDING +
-    SCREEN.PADDING;
-  const firstEnd = totalWidth * 0.25;
-  const secondStart = totalWidth * 0.75;
-  const rpmLogo = new PIXI.Graphics();
-  rpmLogo
-    .beginFill(app.theme.gaugeActiveColor)
-    .drawPolygon([
-      slantStart, 0,
-      0, SCREEN.PADDING,
-      firstEnd, SCREEN.PADDING,
-      firstEnd, 0,
-    ])
-    .drawPolygon([
-      secondStart, 0,
-      secondStart, SCREEN.PADDING,
-      totalWidth, SCREEN.PADDING,
-      totalWidth + slantStart, 0,
-    ])
-    .endFill();
+export default ({renderer, stage}) => {
 
-  const text = new PIXI.BitmapText("RPM", {
-    fontName: "Orbitron",
-    fontSize: 50,
-    align: "left",
+  const renderables = new Renderables({
+    renderer: renderer,
+    theme: theme,
   });
-  text.angle = 180; // no idea what app is flipped??
-  text.x = firstEnd + 5;
-  text.y = -SCREEN.PADDING;
-  rpmLogo.addChild(text);
+  const pedalGauge = renderables.createRenderable(PedalGauge);
+  const rpmGauge = renderables.createRenderable(RPMGauge);
+  const speedoSpeed = renderables.createRenderable(SpeedoSweep);
+  const speedoReadout = renderables.createRenderable(SpeedoReadout);
+  const borderWarnings = renderables.createRenderable(BorderWarnings);
+  const fuelGauge = renderables.createRenderable(FuelGauge);
 
-  const renderedTexture = app.renderer.generateTexture(rpmLogo);
-  rpmLogo.destroy(true);
-  return new PIXI.Sprite(renderedTexture);
-}
+  /**
+   * Generates texture for  to draw the ====RPM==== logo
+   * @returns {PIXI.Sprite}
+   */
+  const createRPMLogo = () => {
+    const slantStart = 5;
+    const totalWidth =
+      renderables[RENDER_KEYS.PEDAL_GAUGE].gaugeWidth +
+      renderables[RENDER_KEYS.RPM_GAUGE].gaugeWidth +
+      SCREEN.PADDING +
+      SCREEN.PADDING;
+    const firstEnd = totalWidth * 0.25;
+    const secondStart = totalWidth * 0.75;
+    const rpmLogo = new PIXI.Graphics();
+    rpmLogo
+      .beginFill(theme.gaugeActiveColor)
+      .drawPolygon([
+        slantStart, 0,
+        0, SCREEN.PADDING,
+        firstEnd, SCREEN.PADDING,
+        firstEnd, 0,
+      ])
+      .drawPolygon([
+        secondStart, 0,
+        secondStart, SCREEN.PADDING,
+        totalWidth, SCREEN.PADDING,
+        totalWidth + slantStart, 0,
+      ])
+      .endFill();
 
-/**
- *
- * @param {PedalGauge} pedalGauge
- * @param {RPMGauge} rpmGauge
- * @param {{stage: PIXI.Container}} app
- */
-export const createRpmCluster = (pedalGauge, rpmGauge, app) => {
-  const rpmCluster = new PIXI.Container();
-  rpmCluster.x = SCREEN.BORDER_WIDTH;
-  rpmCluster.y = SCREEN.RPM_CLUSTER_Y;
+    const text = new PIXI.BitmapText("RPM", {
+      fontName: "Orbitron",
+      fontSize: 50,
+      align: "left",
+    });
+    text.angle = 180; // no idea what app is flipped??
+    text.x = firstEnd + 5;
+    text.y = -SCREEN.PADDING;
+    rpmLogo.addChild(text);
 
-  const rpmLogoTexture = createRPMLogo(app);
-  rpmLogoTexture.x = SCREEN.BORDER_WIDTH;
-  rpmLogoTexture.y = SCREEN.PADDING;
+    const renderedTexture = renderer.generateTexture(rpmLogo);
+    rpmLogo.destroy(true);
+    return new PIXI.Sprite(renderedTexture);
+  }
 
-  rpmGauge.x = pedalGauge.gaugeWidth + SCREEN.PADDING;
-  rpmCluster.addChild(pedalGauge, rpmGauge);
+   const createRpmCluster = () => {
+    const rpmCluster = new PIXI.Container();
+    rpmCluster.x = SCREEN.BORDER_WIDTH;
+    rpmCluster.y = SCREEN.RPM_CLUSTER_Y;
 
-  app.stage.addChild(rpmLogoTexture, rpmCluster);
-  return rpmCluster
-};
+    const rpmLogoTexture = createRPMLogo();
+    rpmLogoTexture.x = SCREEN.BORDER_WIDTH;
+    rpmLogoTexture.y = SCREEN.PADDING;
 
-/**
- * 
- * @param {SpeedoSweep} speedGauge 
- * @param {SpeedoReadout} speedoReadout 
- * @param {RPMGauge} rpmGauge 
- * @param {*} app 
- */
-export const createSpeedoCluster = (speedGauge, speedoReadout, rpmGauge, app) => {
-  const speedoCluster = new PIXI.Container();
-  speedoCluster.x = rpmGauge.x + rpmGauge.gaugeWidth * 0.45; //magic fudge mumber
-  speedoCluster.y = SCREEN.SPEEDO_CLUSTER_Y;
+    rpmGauge.x = pedalGauge.gaugeWidth + SCREEN.PADDING;
+    rpmCluster.addChild(pedalGauge, rpmGauge);
 
-  const text = new PIXI.BitmapText("MPH", {
-    fontName: "Orbitron",
-    fontSize: 50,
-    align: "left",
-  });
-  text.angle = 180; // no idea what app is flipped??
-  text.x = speedGauge.gaugeWidth * .25
-  text.y = speedGauge.gaugeHeight - text.height- SCREEN.PADDING;
-
-  speedoReadout.x = text.x + text.width + SCREEN.PADDING + 50;
-  speedoReadout.y = speedGauge.sweepSize + SCREEN.PADDING;
-  speedoReadout.gaugeHeight = speedGauge.gaugeHeight - speedGauge.sweepSize - SCREEN.PADDING;;
+    stage.addChild(rpmLogoTexture, rpmCluster);
+    return rpmCluster
+  };
   
-  speedoCluster.addChild(speedGauge, speedoReadout, text);
+  const createSpeedoCluster = () => {
+    const speedoCluster = new PIXI.Container();
+    speedoCluster.x = rpmGauge.x + rpmGauge.gaugeWidth * 0.45; //magic fudge mumber
+    speedoCluster.y = SCREEN.SPEEDO_CLUSTER_Y;
 
-  app.stage.addChild(speedoCluster);
-}
+    const text = new PIXI.BitmapText("MPH", {
+      fontName: "Orbitron",
+      fontSize: 50,
+      align: "left",
+    });
+    text.angle = 180; // no idea what app is flipped??
+    text.x = speedoSpeed.gaugeWidth * .25
+    text.y = speedoSpeed.gaugeHeight - text.height- SCREEN.PADDING;
 
-export const createFuelGauge = (app) => {
-  const fuelGauge = app.renderables.createRenderable(FuelGauge);
-  fuelGauge.x = SCREEN.FUEL_GAUGE_X;
-  fuelGauge.y = SCREEN.FUEL_GAUGE_Y;
-  app.stage.addChild(fuelGauge);
+    speedoReadout.x = text.x + text.width + SCREEN.PADDING + 50;
+    speedoReadout.y = speedoSpeed.sweepSize + SCREEN.PADDING;
+    speedoReadout.gaugeHeight = speedoSpeed.gaugeHeight - speedoSpeed.sweepSize - SCREEN.PADDING;;
+    
+    speedoCluster.addChild(speedoSpeed, speedoReadout, text);
+
+    stage.addChild(speedoCluster);
+  }
+
+  const createFuelGauge = () => {    
+    fuelGauge.x = SCREEN.FUEL_GAUGE_X;
+    fuelGauge.y = SCREEN.FUEL_GAUGE_Y;
+    stage.addChild(fuelGauge);
+  }
+
+  return {
+    renderables,
+    createLayout: () => {
+      createRpmCluster();
+      createSpeedoCluster();
+      createFuelGauge();
+      stage.addChild(borderWarnings);
+    }
+  }
 }

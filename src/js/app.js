@@ -3,15 +3,8 @@
 // TODO: make this be the one that contructs the scene
 
 import * as PIXI from "pixi.js";
-import PedalGauge from "./renderables/PedalGauge";
-import RPMGauge from "./renderables/RPMGauge";
-import { createFuelGauge, createRpmCluster, createSpeedoCluster } from "./layoutManager";
-import { Renderables } from "./renderables/Renderables"
-import SpeedoSweep from "./renderables/SpeedoSweep";
-import SpeedoReadout from "./renderables/SpeedoReadout";
-import BorderWarnings from "./renderables/BorderWarnings";
+import layoutManager from "./layoutManager";
 import { DATA_KEYS, WARNING_KEYS } from "./common/dataMap";
-import theme from "./common/theme";
 import { GlitchFilter } from "@pixi/filter-glitch";
 
 const glitchFilter = new GlitchFilter({
@@ -35,28 +28,13 @@ export class DashApp {
     this.renderer = renderer;
     this.stage = new PIXI.Container();
     this.stage.interactiveChildren = false; // dont bother checking anyone for interactions
-
-    /** @type {theme} */
-    this.theme = theme;
+    this.layoutManager = layoutManager(this);
     this.state = (/** @type {Object} */ updatedGaugeData) => {};
-
-    this.renderables = new Renderables({
-      renderer: this.renderer,
-      theme: this.theme,
-    });
   }
 
   initialize() {
-    const pedalGauge = this.renderables.createRenderable(PedalGauge);
-    const rpmGauge = this.renderables.createRenderable(RPMGauge);
-    const speedoSpeed = this.renderables.createRenderable(SpeedoSweep);
-    const speedoReadout = this.renderables.createRenderable(SpeedoReadout);
-    const borderWarnings = this.renderables.createRenderable(BorderWarnings);
-    createRpmCluster(pedalGauge, rpmGauge, this);
-    createSpeedoCluster(speedoSpeed, speedoReadout, rpmGauge, this);
-    createFuelGauge(this);
-    this.stage.addChild(borderWarnings);
-    this.renderables.initializeAll();
+    this.layoutManager.createLayout();
+    this.layoutManager.renderables.initializeAll();
     
     // start rendering
     this.state = this.stateStartup;
@@ -73,11 +51,11 @@ export class DashApp {
    */
   stateRunning(updatedGaugeData) {
     DATA_KEYS
-    this.renderables.forEach(renderable => {
+    this.layoutManager.renderables.forEach(renderable => {
       renderable.value = renderable.dataKey != undefined ? updatedGaugeData[renderable.dataKey] : updatedGaugeData;
     });
 
-    this.renderables.updateAll();
+    this.layoutManager.renderables.updateAll();
     let commError = updatedGaugeData[DATA_KEYS.WARNINGS] & (128 >> WARNING_KEYS.COMM_ERROR  % 8)
     if (commError && !this.stage.filters) {
       this.stage.filters = [glitchFilter];
@@ -89,7 +67,7 @@ export class DashApp {
   }
 
   stateStartup(_updatedGaugeData) {
-    this.renderables.updateAll();
+    this.layoutManager.renderables.updateAll();
     setTimeout(() => {
       this.state = this.stateRunning;
     }, 1000);
