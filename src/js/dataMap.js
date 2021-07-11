@@ -34,10 +34,12 @@ export const DATA_KEYS = {
   ODOMETER: keygen(),
   TRIP_ODOMETER: keygen(), //
   GPS_SPEEED: keygen(), //m
-  HEADING: keygen(),
+  // HEADING: keygen(),
 
   // Our Data
   WARNINGS: keygen(),
+  FUEL_LEVEL: keygen(),
+  CURRENT_MPG: keygen(),
 };
 
 // Keys for handling the WARNINGS Structure

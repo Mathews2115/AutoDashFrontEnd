@@ -34,7 +34,7 @@ class BorderWarnings extends Renderable {
   constructor({ renderer, theme }) {
     super({ renderer, theme });
     this._dashID = ID;
-    this.theme = theme;
+    this.theme = theme; //#FFAE42
     this._value = 0xff;
     this.renderedValue = 0;
     this.borders = [];
@@ -108,8 +108,8 @@ class BorderWarnings extends Renderable {
     const gpsErrorTag = this.createTag(0xff7c00, resources.gpsErrorPng.texture);
     const gpsNotAcquiredTag = this.createTag(0x00FF00, resources.gpsNoSignalPng.texture);
     const commErrorTag = this.createTag(this.theme.dangerColor, resources.warningPng.texture);
-    const batteryTag = this.createTag(this.theme.dangerColor, resources.batteryPng.texture);
-    const fuelTag = this.createTag(this.theme.dangerColor, resources.fuelPng.texture);
+    const batteryTag = this.createTag(0xFFAE42, resources.batteryPng.texture);
+    const fuelTag = this.createTag(0xFFEB00, resources.fuelPng.texture);
     const oilTag = this.createTag(this.theme.dangerColor, resources.oilPng.texture);
     const tempTag = this.createTag(this.theme.dangerColor, resources.tempPng.texture);
     

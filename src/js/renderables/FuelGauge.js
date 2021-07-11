@@ -3,22 +3,22 @@ import { RENDER_KEYS } from "./Renderables";
 import { DATA_KEYS } from "../dataMap";
 import BarGraph from "./BarGraph";
 
-const ID = RENDER_KEYS.PEDAL_GAUGE;
+const ID = RENDER_KEYS.FUEL_GAUGE;
 /**
- * Creates a new PedalGauge.
- * @class PedalGauge
+ * Creates a new FuelGauge.
+ * @class FuelGauge
  */
-class PedalGauge extends BarGraph {
+class FuelGauge extends BarGraph {
   constructor({ renderer, theme }) {
-    super({ renderer, theme, width: SCREEN.BAR_WIDTH, height: SCREEN.RPM_CLUSTER_HEIGHT });
+    super({renderer, theme, width: SCREEN.BAR_WIDTH, height: SCREEN.RPM_CLUSTER_HEIGHT });
     this._dashID = ID;
   }
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.PEDAL_POSITION;
+    return DATA_KEYS.FUEL_LEVEL;
   }
 }
 
-PedalGauge.ID = ID;
-export default PedalGauge;
+FuelGauge.ID = ID;
+export default FuelGauge;
