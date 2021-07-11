@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { SCREEN } from "../appConfig";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
-import { DATA_KEYS, WARNING_KEYS } from "../dataMap";
+import { DATA_KEYS, WARNING_KEYS } from "../common/dataMap";
 import { gsap } from "gsap";
 //Aliases
 let Graphics = PIXI.Graphics;

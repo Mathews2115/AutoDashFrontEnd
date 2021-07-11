@@ -1,6 +1,6 @@
 import { SCREEN } from "../appConfig";
 import { RENDER_KEYS } from "./Renderables";
-import { DATA_KEYS } from "../dataMap";
+import { DATA_KEYS } from "../common/dataMap";
 import BarGraph from "./BarGraph";
 
 const ID = RENDER_KEYS.PEDAL_GAUGE;

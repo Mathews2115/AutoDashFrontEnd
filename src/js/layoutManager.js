@@ -5,6 +5,7 @@ import RPMGauge from "./renderables/RPMGauge";
 import { RENDER_KEYS } from "./renderables/Renderables";
 import SpeedoSweep from "./renderables/SpeedoSweep";
 import SpeedoReadout from "./renderables/SpeedoReadout";
+import FuelGauge from "./renderables/FuelGauge";
 
 /**
  * Generates texture for  to draw the ====RPM==== logo
@@ -102,4 +103,11 @@ export const createSpeedoCluster = (speedGauge, speedoReadout, rpmGauge, app) =>
   speedoCluster.addChild(speedGauge, speedoReadout, text);
 
   app.stage.addChild(speedoCluster);
+}
+
+export const createFuelGauge = (app) => {
+  const fuelGauge = app.renderables.createRenderable(FuelGauge);
+  fuelGauge.x = SCREEN.FUEL_GAUGE_X;
+  fuelGauge.y = SCREEN.FUEL_GAUGE_Y;
+  app.stage.addChild(fuelGauge);
 }

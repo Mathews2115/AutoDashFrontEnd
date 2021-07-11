@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { RPM_CONFIG, SCREEN } from "../appConfig";
 import { GlowFilter } from "@pixi/filter-glow";
-import { DATA_KEYS } from "../dataMap";
+import { DATA_KEYS } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
 const ID = RENDER_KEYS.RPM_GAUGE;

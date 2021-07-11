@@ -1,6 +1,6 @@
 // https://github.com/nathanboktae/robust-websocket#usage
 import RobustWebSocket from "robust-websocket";
-import { createDataStore, DATA_KEYS, WARNING_KEYS } from "../dataMap";
+import { createDataStore, DATA_KEYS, WARNING_KEYS } from "../common/dataMap";
 
 const dataStore = createDataStore();
 
@@ -54,7 +54,9 @@ const parseData = (data) => {
 
     dataStore.set(DATA_KEYS.ODOMETER, data.getInt16(34));
     dataStore.set(DATA_KEYS.TRIP_ODOMETER, data.getInt16(36));//its gonna roll over early, lol - ill fix this at some point
-    dataStore.set(DATA_KEYS.SPEEDO, data.getInt16(38));
+    dataStore.set(DATA_KEYS.GPS_SPEEED, data.getInt16(38));
+    dataStore.set(DATA_KEYS.FUEL_LEVEL, data.getInt8(40));
+    dataStore.set(DATA_KEYS.CURRENT_MPG, data.getFloat32(41));
   } catch (error) {
     console.error(error);
   }

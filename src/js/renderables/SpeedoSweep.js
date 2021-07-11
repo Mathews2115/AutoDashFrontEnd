@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { GlowFilter } from "@pixi/filter-glow";
 import { SCREEN, SPEEDO_CONFIG } from "../appConfig";
-import { DATA_KEYS } from "../dataMap";
+import { DATA_KEYS } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
 

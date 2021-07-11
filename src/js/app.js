@@ -5,12 +5,12 @@
 import * as PIXI from "pixi.js";
 import PedalGauge from "./renderables/PedalGauge";
 import RPMGauge from "./renderables/RPMGauge";
-import { createRpmCluster, createSpeedoCluster } from "./renderHelpers";
+import { createFuelGauge, createRpmCluster, createSpeedoCluster } from "./layoutManager";
 import { Renderables } from "./renderables/Renderables"
 import SpeedoSweep from "./renderables/SpeedoSweep";
 import SpeedoReadout from "./renderables/SpeedoReadout";
 import BorderWarnings from "./renderables/BorderWarnings";
-import { DATA_KEYS, WARNING_KEYS } from "./dataMap";
+import { DATA_KEYS, WARNING_KEYS } from "./common/dataMap";
 import theme from "./common/theme";
 import { GlitchFilter } from "@pixi/filter-glitch";
 
@@ -54,6 +54,7 @@ export class DashApp {
     const borderWarnings = this.renderables.createRenderable(BorderWarnings);
     createRpmCluster(pedalGauge, rpmGauge, this);
     createSpeedoCluster(speedoSpeed, speedoReadout, rpmGauge, this);
+    createFuelGauge(this);
     this.stage.addChild(borderWarnings);
     this.renderables.initializeAll();
     
