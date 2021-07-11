@@ -9,14 +9,13 @@ import FuelGauge from "./renderables/FuelGauge";
 import BorderWarnings from "./renderables/BorderWarnings";
 import theme from "./common/theme";
 
-
 /**
  *  @param {Object} config
  *  @param {PIXI.Renderer } config.renderer
  *  @param {PIXI.Container} config.stage
  */
 export default ({renderer, stage}) => {
-
+  const resources = PIXI.Loader.shared.resources;
   const renderables = new Renderables({
     renderer: renderer,
     theme: theme,
@@ -27,6 +26,9 @@ export default ({renderer, stage}) => {
   const speedoReadout = renderables.createRenderable(SpeedoReadout);
   const borderWarnings = renderables.createRenderable(BorderWarnings);
   const fuelGauge = renderables.createRenderable(FuelGauge);
+
+  const rpmLogo = new PIXI.Graphics();
+  const rpmCluster = new PIXI.Container();
 
   /**
    * Generates texture for  to draw the ====RPM==== logo
@@ -41,7 +43,6 @@ export default ({renderer, stage}) => {
       SCREEN.PADDING;
     const firstEnd = totalWidth * 0.25;
     const secondStart = totalWidth * 0.75;
-    const rpmLogo = new PIXI.Graphics();
     rpmLogo
       .beginFill(theme.gaugeActiveColor)
       .drawPolygon([
@@ -74,7 +75,6 @@ export default ({renderer, stage}) => {
   }
 
    const createRpmCluster = () => {
-    const rpmCluster = new PIXI.Container();
     rpmCluster.x = SCREEN.BORDER_WIDTH;
     rpmCluster.y = SCREEN.RPM_CLUSTER_Y;
 
@@ -112,19 +112,20 @@ export default ({renderer, stage}) => {
     stage.addChild(speedoCluster);
   }
 
-  const createFuelGauge = () => {    
-    fuelGauge.x = SCREEN.FUEL_GAUGE_X;
-    fuelGauge.y = SCREEN.FUEL_GAUGE_Y;
-    stage.addChild(fuelGauge);
-  }
-
   return {
     renderables,
     createLayout: () => {
       createRpmCluster();
       createSpeedoCluster();
-      createFuelGauge();
-      stage.addChild(borderWarnings);
-    }
+
+      fuelGauge.x = SCREEN.FUEL_GAUGE_X;
+      fuelGauge.y = SCREEN.FUEL_GAUGE_Y;
+
+      // const tx = new PIXI.Sprite(resources.fuelPng.texture);
+      // tx.x = fuelGauge.x;
+      // tx.y = 0;
+
+      stage.addChild(fuelGauge, borderWarnings);
+    },
   }
 }

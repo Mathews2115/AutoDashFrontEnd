@@ -2,17 +2,6 @@
 import * as PIXI from "pixi.js";
 import { DashApp } from "./js/app";
 import { SCREEN } from "./js/appConfig";
-import orbitron50xml from "./fonts/orbitron50.xml";
-import orbitron50png1 from "./fonts/orbitron50_0.png";
-import orbitron50png2 from "./fonts/orbitron50_1.png";
-import batteryPng from "./images/battery.png";
-import fuelPng from "./images/fuel.png";
-import gpsErrorPng from "./images/GPS_error.png";
-import gpsSignalPng from "./images/GPS_no_signal.png";
-import oilPng from "./images/oil.png";
-import tempPng from "./images/temp.png";
-import warningPng from "./images/warning.png";
-
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin.js";
 
@@ -49,11 +38,6 @@ let readyForData = true;
 
 // all external assets loaded, initalize app and run
 const initializeApp = (_loader, resources) => {
-  PIXI.BitmapFont.install(orbitron50xml, [
-    resources.OrbitronPng1.texture,
-    resources.OrbitronPng2.texture,
-  ]);
-
   dash.initialize();
   dataWorker.postMessage({msg: "start"}); 
   ticker.add(function(dt){
@@ -87,14 +71,7 @@ dataWorker.onmessage = (event) => {
 
 document.body.appendChild(renderer.view);
 PIXI.Loader.shared
-  .add("OrbitronPng1", orbitron50png1)
-  .add("OrbitronPng2", orbitron50png2)
-  .add("batteryPng", batteryPng)
-  .add("fuelPng", fuelPng)
-  .add("gpsErrorPng", gpsErrorPng)
-  .add("gpsNoSignalPng", gpsSignalPng)
-  .add("oilPng", oilPng)
-  .add("tempPng", tempPng)
-  .add("warningPng", warningPng)
+  .add("assets/fonts/orbitron50.xml")
+  .add("assets/images/warningSheet.json")
   .load(initializeApp);
   

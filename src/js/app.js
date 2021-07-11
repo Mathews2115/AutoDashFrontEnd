@@ -46,7 +46,7 @@ export class DashApp {
   }
 
   /**
-   * 
+   * Main state of the app; shows all the gauges
    * @param {Array} updatedGaugeData 
    */
   stateRunning(updatedGaugeData) {
@@ -66,6 +66,9 @@ export class DashApp {
     }     
   }
 
+  /**
+   *  Start of the Dash; shows all gauges but each gauge is maxed out
+   */
   stateStartup(_updatedGaugeData) {
     this.layoutManager.renderables.updateAll();
     setTimeout(() => {

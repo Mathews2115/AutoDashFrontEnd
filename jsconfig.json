@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "checkJs": true,
-    "target": "es6",
-    "module": "CommonJS"
+    "target": "es2020",
+    "module": "es2020",
+    "moduleResolution": "node",
   },
   "exclude": ["node_modules", "**/node_modules/*", "dist"]
 }

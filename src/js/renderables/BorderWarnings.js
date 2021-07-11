@@ -105,13 +105,13 @@ class BorderWarnings extends Renderable {
     this.borders[2].y = this.gaugeHeight - SCREEN.BORDER_WIDTH + 5;
     this.borders[3].x = this.gaugeWidth - SCREEN.BORDER_WIDTH + 5;
     
-    const gpsErrorTag = this.createTag(0xff7c00, resources.gpsErrorPng.texture);
-    const gpsNotAcquiredTag = this.createTag(0x00FF00, resources.gpsNoSignalPng.texture);
-    const commErrorTag = this.createTag(this.theme.dangerColor, resources.warningPng.texture);
-    const batteryTag = this.createTag(0xFFAE42, resources.batteryPng.texture);
-    const fuelTag = this.createTag(0xFFEB00, resources.fuelPng.texture);
-    const oilTag = this.createTag(this.theme.dangerColor, resources.oilPng.texture);
-    const tempTag = this.createTag(this.theme.dangerColor, resources.tempPng.texture);
+    const gpsErrorTag = this.createTag(0xff7c00, resources['assets/images/warningSheet.json'].spritesheet.textures["GPS_error.png"]);
+    const gpsNotAcquiredTag = this.createTag(0x00FF00, resources['assets/images/warningSheet.json'].spritesheet.textures["GPS_no_signal.png"]);
+    const commErrorTag = this.createTag(this.theme.dangerColor, resources['assets/images/warningSheet.json'].spritesheet.textures["warning.png"]);
+    const batteryTag = this.createTag(0xFFAE42, resources['assets/images/warningSheet.json'].spritesheet.textures["battery.png"]);
+    const fuelTag = this.createTag(0xFFEB00, resources['assets/images/warningSheet.json'].spritesheet.textures["fuel.png"]);
+    const oilTag = this.createTag(this.theme.dangerColor, resources['assets/images/warningSheet.json'].spritesheet.textures["oil.png"]);
+    const tempTag = this.createTag(this.theme.dangerColor, resources['assets/images/warningSheet.json'].spritesheet.textures["temp.png"]);
     
     // order of severity  //(128 >> i % 8)
     this.tags = {

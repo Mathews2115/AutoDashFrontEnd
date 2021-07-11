@@ -17,13 +17,13 @@ module.exports = {
   // Customize the webpack build process
   plugins: [
     // Removes/cleans build folders and unused assets when rebuilding
-    new CleanWebpackPlugin(),
+    // new CleanWebpackPlugin(),
 
     // Copies files from target to destination folder
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: paths.public,
+          from: paths.src + '/assets',
           to: 'assets',
           globOptions: {
             ignore: ['*.DS_Store'],
@@ -42,35 +42,5 @@ module.exports = {
       filename: 'index.html', // output file
     }),
   ],
-
-  // Determine how modules within the project are treated
-  module: {
-    rules: [
-      // JavaScript: Use Babel to transpile JavaScript files
-      //{ test: /\.js$/, use: ['babel-loader'] },
-
-      // {
-      //   type: 'javascript/auto',  // what am i doing? what even is this?  look at the documenteatitiontion?  nope.  doing it live
-      //   test: /\.(json|png|fnt)$/,
-      //   use: [{
-      //     loader: 'file-loader',
-      //     options: {
-      //       name: "[name].[ext]"
-      //     }
-      //   }]
-      // },
-      // {
-      //   test:  /\.(xml)$/, //give me the string value pleeaaase
-      //   use: 'raw-loader',
-      // },
-
-      { test: /\.(?:xml)$/i, type: 'asset/source' },
-      
-      // Images: Copy image files to build folder
-      { test: /\.(?:ico|gif|png|jpg|jpeg)$/i, type: 'asset/resource' },
-
-      // Fonts and SVGs: Inline files
-      { test: /\.(woff(2)?|eot|ttf|otf|svg|)$/, type: 'asset/inline' },
-    ],
-  },
+  target: ["web", "es2020"]
 }
