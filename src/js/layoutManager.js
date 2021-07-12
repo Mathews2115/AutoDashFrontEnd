@@ -112,20 +112,27 @@ export default ({renderer, stage}) => {
     stage.addChild(speedoCluster);
   }
 
+  const configureFuelGauge = () => {
+    fuelGauge.x = SCREEN.FUEL_GAUGE_X;
+    fuelGauge.y = SCREEN.BORDER_WIDTH;
+
+    const tx = new PIXI.Sprite(PIXI.utils.TextureCache["fuel.png"]);
+
+    tx.anchor.set(0.5,0);
+    tx.x = fuelGauge.x + (fuelGauge.gaugeWidth * 0.55);
+    tx.y = fuelGauge.y + fuelGauge.gaugeHeight + 10  ;
+    tx.scale.set(0.6);
+    return tx;
+  }
+
   return {
     renderables,
     createLayout: () => {
       createRpmCluster();
       createSpeedoCluster();
+      const fuelLogo = configureFuelGauge();
 
-      fuelGauge.x = SCREEN.FUEL_GAUGE_X;
-      fuelGauge.y = SCREEN.FUEL_GAUGE_Y;
-
-      // const tx = new PIXI.Sprite(resources.fuelPng.texture);
-      // tx.x = fuelGauge.x;
-      // tx.y = 0;
-
-      stage.addChild(fuelGauge, borderWarnings);
+      stage.addChild(fuelGauge, fuelLogo, borderWarnings);
     },
   }
 }
