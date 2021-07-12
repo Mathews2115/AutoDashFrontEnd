@@ -2,7 +2,7 @@
 
 "battery.png":
 {
-	"frame": {"x":0,"y":100,"w":75,"h":53},
+	"frame": {"x":135,"y":2,"w":75,"h":53},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":75,"h":53},
@@ -10,7 +10,15 @@
 },
 "fuel.png":
 {
-	"frame": {"x":0,"y":295,"w":70,"h":75},
+	"frame": {"x":138,"y":74,"w":70,"h":75},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":70,"h":75},
+	"sourceSize": {"w":70,"h":75}
+},
+"fuel_inverse.png":
+{
+	"frame": {"x":2,"y":151,"w":70,"h":75},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":70,"h":75},
@@ -18,7 +26,7 @@
 },
 "GPS_error.png":
 {
-	"frame": {"x":0,"y":153,"w":57,"h":75},
+	"frame": {"x":2,"y":74,"w":57,"h":75},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":57,"h":75},
@@ -26,7 +34,7 @@
 },
 "GPS_no_signal.png":
 {
-	"frame": {"x":0,"y":30,"w":54,"h":70},
+	"frame": {"x":79,"y":2,"w":54,"h":70},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":54,"h":70},
@@ -34,7 +42,7 @@
 },
 "oil.png":
 {
-	"frame": {"x":0,"y":0,"w":75,"h":30},
+	"frame": {"x":2,"y":2,"w":75,"h":30},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":75,"h":30},
@@ -42,7 +50,7 @@
 },
 "temp.png":
 {
-	"frame": {"x":0,"y":228,"w":75,"h":67},
+	"frame": {"x":61,"y":74,"w":75,"h":67},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":75,"h":67},
@@ -50,7 +58,7 @@
 },
 "warning.png":
 {
-	"frame": {"x":0,"y":370,"w":72,"h":75},
+	"frame": {"x":74,"y":151,"w":72,"h":75},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":72,"h":75},
@@ -60,9 +68,9 @@
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "warningSheet.png",
-	"format": "RGBA8888",
-	"size": {"w":75,"h":445},
+	"format": "ALPHA",
+	"size": {"w":212,"h":228},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:64e1561d734014f2861a78486dabd57c:7704db95263f2e511fc4ccf777967df5:947400244a66c71c1f6d58a110fa6c60$"
+	"smartupdate": "$TexturePacker:SmartUpdate:70c80b698ff671523a89ed8335a278cd:a54b10a97a5f0d630baae8c5ea3089a7:947400244a66c71c1f6d58a110fa6c60$"
 }
 }

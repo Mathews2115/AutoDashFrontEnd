@@ -8,6 +8,7 @@ export default class Renderable extends Container {
     super();
     this._dashID = null;
     this.interactiveChildren = false;
+    /** @type {PIXI.Renderer} */
     this.appRenderer = renderer;
     this.theme = theme;
 

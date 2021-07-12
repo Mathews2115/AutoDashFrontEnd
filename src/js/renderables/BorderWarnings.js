@@ -9,23 +9,23 @@ let Graphics = PIXI.Graphics;
 
 const ID = RENDER_KEYS.WARNING_BORDER;
    
-const tagRctSize = 50;
+const tagRctSize = 54;
 const tagBump = tagRctSize*.1;
 const tagWidth = tagRctSize + tagBump;
-const resources = PIXI.Loader.shared.resources;
+const TAG_BORDER_WIDTH = 4;
 
 const _createTagGeometry = () => {
   const gfx = new Graphics();
   gfx
-    .beginFill(0xffffff)
-    .lineStyle(0)
+    .beginFill(0)
+    .lineStyle({width:TAG_BORDER_WIDTH, color: 0xffffff})
     .drawPolygon([
       0, 0,       // tag edge
-      tagBump, 0,
+      tagRctSize, 0,
+      tagRctSize, tagRctSize,
       tagBump, tagRctSize,
       0,tagRctSize-tagBump,
     ])
-    .drawRect(tagBump, 0, tagRctSize, tagRctSize) // tag sqaure
     .endFill();
   return gfx;
 }
@@ -58,23 +58,20 @@ class BorderWarnings extends Renderable {
   createTag(tint, texture) {
     const renderContainer = new PIXI.Container();
     const tagGeomtry = _createTagGeometry();
-    tagGeomtry.tint = tint;
 
     let tx = new PIXI.Sprite(texture);
     tx.anchor.set(0.5);
-    // tx.x = (tagRctSize/2);
-    // tx.y = (tagRctSize/2);
     tx.setTransform(tagRctSize/2,tagRctSize/2,0.6,0.6,0, 0, 0,0,0); // TODO: reduce actual texture sizes and then remove scaling code
-    
+  
     tagGeomtry.addChild(tx);
     
     renderContainer.addChild(tagGeomtry);
     const renderTexture = this.appRenderer.generateTexture(renderContainer);
     const tag = new PIXI.Sprite(renderTexture);
-    renderContainer.destroy(true); // clean up
+    renderContainer.destroy({children: true}); // clean up
 
     tag.x = SCREEN.WIDTH - 5;
-    tag.y = SCREEN.BORDER_WIDTH - 5;
+    tag.y = SCREEN.BORDER_WIDTH - 5 - TAG_BORDER_WIDTH;
     tag.tint = tint; // save this off so that the borders can adopt this value in the update
     return tag;  
   }
@@ -105,13 +102,13 @@ class BorderWarnings extends Renderable {
     this.borders[2].y = this.gaugeHeight - SCREEN.BORDER_WIDTH + 5;
     this.borders[3].x = this.gaugeWidth - SCREEN.BORDER_WIDTH + 5;
     
-    const gpsErrorTag = this.createTag(0xff7c00, resources['assets/images/warningSheet.json'].spritesheet.textures["GPS_error.png"]);
-    const gpsNotAcquiredTag = this.createTag(0x00FF00, resources['assets/images/warningSheet.json'].spritesheet.textures["GPS_no_signal.png"]);
-    const commErrorTag = this.createTag(this.theme.dangerColor, resources['assets/images/warningSheet.json'].spritesheet.textures["warning.png"]);
-    const batteryTag = this.createTag(0xFFAE42, resources['assets/images/warningSheet.json'].spritesheet.textures["battery.png"]);
-    const fuelTag = this.createTag(0xFFEB00, resources['assets/images/warningSheet.json'].spritesheet.textures["fuel.png"]);
-    const oilTag = this.createTag(this.theme.dangerColor, resources['assets/images/warningSheet.json'].spritesheet.textures["oil.png"]);
-    const tempTag = this.createTag(this.theme.dangerColor, resources['assets/images/warningSheet.json'].spritesheet.textures["temp.png"]);
+    const gpsErrorTag = this.createTag(0xff7c00, PIXI.utils.TextureCache["GPS_error.png"]);
+    const gpsNotAcquiredTag = this.createTag(0x00FF00, PIXI.utils.TextureCache["GPS_no_signal.png"]);
+    const commErrorTag = this.createTag(this.theme.dangerColor, PIXI.utils.TextureCache["warning.png"]);
+    const batteryTag = this.createTag(0xFFAE42, PIXI.utils.TextureCache["battery.png"]);
+    const fuelTag = this.createTag(0xFFEB00, PIXI.utils.TextureCache["fuel.png"]);
+    const oilTag = this.createTag(this.theme.dangerColor, PIXI.utils.TextureCache["oil.png"]);
+    const tempTag = this.createTag(this.theme.dangerColor, PIXI.utils.TextureCache["temp.png"]);
     
     // order of severity  //(128 >> i % 8)
     this.tags = {
@@ -151,7 +148,7 @@ class BorderWarnings extends Renderable {
                 },
                 onComplete: () => {} 
             });
-          offset += tagRctSize;
+          offset += (tagRctSize - 2);
         } else {
           tagData.tl.clear();
           tagData.tl.to(tagData.tag, { 
