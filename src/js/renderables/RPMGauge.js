@@ -118,9 +118,13 @@ class RPMGauge extends Renderable {
     this.activeContainer = new PIXI.Container();
     this.activeContainer.addChild(this.foregroundSprite);
     this.activeContainer.mask = this.gaugeStencil; // set foreground stenciling for when guage "grows" and "shrinks"
-    this.activeContainer.filterArea = this.getBounds(); // optimize and save off filtered area
 
     this.addChild(this.gaugeStencil, this.activeContainer);
+
+    PIXI.Ticker.shared.addOnce(() => {
+      // bake in the final transform area
+      this.activeContainer.filterArea = this.getBounds(); // optimize and save off filtered area
+    });
   }
 
   // the data store values we want to listen too

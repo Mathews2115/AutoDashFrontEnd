@@ -35,7 +35,7 @@ class Odometer extends Renderable {
     this._value = newValue;
   }
   get gaugeHeight() {
-    return 50;
+    return 60;
   }
 
   // MAGIC NUMBERS AHOY LOL - so much pixel chooching.  These numbers also depending on
