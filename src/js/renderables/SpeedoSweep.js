@@ -29,7 +29,7 @@ class SpeedoSweep extends Renderable {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.SPEEDO;
+    return DATA_KEYS.GPS_SPEEED;
   }
 
   set value(newValue) {

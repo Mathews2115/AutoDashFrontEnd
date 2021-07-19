@@ -29,7 +29,7 @@ class SpeedoReadout extends Renderable {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.SPEEDO;
+    return DATA_KEYS.GPS_SPEEED;
   }
 
   set value(newValue) {
@@ -71,7 +71,7 @@ class SpeedoReadout extends Renderable {
           outerStrength: 1,
           innerStrength: 0,
           color: this.theme.gaugeActiveColor,
-          quality: 0.2,
+          quality: 1,
         })];
 
         digitContainer.addChild(numberGraphics)
