@@ -33,9 +33,9 @@ export class DashApp {
   }
 
   initialize() {
-    this.layoutManager.createLayout();
     this.layoutManager.renderables.initializeAll();
-    
+    this.layoutManager.createLayout();
+   
     // start rendering
     this.state = this.stateStartup;
   }

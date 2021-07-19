@@ -1,5 +1,4 @@
 import * as PIXI from "pixi.js";
-import { SCREEN } from "../appConfig";
 import { GlowFilter } from "@pixi/filter-glow";
 import Renderable from "./Renderable";
 //Aliases
@@ -50,7 +49,10 @@ class BarGraph extends Renderable {
       .endFill();
     this.addChild(this.gaugeActive);
 
-    this.gaugeActive.filterArea = this.getBounds();
+    // set the rotate this puppy so we can scale it up and down
+    this.gaugeActive.position.set(this.gaugeWidth, this.gaugeHeight);
+    this.gaugeActive.angle = 180;
+
     this.gaugeActive.filters = [
       new GlowFilter({
         distance: 8,
@@ -61,9 +63,10 @@ class BarGraph extends Renderable {
       }),
     ];
 
-    // set the rotate this puppy so we can scale it up and down
-    this.gaugeActive.position.set(this.gaugeWidth, this.gaugeHeight);
-    this.gaugeActive.angle = 180;
+    PIXI.Ticker.shared.addOnce(() => {
+      // bake in the final transform area
+      this.gaugeActive.filterArea = this.getBounds();
+    });
   }
 
   update() {

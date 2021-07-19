@@ -3,12 +3,6 @@ import RobustWebSocket from "robust-websocket";
 import { createDataStore, DATA_KEYS, WARNING_KEYS } from "../common/dataMap";
 
 const dataStore = createDataStore();
-
-// // TESTING STUFF
-// let modifier = 1;
-// let speed =0;
-//////////////////////////////////
-
 RobustWebSocket.prototype.binaryType = 'arraybuffer';
 const createWS = () => {
   dataStore.setWarning(WARNING_KEYS.COMM_ERROR, true);
@@ -74,15 +68,6 @@ onmessage = (evt) => {
       break;
 
     case "process_update_data":
-      // request for latest data
-      // let data = evt.data.updateData;
-
-      // TEST DATA!!!! (yes I know, I'll make an actual test mode that will do this later shutup)
-      // if (speed >= 99) modifier = -1;
-      // else if (speed <= 0) modifier = 0.3;
-      // speed += modifier;
-      // dataStore.set(DATA_KEYS.SPEEDO, speed);
-
       postMessage({ msg: "update_data_ready", updateData: dataStore.data });
       break;
 

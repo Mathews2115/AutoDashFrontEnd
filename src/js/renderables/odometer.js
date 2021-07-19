@@ -1,25 +1,24 @@
-import * as PIXI from "pixi.js";
-import '@pixi/graphics-extras';
 import { GlowFilter } from "@pixi/filter-glow";
-import { SCREEN, SPEEDO_CONFIG } from "../appConfig";
+import '@pixi/graphics-extras';
+import * as PIXI from "pixi.js";
+import { createDigit } from "../common/createDigit";
 import { DATA_KEYS } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
-import { createDigit } from "../common/createDigit";
 
 const FILTER_PADDING = 20;
 const PADDING_OFFSET = FILTER_PADDING/2;
 const NO_DISPLAY = 10;
 const SEGMENT_SLANT = -0.2;
 
-const ID = RENDER_KEYS.SPEEDO_READOUT;
-class SpeedoReadout extends Renderable {
+const ID = RENDER_KEYS.ODOMETER;
+class Odometer extends Renderable {
   constructor({ renderer, theme }) {
     super({ renderer, theme });
     this._dashID = ID;
 
-    this._value = SPEEDO_CONFIG.MAX;
-    this.renderedValue = this._value;
+    this._value = 99999;
+    this.renderedValue = 0;
     this.bgSprite = null;
     /** @type {PIXI.Texture[]} */
     this.numberTextures = [];
@@ -29,37 +28,25 @@ class SpeedoReadout extends Renderable {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.SPEEDO;
+    return DATA_KEYS.ODOMETER;
   }
 
   set value(newValue) {
-    if (newValue == null || newValue < SPEEDO_CONFIG.MIN) {
-      this._value = SPEEDO_CONFIG.MIN;
-    } else if (newValue > SPEEDO_CONFIG.MAX) {
-      this._value = SPEEDO_CONFIG.MAX;
-    } else {
-      this._value = Math.floor(newValue);
-    }
+    this._value = newValue;
   }
   get gaugeHeight() {
-    return SCREEN.SPEEDO_READOUT_HEIGHT;
+    return 50;
   }
 
   // MAGIC NUMBERS AHOY LOL - so much pixel chooching.  These numbers also depending on
   // renderhelpers.js placement.  Maybe I'll come back and make this less dumb...but I doubt it! :D :D :D    :|
   initialize() {
     // TODO: if we call init after it is already initialized; delete ALL textures
-    const numberBackground = createDigit(8, this.gaugeHeight);
 
     // create each number texture
     for (let i = 0; i <= 10; i++) {
       const digitContainer = new PIXI.Container();
 
-      // background
-      const background = new PIXI.Graphics(numberBackground.geometry);
-      background.tint = this.theme.gaugeBgColor;
-      digitContainer.addChild(background);
-      
       if (i != 10) {
         // greate number graphics
         const numberGraphics = createDigit(i, this.gaugeHeight);
@@ -67,11 +54,11 @@ class SpeedoReadout extends Renderable {
 
         // make the digit GLOW like everything else
         numberGraphics.filters = [new GlowFilter({
-          distance: 20, 
+          distance: 3, 
           outerStrength: 1,
           innerStrength: 0,
           color: this.theme.gaugeActiveColor,
-          quality: 0.2,
+          quality: 1,
         })];
 
         digitContainer.addChild(numberGraphics)
@@ -92,30 +79,35 @@ class SpeedoReadout extends Renderable {
     }
   
     // create number textures
-    this.numberSprites.push(new PIXI.Sprite(this.numberTextures[8]));
-    this.numberSprites.push(new PIXI.Sprite(this.numberTextures[8]));
+    for (let i = 0; i < 5; i++) {
+      this.numberSprites.push(new PIXI.Sprite(this.numberTextures[8]));
+      this.addChild(this.numberSprites[i]);
+    }
+    this.numberSprites.forEach((sprite, i) => {
+      sprite.y = -2; // offset magic number; i did some dumb math while creating render textures
+      if (i > 0) {
+        sprite.x = ((sprite.width/2+3)*i);  
+      }
+    });
+    // reverse the order so when iterating them, the index represents least to most significatnt digit
+    this.numberSprites = this.numberSprites.reverse();
 
-    // move second number into place
-    this.numberSprites[1].x = this.numberSprites[1].x + numberBackground.width + SCREEN.PADDING;
-    
     // give us a bit of a lean on the numbers
-    this.setTransform(0,0,1,1,0, SEGMENT_SLANT, 0,0,0) 
-
-    this.addChild(this.numberSprites[0], this.numberSprites[1]);
-    numberBackground.destroy(true); // cleanup
+    this.setTransform(0,0,1,1,0, SEGMENT_SLANT, 0,0,0)     
   }
 
   update() {
 
     if (this._value != this.renderedValue) {
       this.renderedValue = this._value;
-      this.numberSprites[1].texture = this.numberTextures[this.renderedValue%10]
-
-      const tenthsDigit = Math.floor(this.renderedValue/10) || NO_DISPLAY
-      this.numberSprites[0].texture = this.numberTextures[tenthsDigit]
+      this.numberSprites.forEach((sprite, i) => {
+        const digit = Math.floor(this.renderedValue / Math.pow(10,i)) % 10;
+        sprite.texture = this.numberTextures[digit];
+        
+      });
     }
   }
 }
 
-SpeedoReadout.ID = ID;
-export default SpeedoReadout;
+Odometer.ID = ID;
+export default Odometer;

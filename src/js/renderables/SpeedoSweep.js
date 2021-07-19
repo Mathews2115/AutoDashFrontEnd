@@ -68,13 +68,6 @@ class SpeedoSweep extends Renderable {
     return SCREEN.SPEEDO_CLUSTER_HEIGHT;
   }
 
-  get segmentWidth() {
-    return this.gaugeWidth / SPEEDO_CONFIG.SEGMENTS
-  }
-  get sweepSize() {
-    return (this.segmentWidth)*4
-  }
-
   initialize() {
     const segments = SPEEDO_CONFIG.SEGMENTS;
     // colors
@@ -89,9 +82,9 @@ class SpeedoSweep extends Renderable {
       .lineStyle(0)
       .drawPolygon([
         0, this.gaugeHeight, // bottom left
-        this.sweepSize, this.gaugeHeight, // bottom right
-        this.sweepSize*2-SEGEMENT_PADDING, this.sweepSize, // angle up
-        this.gaugeWidth, this.sweepSize, // bottom right end
+        SCREEN.SPEEDO_SWEEP_SIZE, this.gaugeHeight, // bottom right
+        SCREEN.SPEEDO_SWEEP_SIZE*2-SEGEMENT_PADDING, SCREEN.SPEEDO_SWEEP_SIZE, // angle up
+        this.gaugeWidth, SCREEN.SPEEDO_SWEEP_SIZE, // bottom right end
         this.gaugeWidth, 0,
         this.gaugeWidth * 0.3-SEGEMENT_PADDING, 0, 
       ])
@@ -107,8 +100,8 @@ class SpeedoSweep extends Renderable {
     foreground.beginFill(this.theme.gaugeActiveColor).lineStyle(0);
     for (let index = 0; index < segments; index++) {
       foreground.drawRect(
-        this.segmentWidth * index, 0, 
-        this.segmentWidth - (index == segments - 1 ? 0 : SEGEMENT_PADDING), this.gaugeHeight
+        SCREEN.SPEEDO_SEGMENT_WIDTH * index, 0, 
+        SCREEN.SPEEDO_SEGMENT_WIDTH - (index == segments - 1 ? 0 : SEGEMENT_PADDING), this.gaugeHeight
       );
     }
     foreground.endFill();
@@ -165,8 +158,13 @@ class SpeedoSweep extends Renderable {
     this.activeContainer = new PIXI.Container();
     this.activeContainer.addChild(this.foregroundSprite);
     this.activeContainer.mask = this.gaugeStencil; // set foreground stenciling for when guage "grows" and "shrinks"
-    this.activeContainer.filterArea = this.getBounds(); // optimize and save off filtered area
+    this.activeContainer.filters = [this.activeFilter];
     this.addChild(this.gaugeStencil, this.activeContainer);
+
+   PIXI.Ticker.shared.addOnce(() => {
+      // bake in the final transform area
+      this.activeContainer.filterArea = this.getBounds(); // optimize and save off filtered area
+    });
   }
 
   update() {

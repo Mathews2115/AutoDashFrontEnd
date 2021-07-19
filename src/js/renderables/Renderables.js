@@ -7,7 +7,8 @@ export const RENDER_KEYS = {
   SPEEDO_SWEEP: 2,
   SPEEDO_READOUT: 3,
   WARNING_BORDER: 4,
-  FUEL_GAUGE: 5
+  FUEL_GAUGE: 5,
+  ODOMETER: 6,
 }
 
 export class Renderables extends Array {
@@ -22,11 +23,6 @@ export class Renderables extends Array {
     this.theme = theme;
   }
 
-  /**
-   * 
-   * @param {Object} RenderableClass 
-   * @returns 
-   */
   createRenderable(RenderableClass) {
     const renderable = new RenderableClass({
       renderer: this.renderer,

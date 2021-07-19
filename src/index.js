@@ -14,7 +14,6 @@ gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 gsap.ticker.fps(45);
 
-
 const ticker = PIXI.Ticker.shared;
 // Set this to prevent starting this ticker when listeners are added.
 // By default this is true only for the PIXI.Ticker.shared instance.
@@ -22,7 +21,6 @@ ticker.autoStart = false;
 // FYI, call this to ensure the ticker is stopped. It should be stopped
 // if you have not attempted to render anything yet.
 ticker.stop();
-gsap.ticker.add((time,_deltaTime,_frame) => ticker.update(time))
 
 // RENDERER and TICKER
 // setup renderer and ticker
@@ -38,8 +36,14 @@ let readyForData = true;
 
 // all external assets loaded, initalize app and run
 const initializeApp = (_loader, resources) => {
+  // start ticker
+  gsap.ticker.add((time,_deltaTime,_frame) => ticker.update(time))
   dash.initialize();
+
+  // init worker
   dataWorker.postMessage({msg: "start"}); 
+
+  // hook up update loop
   ticker.add(function(dt){
     if (readyForData) {
       dataWorker.postMessage({msg: 'process_update_data', updateData: updateData})
