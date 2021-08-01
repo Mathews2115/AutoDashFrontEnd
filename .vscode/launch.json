@@ -8,9 +8,30 @@
       "name": "Launch Chrome",
       "request": "launch",
       "type": "pwa-chrome",
-      "url": "${workspaceFolder}/index.html",
-      "file": "/home/mathews/development/AutoDashFrontEnd/index.html",
+      "url": "http://localhost:8080",
       "webRoot": "${workspaceFolder}"
-  }
+    },
+    {
+      "name": "Attach to Chrome",
+      "port": 9222,
+      "request": "attach",
+      "type": "pwa-chrome",
+      "webRoot": "${workspaceFolder}"
+    },
+
+  {
+    "type": "pwa-chrome",
+    "request": "launch",
+    "name": "Launch Chromium against localhost",
+    "url": "http://localhost:8080/#",
+    "webRoot": "${workspaceFolder}",
+    "runtimeExecutable": "/usr/bin/chromium-browser",
+    "runtimeArgs": [
+      "--new-window",
+      "-user-data-dir=\"/${workspaceFolder}/DevProfile\"",
+      "--remote-debugging-port=9222",
+      "--disable-background-networking"
+    ]
+}
   ]
 }

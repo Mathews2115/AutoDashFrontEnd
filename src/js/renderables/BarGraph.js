@@ -12,21 +12,22 @@ const BAR_MIN = 0;
  */
 class BarGraph extends Renderable {
 
-  constructor({ renderer, theme, width, height}) {
+  constructor({ renderer, theme, width, height, maxValue}) {
     super({ renderer, theme });
     this.activeColor = theme.gaugeActiveColor;
     this.backgroundColor = theme.gaugeBgColor;
-    this._value = BAR_MAX;
+    this._value = maxValue;
     this.renderedValue = this._value;
     this.gaugeHeight = height;
     this.gaugeWidth = width;
+    this.maxValue = maxValue || BAR_MAX;
   }
 
   set value(newValue) {
     if (newValue == null || newValue < BAR_MIN) {
       this._value = BAR_MIN;
-    } else if (newValue > BAR_MAX) {
-      this._value = BAR_MAX;
+    } else if (newValue > this.maxValue) {
+      this._value = this.maxValue;
     } else {
       this._value = newValue;
     }
@@ -71,7 +72,7 @@ class BarGraph extends Renderable {
 
   update() {
     if (this._value != this.renderedValue) {
-      this.gaugeActive.scale.set(1, this._value / BAR_MAX);
+      this.gaugeActive.scale.set(1, this._value / this.maxValue);
       this.renderedValue = this._value;
     }
   }

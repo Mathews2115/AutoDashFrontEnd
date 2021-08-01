@@ -1,8 +1,11 @@
 import * as PIXI from "pixi.js";
 import { SCREEN } from "./appConfig";
 import theme from "./common/theme";
+import AverageMpgReadout from "./renderables/AverageMpgReadout";
 import BorderWarnings from "./renderables/BorderWarnings";
+import CurrentMpgReadout from "./renderables/CurrentMpgReadout";
 import FuelGauge from "./renderables/FuelGauge";
+import MpgGauge from "./renderables/MpgGauge";
 import Odometer from "./renderables/odometer";
 import PedalGauge from "./renderables/PedalGauge";
 import { Renderables, RENDER_KEYS } from "./renderables/Renderables";
@@ -34,6 +37,12 @@ export default ({renderer, stage}) => {
   const fuelGauge = renderables.createRenderable(FuelGauge);
   /** @type {Odometer} */
   const odometer = renderables.createRenderable(Odometer);
+  /** @type {MpgGauge} */
+  const mpgGauge = renderables.createRenderable(MpgGauge);
+  /** @type {CurrentMpgReadout} */
+  const currentMpgReadout = renderables.createRenderable(CurrentMpgReadout);
+  /** @type {AverageMpgReadout} */
+  const averageMpgReadout = renderables.createRenderable(AverageMpgReadout);
   
   
   const mpgCluster = new PIXI.Container();
@@ -194,13 +203,42 @@ export default ({renderer, stage}) => {
     mpgCluster.addChild(background);
 
     // ---- current mpg bar
+    mpgGauge.height = mpgClusterWidth; // force scale it down (ugh i engineered myself into a corner here)
+    mpgGauge.angle = 90;
+    mpgGauge.x = mpgClusterX + mpgClusterWidth;
+    mpgGauge.y = mpgClusterY + mpgCluster.height + 15;
 
     // ---- text readouts
+    const readoutY = mpgClusterY +  mpgCluster.height + mpgGauge.gaugeWidth + 30;
     // average
+    const avgMpgText = new PIXI.BitmapText("AVERAGE", {
+      fontName: "Orbitron",
+      fontSize: 22,
+      align: "left",
+    });
+    avgMpgText.angle = 180;
+    avgMpgText.x = mpgClusterX;
+    avgMpgText.y = readoutY;
+    // center it under the text
+    averageMpgReadout.x = avgMpgText.x + (avgMpgText.width/2) - (averageMpgReadout.width/2);
+    averageMpgReadout.y = avgMpgText.y + avgMpgText.height + 10;
+
 
     // current
+    const currentMpgText = new PIXI.BitmapText("CURRENT", {
+      fontName: "Orbitron",
+      fontSize: 24,
+      align: "left",
+    });
+    currentMpgText.angle = 180;
+    currentMpgText.x = mpgClusterX + mpgClusterWidth * 0.5;
+    currentMpgText.y = readoutY;
+    currentMpgReadout.x = currentMpgText.x;
+    currentMpgReadout.y = currentMpgText.y + currentMpgText.height + 10;
 
-    return {mpgLogo, mpgCluster};
+    return {mpgLogo, mpgCluster, mpgGauge, 
+      avgMpgText, averageMpgReadout,
+      currentMpgText, currentMpgReadout};
   }
 
   return {
@@ -209,7 +247,9 @@ export default ({renderer, stage}) => {
       const {rpmLogoTexture, rpmCluster} = createRpmCluster();
       const speedoCluster = createSpeedoCluster();
       const fuelSymbol = configureFuelGauge();
-      const {mpgLogo, mpgCluster} = createMPGCluser(speedoCluster);
+      const {mpgLogo, mpgCluster, mpgGauge, 
+        avgMpgText, averageMpgReadout, 
+        currentMpgText, currentMpgReadout} = createMPGCluser(speedoCluster);
 
       stage.addChild(
         fuelGauge, 
@@ -219,7 +259,11 @@ export default ({renderer, stage}) => {
         mpgLogo,
         rpmLogoTexture, 
         fuelSymbol,
-        borderWarnings);
+        borderWarnings,
+        mpgGauge,
+        avgMpgText, averageMpgReadout,
+        currentMpgText,
+        currentMpgReadout);
     },
   }
 }

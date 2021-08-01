@@ -48,7 +48,8 @@ export const PEDAL_CONFIG = {
 
 export const FUEL_CONFIG = {
   MIN: 0,
-  MAX: 100
+  MAX: 100,
+  MAX_MPG: 15
 }
 
 export const RPM_CONFIG = {

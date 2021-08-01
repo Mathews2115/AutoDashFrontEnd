@@ -9,6 +9,9 @@ export const RENDER_KEYS = {
   WARNING_BORDER: 4,
   FUEL_GAUGE: 5,
   ODOMETER: 6,
+  MPG_GAUGE: 7,
+  MPG_READOUT: 8,
+  AVG_MPG_READOUT: 9,
 }
 
 export class Renderables extends Array {
@@ -23,11 +26,12 @@ export class Renderables extends Array {
     this.theme = theme;
   }
 
-  createRenderable(RenderableClass) {
-    const renderable = new RenderableClass({
+  createRenderable(RenderableClass, options = {}) {
+    options = Object.assign({}, options, {
       renderer: this.renderer,
-      theme: this.theme,
+      theme: this.theme
     });
+    const renderable = new RenderableClass(options);
     return (this[renderable.dashID] = renderable);
   }
 

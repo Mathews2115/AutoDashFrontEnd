@@ -40,6 +40,7 @@ export const DATA_KEYS = {
   WARNINGS: keygen(),
   FUEL_LEVEL: keygen(),
   CURRENT_MPG: keygen(),
+  AVERAGE_MPG: keygen(),
 };
 
 // Keys for handling the WARNINGS Structure
