@@ -51,6 +51,8 @@ const parseData = (data) => {
     dataStore.set(DATA_KEYS.GPS_SPEEED, data.getInt16(38));
     dataStore.set(DATA_KEYS.FUEL_LEVEL, data.getInt8(40));
     dataStore.set(DATA_KEYS.CURRENT_MPG, data.getFloat32(41));
+    dataStore.set(DATA_KEYS.AVERAGE_MPG, data.getFloat32(45));
+
   } catch (error) {
     console.error(error);
   }

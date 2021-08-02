@@ -118,7 +118,7 @@ class BorderWarnings extends Renderable {
       temp: { mask: WARNING_KEYS.ENGINE_TEMPERATURE, tag: tempTag, tl: gsap.timeline()},
       gpsError: { mask: WARNING_KEYS.GPS_ERROR, tag: gpsErrorTag, tl: gsap.timeline()},
       battery: { mask: WARNING_KEYS.BATT_VOLTAGE, tag: batteryTag, tl: gsap.timeline()},
-      gpsNotAcquired: { mask: WARNING_KEYS.GPS_ACQUIRED, tag: gpsNotAcquiredTag, tl: gsap.timeline()},
+      gpsNotAcquired: { mask: WARNING_KEYS.GPS_NOT_ACQUIRED, tag: gpsNotAcquiredTag, tl: gsap.timeline()},
     }
 
     // reminder: last added is the last drawn (painters algorithm)

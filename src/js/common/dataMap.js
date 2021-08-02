@@ -41,6 +41,7 @@ export const DATA_KEYS = {
   FUEL_LEVEL: keygen(),
   CURRENT_MPG: keygen(),
   AVERAGE_MPG: keygen(),
+  AVERAGE_MPG_POINTS: keygen(),
 };
 
 // Keys for handling the WARNINGS Structure
@@ -50,7 +51,7 @@ export const WARNING_KEYS = {
   LOW_FUEL: keygen(),
   ENGINE_TEMPERATURE: keygen(), // temp too high
   ECU_COMM: keygen(), // trouble communicating with ECU via CAN
-  GPS_ACQUIRED: keygen(), // GPS working but no 2d/3d fix aqcuired yet
+  GPS_NOT_ACQUIRED: keygen(), // no 2d/3d fix aqcuired yet
   GPS_ERROR: keygen(), // some sort of untracked error occurred
   COMM_ERROR: keygen(),
 };
