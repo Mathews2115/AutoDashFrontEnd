@@ -12,6 +12,7 @@ export const RENDER_KEYS = {
   MPG_GAUGE: 7,
   MPG_READOUT: 8,
   AVG_MPG_READOUT: 9,
+  AVG_MPG_HISTOGRAM: 10,
 }
 
 export class Renderables extends Array {

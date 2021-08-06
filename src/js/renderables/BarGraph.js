@@ -12,7 +12,7 @@ const BAR_MIN = 0;
  */
 class BarGraph extends Renderable {
 
-  constructor({ renderer, theme, width, height, maxValue}) {
+  constructor({ renderer, theme, width, height, maxValue=BAR_MAX}) {
     super({ renderer, theme });
     this.activeColor = theme.gaugeActiveColor;
     this.backgroundColor = theme.gaugeBgColor;
@@ -20,7 +20,7 @@ class BarGraph extends Renderable {
     this.renderedValue = this._value;
     this.gaugeHeight = height;
     this.gaugeWidth = width;
-    this.maxValue = maxValue || BAR_MAX;
+    this.maxValue = maxValue;
   }
 
   set value(newValue) {

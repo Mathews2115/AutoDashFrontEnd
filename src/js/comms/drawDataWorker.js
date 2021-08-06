@@ -1,6 +1,7 @@
 // https://github.com/nathanboktae/robust-websocket#usage
 import RobustWebSocket from "robust-websocket";
 import { createDataStore, DATA_KEYS, WARNING_KEYS } from "../common/dataMap";
+import RingBuffer from "../common/ringBuffer";
 
 const dataStore = createDataStore();
 RobustWebSocket.prototype.binaryType = 'arraybuffer';
@@ -52,7 +53,7 @@ const parseData = (data) => {
     dataStore.set(DATA_KEYS.FUEL_LEVEL, data.getInt8(40));
     dataStore.set(DATA_KEYS.CURRENT_MPG, data.getFloat32(41));
     dataStore.set(DATA_KEYS.AVERAGE_MPG, data.getFloat32(45));
-
+    dataStore.set(DATA_KEYS.AVERAGE_MPG_POINTS, new RingBuffer(data.buffer, 49, 100, data.getInt8(149)));
   } catch (error) {
     console.error(error);
   }

@@ -6,12 +6,16 @@ import BorderWarnings from "./renderables/BorderWarnings";
 import CurrentMpgReadout from "./renderables/CurrentMpgReadout";
 import FuelGauge from "./renderables/FuelGauge";
 import MpgGauge from "./renderables/MpgGauge";
+import MpgHistogram from "./renderables/MpgHistogram";
 import Odometer from "./renderables/odometer";
 import PedalGauge from "./renderables/PedalGauge";
 import { Renderables, RENDER_KEYS } from "./renderables/Renderables";
 import RPMGauge from "./renderables/RPMGauge";
 import SpeedoReadout from "./renderables/SpeedoReadout";
 import SpeedoSweep from "./renderables/SpeedoSweep";
+
+// PLEASE NOTE: all this is magic number stuff because I was in "EFF IT ILL DO IT LIVE" mode...
+// so...dont get all snooty when you look at this hot garbage while thinking "pssh, i cant believe he didn't use ALGORITHM_X to figure out the placement for everything"
 
 /**
  *  @param {Object} config
@@ -43,7 +47,8 @@ export default ({renderer, stage}) => {
   const currentMpgReadout = renderables.createRenderable(CurrentMpgReadout);
   /** @type {AverageMpgReadout} */
   const averageMpgReadout = renderables.createRenderable(AverageMpgReadout);
-  
+  /** @type {MpgHistogram} */
+  const mpgHistogram = renderables.createRenderable(MpgHistogram);
   
   const mpgCluster = new PIXI.Container();
   const fuelLogo = new PIXI.Graphics();
@@ -190,26 +195,25 @@ export default ({renderer, stage}) => {
     mpgLogo.y = SCREEN.PADDING;
 
     const mpgClusterY = mpgLogo.y +mpgLogo.height + SCREEN.PADDING;
-    // const mpgClusterHeight = SCREEN.CONTENT_HEIGHT - mpgClusterY;
-    mpgCluster.x = mpgClusterX;
-    mpgCluster.y = mpgClusterY;
 
     // ---- histogram
-    const background = new PIXI.Graphics();
-    background
-      .beginFill(theme.gaugeBgColor)
-      .drawRect(0, 0, mpgClusterWidth, SCREEN.CONTENT_HEIGHT/3)
-      .endFill();
-    mpgCluster.addChild(background);
+    // HACK ALERT: lol, here is me re-calling init again because I engineered myself in a corner....
+    // ANyway, I'll come back later and refactor the layout to be more sane
+    mpgHistogram.gaugeHeight = SCREEN.CONTENT_HEIGHT/3
+    mpgHistogram.gaugeWidth = mpgClusterWidth;
+    mpgHistogram.x = mpgClusterX;
+    mpgHistogram.y = mpgClusterY;
+    mpgHistogram.initialize(); //lol again
 
     // ---- current mpg bar
     mpgGauge.height = mpgClusterWidth; // force scale it down (ugh i engineered myself into a corner here)
     mpgGauge.angle = 90;
     mpgGauge.x = mpgClusterX + mpgClusterWidth;
-    mpgGauge.y = mpgClusterY + mpgCluster.height + 15;
+    mpgGauge.y = mpgClusterY + mpgHistogram.height + 15;
 
     // ---- text readouts
-    const readoutY = mpgClusterY +  mpgCluster.height + mpgGauge.gaugeWidth + 30;
+    const readoutY = mpgClusterY +  mpgHistogram.height + mpgGauge.gaugeWidth + 30;
+    
     // average
     const avgMpgText = new PIXI.BitmapText("AVERAGE", {
       fontName: "Orbitron",
@@ -236,7 +240,7 @@ export default ({renderer, stage}) => {
     currentMpgReadout.x = currentMpgText.x;
     currentMpgReadout.y = currentMpgText.y + currentMpgText.height + 10;
 
-    return {mpgLogo, mpgCluster, mpgGauge, 
+    return {mpgLogo, mpgHistogram, mpgGauge, 
       avgMpgText, averageMpgReadout,
       currentMpgText, currentMpgReadout};
   }
@@ -247,7 +251,7 @@ export default ({renderer, stage}) => {
       const {rpmLogoTexture, rpmCluster} = createRpmCluster();
       const speedoCluster = createSpeedoCluster();
       const fuelSymbol = configureFuelGauge();
-      const {mpgLogo, mpgCluster, mpgGauge, 
+      const {mpgLogo, mpgHistogram, mpgGauge, 
         avgMpgText, averageMpgReadout, 
         currentMpgText, currentMpgReadout} = createMPGCluser(speedoCluster);
 
@@ -255,7 +259,7 @@ export default ({renderer, stage}) => {
         fuelGauge, 
         rpmCluster, 
         speedoCluster,
-        mpgCluster, 
+        mpgHistogram, 
         mpgLogo,
         rpmLogoTexture, 
         fuelSymbol,

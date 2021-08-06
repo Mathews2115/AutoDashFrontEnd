@@ -181,5 +181,5 @@ class RPMGauge extends Renderable {
   }
 }
 
-RPMGauge.DASH_ID = ID;
+RPMGauge.ID = ID;
 export default RPMGauge;
