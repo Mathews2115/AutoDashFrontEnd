@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { GlowFilter } from "@pixi/filter-glow";
 import Renderable from "./Renderable";
+import { gsap } from "gsap";
 //Aliases
 let Graphics = PIXI.Graphics;
 
@@ -21,6 +22,7 @@ class BarGraph extends Renderable {
     this.gaugeHeight = height;
     this.gaugeWidth = width;
     this.maxValue = maxValue;
+    this.gsapTimeline = gsap.timeline();
   }
 
   set value(newValue) {
@@ -72,7 +74,8 @@ class BarGraph extends Renderable {
 
   update() {
     if (this._value != this.renderedValue) {
-      this.gaugeActive.scale.set(1, this._value / this.maxValue);
+      this.gsapTimeline.clear();
+      this.gsapTimeline.to(this.gaugeActive.scale, {duration: 0.15, y: this._value / this.maxValue})
       this.renderedValue = this._value;
     }
   }

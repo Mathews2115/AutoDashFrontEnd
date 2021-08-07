@@ -50,7 +50,6 @@ export default ({renderer, stage}) => {
   /** @type {MpgHistogram} */
   const mpgHistogram = renderables.createRenderable(MpgHistogram);
   
-  const mpgCluster = new PIXI.Container();
   const fuelLogo = new PIXI.Graphics();
 
   /**
@@ -226,7 +225,6 @@ export default ({renderer, stage}) => {
     // center it under the text
     averageMpgReadout.x = avgMpgText.x + (avgMpgText.width/2) - (averageMpgReadout.width/2);
     averageMpgReadout.y = avgMpgText.y + avgMpgText.height + 10;
-
 
     // current
     const currentMpgText = new PIXI.BitmapText("CURRENT", {
