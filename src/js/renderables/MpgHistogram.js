@@ -62,7 +62,8 @@ class MpgHistogram extends Renderable {
         .drawPolygon([
           0, this.gaugeHeight,
           ...points,
-          this.gaugeWidth, this.gaugeHeight
+          this.gaugeWidth, points[points.length-1],
+          this.gaugeWidth, this.gaugeHeight,
         ])
         .endFill();
     }
