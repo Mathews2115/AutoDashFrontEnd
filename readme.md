@@ -1,4 +1,4 @@
-# Quick How-To Raspberry Pi 4 Dashboard setup.
+# Quick How-To Raspberry Pi 4 Digital Dashboard setup.
 
 **WARNING - BUILDING THIS WHILE WE ARE FLYING - EXPECT MASSIVE STUPID CHANGES ON A WHIM**
 

@@ -26,13 +26,7 @@ class BarGraph extends Renderable {
   }
 
   set value(newValue) {
-    if (newValue == null || newValue < BAR_MIN) {
-      this._value = BAR_MIN;
-    } else if (newValue > this.maxValue) {
-      this._value = this.maxValue;
-    } else {
-      this._value = newValue;
-    }
+    this._value = Math.min(Math.max(newValue || BAR_MIN), BAR_MAX);
   }
 
   initialize() {
