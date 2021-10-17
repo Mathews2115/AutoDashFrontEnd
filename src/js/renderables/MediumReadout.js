@@ -22,7 +22,7 @@ class MediumReadout extends Renderable {
   }
 
   set value(newValue) {
-    this._value = Math.floor(newValue);
+    if (newValue) this._value = Math.floor(newValue);
   }
   get gaugeHeight() {
     return 90;

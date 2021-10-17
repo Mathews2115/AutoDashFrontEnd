@@ -33,7 +33,7 @@ class MpgHistogram extends Renderable {
   }
 
   set value(newValue) {
-    this._value = newValue;
+    if (newValue) this._value = newValue;
   }
 
   initialize() {
