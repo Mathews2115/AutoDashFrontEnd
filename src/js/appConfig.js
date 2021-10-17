@@ -79,6 +79,9 @@ export const DEFAULT_COLORS = {
   backgroundColor: 0x0,
 };
 
+// TODO: 
+// 1. Make light theme versions of bitmaps
+// 2. Fix speed/rpm sweeps so the color part is working
 // export const DEFAULT_COLORS = {
 //   gaugeBgColor: 0xebebeb,
 //   gaugeActiveColor: 0x414141,
