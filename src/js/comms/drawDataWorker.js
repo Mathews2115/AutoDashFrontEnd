@@ -13,7 +13,7 @@ const createWS = () => {
     ignoreConnectivityEvents: false,
   });
   ws.addEventListener('open', function(event) {
-    dataStore.setWarning(WARNING_KEYS.COMM_ERROR, false);
+    // dataStore.setWarning(WARNING_KEYS.COMM_ERROR, false);
     // ws.send('Hello!')
   })
   ws.addEventListener('close', (event) => {
