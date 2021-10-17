@@ -76,4 +76,14 @@ export const DEFAULT_COLORS = {
   dangerColor: 0xf00000,
   warningColor: 0xff7c00,
   nominalColor: 0x121be0,
+  backgroundColor: 0x0,
 };
+
+// export const DEFAULT_COLORS = {
+//   gaugeBgColor: 0xebebeb,
+//   gaugeActiveColor: 0x414141,
+//   dangerColor: 0xf00000,
+//   warningColor: 0xff7c00,
+//   nominalColor: 0x121be0,
+//   backgroundColor: 0xffffff,
+// };

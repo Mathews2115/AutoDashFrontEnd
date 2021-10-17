@@ -1,7 +1,7 @@
 "use strict";
 import * as PIXI from "pixi.js";
 import { DashApp } from "./js/app";
-import { SCREEN } from "./js/appConfig";
+import { SCREEN, DEFAULT_COLORS } from "./js/appConfig";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin.js";
 
@@ -27,7 +27,7 @@ ticker.stop();
 const renderer = new PIXI.Renderer({
   width: SCREEN.WIDTH,
   height: SCREEN.HEIGHT,
-  backgroundColor: 0x000000,
+  backgroundColor: DEFAULT_COLORS.backgroundColor,
 });
 const dash = new DashApp(renderer);
 const dataWorker = new Worker(new URL('./js/comms/drawDataWorker.js', import.meta.url));

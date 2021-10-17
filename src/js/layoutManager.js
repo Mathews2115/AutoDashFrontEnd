@@ -90,6 +90,7 @@ export default ({renderer, stage}) => {
     text.angle = 180; // no idea what app is flipped??
     text.x = firstEnd + 5;
     text.y = -SCREEN.PADDING;
+    text.tint = theme.gaugeActiveColor;
     rpmLogo.addChild(text);
 
     const renderedTexture = renderer.generateTexture(rpmLogo);
@@ -125,6 +126,7 @@ export default ({renderer, stage}) => {
       fontSize: 50,
       align: "left",
     });
+    text.tint = theme.gaugeActiveColor;
     text.angle = 180; // no idea what app is flipped??
     text.x = speedoReadout.x - text.width - 22;; // fudge number lol
     text.y = speedoReadout.y;
@@ -178,6 +180,7 @@ export default ({renderer, stage}) => {
     text.angle = 180; // no idea what app is flipped??
     text.x = firstEnd + 5;
     text.y = -SCREEN.PADDING;
+    text.tint = theme.gaugeActiveColor;
     fuelLogo.addChild(text);
 
     const renderedTexture = renderer.generateTexture(fuelLogo);
@@ -219,6 +222,7 @@ export default ({renderer, stage}) => {
       fontSize: 22,
       align: "left",
     });
+    avgMpgText.tint = theme.gaugeActiveColor;
     avgMpgText.angle = 180;
     avgMpgText.x = mpgClusterX;
     avgMpgText.y = readoutY;
@@ -232,6 +236,7 @@ export default ({renderer, stage}) => {
       fontSize: 24,
       align: "left",
     });
+    currentMpgText.tint = theme.gaugeActiveColor;
     currentMpgText.angle = 180;
     currentMpgText.x = mpgClusterX + mpgClusterWidth * 0.5;
     currentMpgText.y = readoutY;
