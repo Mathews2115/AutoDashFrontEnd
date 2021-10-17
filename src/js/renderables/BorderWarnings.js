@@ -112,7 +112,7 @@ class BorderWarnings extends Renderable {
     
     // order of severity  //(128 >> i % 8)
     this.tags = {
-      commError: { mask: WARNING_KEYS.COMM_ERROR, tag: commErrorTag, tl: gsap.timeline()},
+      commError: { mask: WARNING_KEYS.ECU_COMM, tag: commErrorTag, tl: gsap.timeline()},
       lowFuel: { mask: WARNING_KEYS.LOW_FUEL, tag: fuelTag, tl: gsap.timeline()},
       oil: { mask: WARNING_KEYS.OIL_PRESSURE, tag: oilTag, tl: gsap.timeline()},
       temp: { mask: WARNING_KEYS.ENGINE_TEMPERATURE, tag: tempTag, tl: gsap.timeline()},
