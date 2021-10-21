@@ -97,7 +97,7 @@ class SpeedoSweep extends Renderable {
     //////// foreground shape
     const foreground = new PIXI.Graphics();
 
-    foreground.beginFill(this.theme.gaugeActiveColor).lineStyle(0);
+    foreground.beginFill(0xffffff).lineStyle(0);
     for (let index = 0; index < segments; index++) {
       foreground.drawRect(
         SCREEN.SPEEDO_SEGMENT_WIDTH * index, 0, 
@@ -108,6 +108,7 @@ class SpeedoSweep extends Renderable {
     foreground.mask = new PIXI.Graphics(background.geometry);
 
     // create normal sprite
+    foreground.tint = this.theme.gaugeActiveColor;
     this._foregroundTextures[STATE_ENUM.NORMAL] = this.appRenderer.generateTexture(
       foreground
     );

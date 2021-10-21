@@ -144,12 +144,29 @@ export default ({renderer, stage}) => {
     fuelGauge.y = SCREEN.BORDER_WIDTH;
 
     const tx = new PIXI.Sprite(PIXI.utils.TextureCache["fuel.png"]);
-
-    tx.anchor.set(0.5,0);
-    tx.x = fuelGauge.x + (fuelGauge.gaugeWidth * 0.55);
-    tx.y = fuelGauge.y + fuelGauge.gaugeHeight + 10  ;
+    tx.anchor.set(0);
     tx.scale.set(0.6);
-    return tx;
+
+    const fuelIcon = new PIXI.Graphics()
+    fuelIcon
+      .beginFill(theme.gaugeActiveColor)
+      .lineStyle(0)
+      .drawRect(0, 0, tx.width, tx.height)
+      .endFill();
+    fuelIcon.addChild(tx);
+    fuelIcon.mask = tx;
+
+    const renderContainer = new PIXI.Container();
+    renderContainer.addChild(fuelIcon);
+    const renderTexture = renderer.generateTexture(renderContainer);
+    const fuelIconTexture = new PIXI.Sprite(renderTexture);
+    
+    fuelIconTexture.x = fuelGauge.x + (fuelGauge.width-tx.width);
+    fuelIconTexture.y = fuelGauge.y + fuelGauge.gaugeHeight + 10  ;
+
+    renderContainer.destroy({children: true}); // clean up
+
+    return fuelIconTexture;
   }
 
   const createMpyLogo = (mpgClusterWidth) => {

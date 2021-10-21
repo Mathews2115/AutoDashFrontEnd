@@ -1,9 +1,10 @@
 "use strict";
 import * as PIXI from "pixi.js";
 import { DashApp } from "./js/app";
-import { SCREEN, DEFAULT_COLORS } from "./js/appConfig";
+import { SCREEN } from "./js/appConfig";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin.js";
+import theme from "./js/common/theme";
 
 delete PIXI.Renderer.__plugins.interaction; // removing the interactoins manager; we dont need it
 // it also adds another RAF, which we dont need
@@ -27,7 +28,7 @@ ticker.stop();
 const renderer = new PIXI.Renderer({
   width: SCREEN.WIDTH,
   height: SCREEN.HEIGHT,
-  backgroundColor: DEFAULT_COLORS.backgroundColor,
+  backgroundColor: theme.backgroundColor,
 });
 const dash = new DashApp(renderer);
 const dataWorker = new Worker(new URL('./js/comms/drawDataWorker.js', import.meta.url));

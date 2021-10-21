@@ -54,7 +54,7 @@ class RPMGauge extends Renderable {
     const foreground = new PIXI.Graphics();
     const segments = RPM_CONFIG.SEGMENTS;
     let segmentHeight = this.gaugeHeight / segments;
-    foreground.beginFill(this.theme.gaugeActiveColor).lineStyle(0);
+    foreground.beginFill(0xffffff).lineStyle(0);
     for (let index = 0; index < segments; index++) {
       foreground.drawRect(
         0, segmentHeight * index,
@@ -65,6 +65,7 @@ class RPMGauge extends Renderable {
     foreground.mask = new PIXI.Graphics(background.geometry);
 
     // create normal sprite
+    foreground.tint = this.theme.gaugeActiveColor;
     this._foregroundTextures[STATE_ENUM.NORMAL] = this.appRenderer.generateTexture(
       foreground
     );

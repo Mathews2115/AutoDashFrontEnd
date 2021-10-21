@@ -53,9 +53,10 @@ class BarGraph extends Renderable {
     this.gaugeActive.filters = [
       new GlowFilter({
         distance: 8,
-        outerStrength: 2,
+        outerStrength: 1,
         innerStrength: 0,
-        color: 0xf0f0f0,
+        // color: 0xf0f0f0,
+        color: this.theme.gaugeActiveColor,
         quality: 0.2,
       }),
     ];

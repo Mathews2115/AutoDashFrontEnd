@@ -1,11 +1,6 @@
-import { DEFAULT_COLORS } from "../appConfig";
+import { DARK_THEME, LIGHT_THEME } from "../appConfig";
 
-const theme = {
-  gaugeBgColor: DEFAULT_COLORS.gaugeBgColor,
-  gaugeActiveColor: DEFAULT_COLORS.gaugeActiveColor,
-  dangerColor: DEFAULT_COLORS.dangerColor,
-  warningColor: DEFAULT_COLORS.warningColor,
-  nominalColor: DEFAULT_COLORS.nominalColor,
-};
+// const theme = DARK_THEME;
+const theme = LIGHT_THEME;
 
 export default theme;
