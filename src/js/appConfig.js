@@ -71,7 +71,7 @@ export const SPEEDO_CONFIG = {
 }
 
 export const DARK_THEME = {
-  gaugeBgColor: 0x414141,
+  gaugeBgColor: 0x383838,
   gaugeActiveColor: 0xffffff,
   dangerColor: 0xf00000,
   warningColor: 0xff7c00,
