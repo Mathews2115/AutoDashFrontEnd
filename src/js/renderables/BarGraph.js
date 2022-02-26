@@ -50,16 +50,16 @@ class BarGraph extends Renderable {
     this.gaugeActive.position.set(this.gaugeWidth, this.gaugeHeight);
     this.gaugeActive.angle = 180;
 
-    this.gaugeActive.filters = [
-      new GlowFilter({
-        distance: 8,
-        outerStrength: 1,
-        innerStrength: 0,
-        // color: 0xf0f0f0,
-        color: this.theme.gaugeActiveColor,
-        quality: 0.2,
-      }),
-    ];
+    // this.gaugeActive.filters = [
+    //   new GlowFilter({
+    //     distance: 8,
+    //     outerStrength: 1,
+    //     innerStrength: 0,
+    //     // color: 0xf0f0f0,
+    //     color: this.theme.gaugeActiveColor,
+    //     quality: 0.2,
+    //   }),
+    // ];
 
     PIXI.Ticker.shared.addOnce(() => {
       // bake in the final transform area

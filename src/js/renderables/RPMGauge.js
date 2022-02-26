@@ -172,7 +172,7 @@ class RPMGauge extends Renderable {
 
   update() {
     if (this._value != this.renderedValue) {
-      this.activeContainer.filters = [this.activeFilter];
+      //this.activeContainer.filters = [this.activeFilter];
       this.foregroundSprite.texture = this.activeTexture;
 
       this.gaugeStencil.scale.set(1, this._value / RPM_CONFIG.MAX);

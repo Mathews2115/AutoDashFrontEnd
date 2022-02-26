@@ -159,7 +159,7 @@ class SpeedoSweep extends Renderable {
     this.activeContainer = new PIXI.Container();
     this.activeContainer.addChild(this.foregroundSprite);
     this.activeContainer.mask = this.gaugeStencil; // set foreground stenciling for when guage "grows" and "shrinks"
-    this.activeContainer.filters = [this.activeFilter];
+    // this.activeContainer.filters = [this.activeFilter];
     this.addChild(this.gaugeStencil, this.activeContainer);
 
    PIXI.Ticker.shared.addOnce(() => {
@@ -170,7 +170,7 @@ class SpeedoSweep extends Renderable {
 
   update() {
     if (this._value != this.renderedValue) {
-      this.activeContainer.filters = [this.activeFilter];
+      // this.activeContainer.filters = [this.activeFilter];
       this.foregroundSprite.texture = this.activeTexture;
 
       this.gaugeStencil.scale.set(this._value / SPEEDO_CONFIG.MAX, 1);
