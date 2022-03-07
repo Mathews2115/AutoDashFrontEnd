@@ -1,5 +1,4 @@
 import * as PIXI from "pixi.js";
-import theme from "../common/theme";
 
 export const RENDER_KEYS = {
   RPM_GAUGE: 0,
@@ -13,13 +12,13 @@ export const RENDER_KEYS = {
   MPG_READOUT: 8,
   AVG_MPG_READOUT: 9,
   AVG_MPG_HISTOGRAM: 10,
-}
+};
 
 export class Renderables extends Array {
   /**
    * @param {Object} options
    * @param {PIXI.Renderer} options.renderer
-   * @param {theme} options.theme
+   * @param {import("../appConfig").ThemeData} options.theme
    */
   constructor({ renderer, theme }) {
     super();
@@ -30,12 +29,20 @@ export class Renderables extends Array {
   createRenderable(RenderableClass, options = {}) {
     options = Object.assign({}, options, {
       renderer: this.renderer,
-      theme: this.theme
+      theme: this.theme,
     });
     const renderable = new RenderableClass(options);
     return (this[renderable.dashID] = renderable);
   }
-
+  /**
+   * @param {import("../appConfig").ThemeData} theme
+   */
+  refresh(theme) {
+    this.forEach((renderable) => {
+      renderable.theme = this.theme;
+      renderable.initialize(theme);
+    });
+  }
   initializeAll() {
     this.forEach((renderable) => renderable.initialize());
   }

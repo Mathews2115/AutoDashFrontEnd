@@ -36,7 +36,7 @@ class MpgHistogram extends Renderable {
     if (newValue) this._value = newValue;
   }
 
-  initialize() {
+  initialize() {  
     this.background.clear();
     this.background
       .beginFill(this.backgroundColor)

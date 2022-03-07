@@ -4,7 +4,6 @@ import { DashApp } from "./js/app";
 import { SCREEN } from "./js/appConfig";
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin.js";
-import theme from "./js/common/theme";
 
 delete PIXI.Renderer.__plugins.interaction; // removing the interactoins manager; we dont need it
 // it also adds another RAF, which we dont need
@@ -13,7 +12,7 @@ delete PIXI.Renderer.__plugins.interaction; // removing the interactoins manager
 gsap.registerPlugin(PixiPlugin);
 // give the plugin a reference to the PIXI object
 PixiPlugin.registerPIXI(PIXI);
-gsap.ticker.fps(45);
+gsap.ticker.fps(60);
 
 const ticker = PIXI.Ticker.shared;
 // Set this to prevent starting this ticker when listeners are added.
@@ -28,7 +27,6 @@ ticker.stop();
 const renderer = new PIXI.Renderer({
   width: SCREEN.WIDTH,
   height: SCREEN.HEIGHT,
-  backgroundColor: theme.backgroundColor,
 });
 const dash = new DashApp(renderer);
 const dataWorker = new Worker(new URL('./js/comms/drawDataWorker.js', import.meta.url));

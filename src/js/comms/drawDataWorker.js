@@ -23,12 +23,12 @@ const createWS = () => {
     dataStore.setWarning(WARNING_KEYS.COMM_ERROR, true);
   })
 
-  ws.addEventListener("message", (evt) => parsePacket(evt));
+  ws.addEventListener("message", (/** @type {{ data: ArrayBuffer; }} */ evt) => parsePacket(evt));
   return ws;
 };
 
 /**
- * 
+ * These Byte offsets MUST match PacketEntry.js from AutoDashBackEnd
  * @param {DataView} data 
  */
 const parseData = (data) => {

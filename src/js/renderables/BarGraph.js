@@ -15,56 +15,60 @@ class BarGraph extends Renderable {
 
   constructor({ renderer, theme, width, height, maxValue=BAR_MAX}) {
     super({ renderer, theme });
-    this.activeColor = theme.gaugeActiveColor;
-    this.backgroundColor = theme.gaugeBgColor;
     this._value = maxValue;
     this.renderedValue = this._value;
     this.gaugeHeight = height;
     this.gaugeWidth = width;
     this.maxValue = maxValue;
     this.gsapTimeline = gsap.timeline();
+    this.background = new Graphics();
+    this.gaugeActive = new Graphics();
   }
 
+  /**
+   * @param {Number} newValue
+   */
   set value(newValue) {
-    this._value = Math.min(Math.max(newValue || BAR_MIN), BAR_MAX);
+    this._value = Math.min(Math.max(newValue || BAR_MIN), this.maxValue);
   }
 
   initialize() {
-    const background = new Graphics();
-    background
-      .beginFill(this.backgroundColor)
-      .lineStyle(0)
-      .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
-      .endFill();
-    this.addChild(background);
-
-    this.gaugeActive = new Graphics();
-    this.gaugeActive
-      .beginFill(this.activeColor)
-      .lineStyle(0)
-      .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
-      .endFill();
-    this.addChild(this.gaugeActive);
-
-    // set the rotate this puppy so we can scale it up and down
-    this.gaugeActive.position.set(this.gaugeWidth, this.gaugeHeight);
-    this.gaugeActive.angle = 180;
-
+    // commented these out for now; my current implementation performs horrid on the RPI
     // this.gaugeActive.filters = [
     //   new GlowFilter({
     //     distance: 8,
     //     outerStrength: 1,
     //     innerStrength: 0,
     //     // color: 0xf0f0f0,
-    //     color: this.theme.gaugeActiveColor,
+    //     color: this.gaugeActiveColor,
     //     quality: 0.2,
     //   }),
     // ];
 
-    PIXI.Ticker.shared.addOnce(() => {
-      // bake in the final transform area
-      this.gaugeActive.filterArea = this.getBounds();
-    });
+    this.activeColor = this.theme.gaugeActiveColor;
+    this.backgroundColor = this.theme.gaugeBgColor;
+    this.background
+      .beginFill(this.backgroundColor)
+      .lineStyle(0)
+      .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
+      .endFill();
+    this.gaugeActive
+      .beginFill(this.activeColor)
+      .lineStyle(0)
+      .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
+      .endFill();
+
+    // set the rotate this puppy so we can scale it up and down
+    this.gaugeActive.position.set(this.gaugeWidth, this.gaugeHeight);
+    this.gaugeActive.angle = 180;
+ 
+    this.addChild(this.background, this.gaugeActive);
+
+    // Filter/Glow functionality
+    // PIXI.Ticker.shared.addOnce(() => {
+    //   // bake in the final transform area
+    //   this.gaugeActive.filterArea = this.getBounds();
+    // });
   }
 
   update() {

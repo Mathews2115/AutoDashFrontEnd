@@ -1,12 +1,17 @@
-// ideas - keep track of background, active, etc colors!
-// redraw if theme change
-// TODO: make this be the one that contructs the scene
-
 import * as PIXI from "pixi.js";
 import layoutManager from "./layoutManager";
 import { DATA_KEYS, WARNING_KEYS } from "./common/dataMap";
 import { GlitchFilter } from "@pixi/filter-glitch";
+import { THEMES } from "./common/theme";
 // import FPSTextField from "./renderables/FPSTextField";
+
+
+/**
+ * @typedef Theme
+ * @type {object}
+ * @property {import("./appConfig").ThemeData} current
+ * @property {null|import("./appConfig").ThemeData} changeRequested
+ */
 
 const glitchFilter = new GlitchFilter({
   slices: 10,
@@ -26,20 +31,38 @@ export class DashApp {
    * @param { PIXI.Renderer } renderer
    */
   constructor(renderer) {
+    /**
+     * @type {Theme}
+     */
+    this.theme = {
+      changeRequested: null,
+      current: THEMES.dark
+    }
+    renderer.backgroundColor = this.theme.current.backgroundColor;
     this.renderer = renderer;
     this.stage = new PIXI.Container();
     this.stage.interactiveChildren = false; // dont bother checking anyone for interactions
-    this.layoutManager = layoutManager(this);
+    this.layoutManager = layoutManager({
+      renderer: renderer,
+      stage: this.stage,
+      theme: this.theme.current
+    });
     this.state = (/** @type {Object} */ updatedGaugeData) => {};
   }
 
   initialize() {
-    this.layoutManager.renderables.initializeAll();
     this.layoutManager.createLayout();
     // this.stage.addChild(new FPSTextField());
     // start rendering
     this.state = this.stateStartup;
   }
+
+  onThemeChange() {
+    this.theme.current = this.theme.changeRequested || THEMES.dark;
+    this.theme.changeRequested = null;
+    this.renderer.backgroundColor = this.theme.current.backgroundColor;
+    this.layoutManager.refresh(this.theme.current);
+  };
 
   update(updatedGaugeData) {
     this.state(updatedGaugeData);
@@ -55,6 +78,10 @@ export class DashApp {
     this.layoutManager.renderables.forEach(renderable => {
       renderable.value = renderable.dataKey != undefined ? updatedGaugeData[renderable.dataKey] : updatedGaugeData;
     });
+
+    if (this.theme.changeRequested) {
+      this.onThemeChange();
+    }
 
     this.layoutManager.renderables.updateAll();
     let commError = updatedGaugeData[DATA_KEYS.WARNINGS] & (128 >> WARNING_KEYS.COMM_ERROR  % 8)

@@ -1,9 +1,10 @@
 import * as PIXI from "pixi.js";
-import { GlowFilter } from "@pixi/filter-glow";
+// import { GlowFilter } from "@pixi/filter-glow";
 import { SCREEN, SPEEDO_CONFIG } from "../appConfig";
 import { DATA_KEYS } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
+import { gsap } from "gsap";
 
 const SEGEMENT_PADDING = 4;
 const ID = RENDER_KEYS.SPEEDO_SWEEP;
@@ -20,11 +21,14 @@ class SpeedoSweep extends Renderable {
 
     this._value = SPEEDO_CONFIG.MAX;
     this.renderedValue = this._value;
-
+    this.gsapTimeline = gsap.timeline();
+    this.foregroundSprite = null;
     this._foregroundTextures = new Array(3);
-    this._storedfilters = new Array(3);
     this._activeColors = new Array(3);
     this._gaugeDisplayState = STATE_ENUM.DANGER;
+    this.background = new PIXI.Graphics();
+    this.gaugeStencil = new PIXI.Graphics();
+    this.foreground = new PIXI.Graphics();
   }
 
   // the data store values we want to listen too
@@ -32,6 +36,9 @@ class SpeedoSweep extends Renderable {
     return DATA_KEYS.GPS_SPEEED;
   }
 
+  /**
+   * @param {number} newValue
+   */
   set value(newValue) {
     if (newValue == null || newValue < SPEEDO_CONFIG.MIN) {
       this._value = SPEEDO_CONFIG.MIN;
@@ -53,10 +60,6 @@ class SpeedoSweep extends Renderable {
     return this._activeColors[this._gaugeDisplayState];
   }
 
-  get activeFilter() {
-    return this._storedfilters[this._gaugeDisplayState];
-  }
-
   get activeTexture() {
     return this._foregroundTextures[this._gaugeDisplayState];
   }
@@ -69,6 +72,7 @@ class SpeedoSweep extends Renderable {
   }
 
   initialize() {
+    this.resetTextures();
     const segments = SPEEDO_CONFIG.SEGMENTS;
     // colors
     this._activeColors[STATE_ENUM.NORMAL] = this.theme.gaugeActiveColor;
@@ -76,8 +80,8 @@ class SpeedoSweep extends Renderable {
     this._activeColors[STATE_ENUM.DANGER] = this.theme.dangerColor;
 
     // magic numbers in here, chooching pixels to make it look decent
-    const background = new PIXI.Graphics();
-    background
+
+    this.background
       .beginFill(0xffffff)
       .lineStyle(0)
       .drawPolygon([
@@ -91,91 +95,71 @@ class SpeedoSweep extends Renderable {
       .endFill();
 
     ///////// background shape
-    background.tint = this.theme.gaugeBgColor;
-    this.addChild(background);
+    this.background.tint = this.theme.gaugeBgColor;
+    this.addChild(this.background);
 
     //////// foreground shape
-    const foreground = new PIXI.Graphics();
-
-    foreground.beginFill(0xffffff).lineStyle(0);
+    this.foreground.beginFill(0xffffff).lineStyle(0);
     for (let index = 0; index < segments; index++) {
-      foreground.drawRect(
+      this.foreground.drawRect(
         SCREEN.SPEEDO_SEGMENT_WIDTH * index, 0, 
         SCREEN.SPEEDO_SEGMENT_WIDTH - (index == segments - 1 ? 0 : SEGEMENT_PADDING), this.gaugeHeight
       );
     }
-    foreground.endFill();
-    foreground.mask = new PIXI.Graphics(background.geometry);
+    this.foreground.endFill();
+    this.foreground.mask = new PIXI.Graphics(this.background.geometry);
 
     // create normal sprite
-    foreground.tint = this.theme.gaugeActiveColor;
+    this.foreground.tint = this.theme.gaugeActiveColor;
     this._foregroundTextures[STATE_ENUM.NORMAL] = this.appRenderer.generateTexture(
-      foreground
+      this.foreground
     );
 
     // create warning sprite
-    foreground.tint = this.theme.warningColor;
+    this.foreground.tint = this.theme.warningColor;
     this._foregroundTextures[
       STATE_ENUM.WARNING
-    ] = this.appRenderer.generateTexture(foreground);
+    ] = this.appRenderer.generateTexture(this.foreground);
 
     // create danger sprite
-    foreground.tint = this.theme.dangerColor;
+    this.foreground.tint = this.theme.dangerColor;
     this._foregroundTextures[STATE_ENUM.DANGER] = this.appRenderer.generateTexture(
-      foreground
+      this.foreground
     );
-    foreground.mask.destroy(true);
-    foreground.destroy(true); // remove grafic ref and cache texture
+    this.foreground.mask.destroy(true);
+    this.foreground.destroy(true); // remove grafic ref and cache texture
 
     this.foregroundSprite = new PIXI.Sprite(
       this._foregroundTextures[STATE_ENUM.DANGER]
     );
-
-    ////////// FILTERS
-    this._storedfilters[STATE_ENUM.NORMAL] = new GlowFilter({
-      distance: 8,
-      outerStrength: 1,
-      innerStrength: 0,
-      color: this._activeColors[STATE_ENUM.NORMAL],
-      quality: 0.2,
-    });
-    this._storedfilters[STATE_ENUM.WARNING] = new GlowFilter({
-      distance: 8,
-      outerStrength: 1,
-      innerStrength: 0,
-      color: this._activeColors[STATE_ENUM.WARNING],
-      quality: 0.2,
-    });
-    this._storedfilters[STATE_ENUM.DANGER] = new GlowFilter({
-      distance: 8,
-      outerStrength: 1,
-      innerStrength: 0,
-      color: this._activeColors[STATE_ENUM.DANGER],
-      quality: 0.2,
-    });
-
-    this.gaugeStencil = new PIXI.Graphics();
+    
     this.gaugeStencil.drawRect(0, 0, this.gaugeWidth, this.gaugeHeight);
     this.activeContainer = new PIXI.Container();
     this.activeContainer.addChild(this.foregroundSprite);
     this.activeContainer.mask = this.gaugeStencil; // set foreground stenciling for when guage "grows" and "shrinks"
-    // this.activeContainer.filters = [this.activeFilter];
     this.addChild(this.gaugeStencil, this.activeContainer);
-
-   PIXI.Ticker.shared.addOnce(() => {
-      // bake in the final transform area
-      this.activeContainer.filterArea = this.getBounds(); // optimize and save off filtered area
-    });
   }
 
   update() {
     if (this._value != this.renderedValue) {
-      // this.activeContainer.filters = [this.activeFilter];
       this.foregroundSprite.texture = this.activeTexture;
-
-      this.gaugeStencil.scale.set(this._value / SPEEDO_CONFIG.MAX, 1);
-
+      this.gsapTimeline.clear();
+      this.gsapTimeline.to(this.gaugeStencil.scale, {duration: 0.15, x: this._value / SPEEDO_CONFIG.MAX});
+      // this.gaugeStencil.scale.set(this._value / SPEEDO_CONFIG.MAX, 1);
       this.renderedValue = this._value;
+    }
+  }
+
+  resetTextures() {
+    if (this.initialized) {
+      this._foregroundTextures.forEach(texture => texture.destroy(true));
+      this._foregroundTextures = [];
+      this.foregroundSprite.destroy({children: true, texture: true, baseTexture: true});
+      this.foregroundSprite = null;
+      this.children.forEach((child) => {
+        child.destroy({children: true, texture: true, baseTexture: true});
+      });
+      this.removeChild(...this.children);
     }
   }
 }
