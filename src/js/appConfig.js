@@ -80,6 +80,7 @@ export const SPEEDO_CONFIG = {
  * @property {Number} warningColor
  * @property {Number} nominalColor
  * @property {Number} backgroundColor
+ * @property {Number} id
  */
 
 /**
@@ -92,6 +93,7 @@ export const DARK_THEME = {
   warningColor: 0xff7c00,
   nominalColor: 0x121be0,
   backgroundColor: 0x0,
+  id: 1
 };
 
 /**
@@ -104,4 +106,5 @@ export const LIGHT_THEME = {
   warningColor: 0xff7c00,
   nominalColor: 0x121be0,
   backgroundColor: 0xffffff,
+  id: 0,
 };

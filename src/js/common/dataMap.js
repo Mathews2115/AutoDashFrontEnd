@@ -43,6 +43,7 @@ export const DATA_KEYS = {
   AVERAGE_MPG: keygen(),
   AVERAGE_MPG_POINTS: keygen(),
   AVERAGE_MPG_POINT_INDEX: keygen(),
+  LOW_LIGHT_DETECTED: keygen(),
 
   //
   MAX_AVERAGE_POINTS: 100, // make sure this is the same as in PacketEntry.js
@@ -67,7 +68,7 @@ export const WARNING_KEYS = {
 export const createDataStore = () => {
   let dataStore = [];
   for (const [_key, value] of Object.entries(DATA_KEYS)) {
-    dataStore[value] = null;
+    dataStore[value] = 0;
   }
 
   /**

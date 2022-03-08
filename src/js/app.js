@@ -36,8 +36,8 @@ export class DashApp {
      */
     this.theme = {
       changeRequested: null,
-      current: THEMES.dark
-    }
+      current: THEMES.light,
+    };
     renderer.backgroundColor = this.theme.current.backgroundColor;
     this.renderer = renderer;
     this.stage = new PIXI.Container();
@@ -45,7 +45,7 @@ export class DashApp {
     this.layoutManager = layoutManager({
       renderer: renderer,
       stage: this.stage,
-      theme: this.theme.current
+      theme: this.theme.current,
     });
     this.state = (/** @type {Object} */ updatedGaugeData) => {};
   }
@@ -55,9 +55,6 @@ export class DashApp {
     // this.stage.addChild(new FPSTextField());
     // start rendering
     PIXI.Ticker.shared.addOnce(() => {
-      // setTimeout(() => {
-      //   this.theme.changeRequested = THEMES.light;
-      //   }, 4000);
       setTimeout(() => {
         this.state = this.stateRunning;
       }, 1000);
@@ -70,21 +67,32 @@ export class DashApp {
     this.theme.changeRequested = null;
     this.renderer.backgroundColor = this.theme.current.backgroundColor;
     this.layoutManager.refresh(this.theme.current);
-  };
+  }
 
   update(updatedGaugeData) {
+    if (
+      updatedGaugeData[DATA_KEYS.LOW_LIGHT_DETECTED] != null &&
+      this.theme.current.id != updatedGaugeData[DATA_KEYS.LOW_LIGHT_DETECTED]
+    ) {
+      //currently, using the IDs 0 and 1 to represent true/false if LOW LIGHT MODE
+      this.theme.changeRequested = updatedGaugeData[ DATA_KEYS.LOW_LIGHT_DETECTED] ? THEMES.dark : THEMES.light;
+    }
+
     this.state(updatedGaugeData);
     this.renderer.render(this.stage);
   }
 
   /**
    * Main state of the app; shows all the gauges
-   * @param {Array} updatedGaugeData 
+   * @param {Array} updatedGaugeData
    */
   stateRunning(updatedGaugeData) {
-    DATA_KEYS
-    this.layoutManager.renderables.forEach(renderable => {
-      renderable.value = renderable.dataKey != undefined ? updatedGaugeData[renderable.dataKey] : updatedGaugeData;
+    DATA_KEYS;
+    this.layoutManager.renderables.forEach((renderable) => {
+      renderable.value =
+        renderable.dataKey != undefined
+          ? updatedGaugeData[renderable.dataKey]
+          : updatedGaugeData;
     });
 
     if (this.theme.changeRequested) {
@@ -92,7 +100,7 @@ export class DashApp {
     }
 
     this.layoutManager.renderables.updateAll();
-    
+
     // let commError = updatedGaugeData[DATA_KEYS.WARNINGS] & (128 >> WARNING_KEYS.COMM_ERROR  % 8)
     // if (commError && !this.stage.filters) {
     //   // this.stage.filters = [glitchFilter];
@@ -100,7 +108,7 @@ export class DashApp {
     // } else if(glitchinterval && !commError) {
     //   clearTimeout(glitchinterval);
     //   this.stage.filters = null;
-    // }     
+    // }
   }
 
   /**

@@ -4,6 +4,19 @@ import { createDataStore, DATA_KEYS, WARNING_KEYS } from "../common/dataMap";
 import RingBuffer from "../common/ringBuffer";
 
 const dataStore = createDataStore();
+
+// Testing some data readouts
+// dataStore.set(DATA_KEYS.RPM, 4500);
+// const data = new Uint8Array(100);
+// for(let i = 0; i < 100; i++){
+//   data[i] = Math.random() * 25;
+// }
+// dataStore.set(DATA_KEYS.CURRENT_MPG, 12);
+// dataStore.set(DATA_KEYS.AVERAGE_MPG, 6);
+// dataStore.set(DATA_KEYS.GPS_SPEEED, 65);
+// dataStore.set(DATA_KEYS.ODOMETER, 62636);
+// dataStore.set(DATA_KEYS.AVERAGE_MPG_POINTS, new RingBuffer(data.buffer, 0, 100, 1));
+
 RobustWebSocket.prototype.binaryType = 'arraybuffer';
 const createWS = () => {
   dataStore.setWarning(WARNING_KEYS.COMM_ERROR, true);
@@ -54,6 +67,7 @@ const parseData = (data) => {
     dataStore.set(DATA_KEYS.CURRENT_MPG, data.getFloat32(41));
     dataStore.set(DATA_KEYS.AVERAGE_MPG, data.getFloat32(45));
     dataStore.set(DATA_KEYS.AVERAGE_MPG_POINTS, new RingBuffer(data.buffer, 49, 100, data.getInt8(149)));
+    dataStore.set(DATA_KEYS.LOW_LIGHT_DETECTED, data.getInt8(150));
   } catch (error) {
     console.error(error);
   }
