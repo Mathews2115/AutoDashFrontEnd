@@ -29,6 +29,7 @@ class RPMGauge extends Renderable {
   }
 
   initialize() {
+    this.renderedValue = null;
     // colors
     this._activeColors[STATE_ENUM.NORMAL] = this.theme.gaugeActiveColor;
     this._activeColors[STATE_ENUM.WARNING] = this.theme.warningColor;

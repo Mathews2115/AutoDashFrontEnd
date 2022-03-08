@@ -54,6 +54,14 @@ export class DashApp {
     this.layoutManager.createLayout();
     // this.stage.addChild(new FPSTextField());
     // start rendering
+    PIXI.Ticker.shared.addOnce(() => {
+      // setTimeout(() => {
+      //   this.theme.changeRequested = THEMES.light;
+      //   }, 4000);
+      setTimeout(() => {
+        this.state = this.stateRunning;
+      }, 1000);
+    });
     this.state = this.stateStartup;
   }
 
@@ -84,14 +92,15 @@ export class DashApp {
     }
 
     this.layoutManager.renderables.updateAll();
-    let commError = updatedGaugeData[DATA_KEYS.WARNINGS] & (128 >> WARNING_KEYS.COMM_ERROR  % 8)
-    if (commError && !this.stage.filters) {
-      // this.stage.filters = [glitchFilter];
-      // refreshGlitch();
-    } else if(glitchinterval && !commError) {
-      clearTimeout(glitchinterval);
-      this.stage.filters = null;
-    }     
+    
+    // let commError = updatedGaugeData[DATA_KEYS.WARNINGS] & (128 >> WARNING_KEYS.COMM_ERROR  % 8)
+    // if (commError && !this.stage.filters) {
+    //   // this.stage.filters = [glitchFilter];
+    //   // refreshGlitch();
+    // } else if(glitchinterval && !commError) {
+    //   clearTimeout(glitchinterval);
+    //   this.stage.filters = null;
+    // }     
   }
 
   /**
@@ -99,9 +108,6 @@ export class DashApp {
    */
   stateStartup(_updatedGaugeData) {
     this.layoutManager.renderables.updateAll();
-    setTimeout(() => {
-      this.state = this.stateRunning;
-    }, 1000);
   }
 
   stateShutdown(updatedGaugeData) {

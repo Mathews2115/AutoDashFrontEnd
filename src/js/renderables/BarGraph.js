@@ -23,6 +23,7 @@ class BarGraph extends Renderable {
     this.gsapTimeline = gsap.timeline();
     this.background = new Graphics();
     this.gaugeActive = new Graphics();
+    this.addChild(this.background, this.gaugeActive);
   }
 
   /**
@@ -62,8 +63,6 @@ class BarGraph extends Renderable {
     this.gaugeActive.position.set(this.gaugeWidth, this.gaugeHeight);
     this.gaugeActive.angle = 180;
  
-    this.addChild(this.background, this.gaugeActive);
-
     // Filter/Glow functionality
     // PIXI.Ticker.shared.addOnce(() => {
     //   // bake in the final transform area

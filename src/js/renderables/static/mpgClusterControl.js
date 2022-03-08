@@ -7,7 +7,7 @@ import { RENDER_KEYS } from "../Renderables";
 import SpeedoSweep from "../SpeedoSweep";
 import speedoClusterControl from "./speedoClusterControl";
 
-const mpgLogoSprite =  new PIXI.Sprite();
+const mpgLogoSprite = new PIXI.Sprite();
 /**
  * @type {PIXI.BitmapText}
  */
@@ -22,16 +22,24 @@ const createMpyLogo = ({ renderer, theme, mpgClusterWidth }) => {
   logo
     .beginFill(theme.gaugeActiveColor)
     .drawPolygon([
-      0,  0,
-      0, SCREEN.PADDING,
-      firstEnd, SCREEN.PADDING,
-      firstEnd, 0,
+      0,
+      0,
+      0,
+      SCREEN.PADDING,
+      firstEnd,
+      SCREEN.PADDING,
+      firstEnd,
+      0,
     ])
     .drawPolygon([
-      secondStart, 0,
-      secondStart, SCREEN.PADDING,
-      totalWidth, SCREEN.PADDING,
-      totalWidth, 0,
+      secondStart,
+      0,
+      secondStart,
+      SCREEN.PADDING,
+      totalWidth,
+      SCREEN.PADDING,
+      totalWidth,
+      0,
     ])
     .endFill();
 
@@ -72,12 +80,12 @@ const mpgClusterControl = {
     mpgClusterWidth = fuelGauge.x - mpgClusterX - 3 * SCREEN.PADDING;
 
     mpgLogoSprite.texture = createMpyLogo({ renderer, theme, mpgClusterWidth });
-    
+
     mpgLogoSprite.x = mpgClusterX;
     mpgLogoSprite.y = SCREEN.PADDING;
     const mpgClusterY = mpgLogoSprite.y + mpgLogoSprite.height + SCREEN.PADDING;
 
-// ---- histogram
+    // ---- histogram
     /** @type {MpgHistogram} */
     const mpgHistogram = renderables[RENDER_KEYS.AVG_MPG_HISTOGRAM];
     // HACK ALERT: lol, here is me re-calling init again because I engineered myself in a corner....
@@ -110,7 +118,8 @@ const mpgClusterControl = {
     avgMpgText.x = mpgClusterX;
     avgMpgText.y = readoutY;
     // center it under the text
-    averageMpgReadout.x = avgMpgText.x + avgMpgText.width / 2 - averageMpgReadout.width / 2;
+    averageMpgReadout.x =
+      avgMpgText.x + avgMpgText.width / 2 - averageMpgReadout.width / 2;
     averageMpgReadout.y = avgMpgText.y + avgMpgText.height + 10;
 
     // current
@@ -127,8 +136,8 @@ const mpgClusterControl = {
     currentMpgReadout.x = currentMpgText.x;
     currentMpgReadout.y = currentMpgText.y + currentMpgText.height + 10;
     return [
-      mpgLogoSprite, 
-      mpgHistogram, 
+      mpgLogoSprite,
+      mpgHistogram,
       mpgGauge,
       avgMpgText,
       averageMpgReadout,
@@ -139,9 +148,18 @@ const mpgClusterControl = {
   refresh: ({ renderables, theme, renderer }) => {
     mpgLogoSprite.texture.destroy();
     mpgLogoSprite.texture = createMpyLogo({ renderer, theme, mpgClusterWidth });
-    
+
     avgMpgText.tint = theme.gaugeActiveColor;
     currentMpgText.tint = theme.gaugeActiveColor;
+
+    // center it under the text
+    const averageMpgReadout = renderables[RENDER_KEYS.AVG_MPG_READOUT];
+    averageMpgReadout.x =
+      avgMpgText.x + avgMpgText.width / 2 - averageMpgReadout.width / 2;
+    averageMpgReadout.y = avgMpgText.y + avgMpgText.height + 10;
+    const currentMpgReadout = renderables[RENDER_KEYS.MPG_READOUT];
+    currentMpgReadout.x = currentMpgText.x;
+    currentMpgReadout.y = currentMpgText.y + currentMpgText.height + 10;
   },
 };
 

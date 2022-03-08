@@ -50,6 +50,7 @@ class MediumReadout extends Renderable {
 
   resetTextures() {
     if (this.initialized) {
+      this.renderedValue = null;
       this.numberTextures.forEach(texture => texture.destroy(true));
       this.numberTextures = [];
       this.numberSprites.forEach(sprite => sprite.destroy(true));

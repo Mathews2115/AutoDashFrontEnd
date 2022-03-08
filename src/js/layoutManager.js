@@ -52,10 +52,7 @@ const createGauges = ({ renderables }) => {
  *  @param {import("./appConfig").ThemeData} config.theme
  */
 export default ({ renderer, stage, theme }) => {
-  const renderables = new Renderables({
-    renderer,
-    theme,
-  });
+  const renderables = new Renderables({ renderer, theme });
   createGauges({ renderables });
 
   const clusters = [
@@ -84,9 +81,7 @@ export default ({ renderer, stage, theme }) => {
      * @param {import("./appConfig").ThemeData} theme 
      */
     refresh: (theme) => {
-      renderables.forEach((renderable) => {
-        renderable.refresh(theme);
-      });
+      renderables.refreshAll(theme)
       clusters.forEach((renderable) => {
         renderable.refresh({ renderer, theme, renderables });
       });

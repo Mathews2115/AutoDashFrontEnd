@@ -28,7 +28,6 @@ class SpeedoSweep extends Renderable {
     this._gaugeDisplayState = STATE_ENUM.DANGER;
     this.background = new PIXI.Graphics();
     this.gaugeStencil = new PIXI.Graphics();
-    this.foreground = new PIXI.Graphics();
   }
 
   // the data store values we want to listen too
@@ -81,6 +80,7 @@ class SpeedoSweep extends Renderable {
 
     // magic numbers in here, chooching pixels to make it look decent
 
+    this.background = new PIXI.Graphics();
     this.background
       .beginFill(0xffffff)
       .lineStyle(0)
@@ -99,6 +99,7 @@ class SpeedoSweep extends Renderable {
     this.addChild(this.background);
 
     //////// foreground shape
+    this.foreground = new PIXI.Graphics();
     this.foreground.beginFill(0xffffff).lineStyle(0);
     for (let index = 0; index < segments; index++) {
       this.foreground.drawRect(
@@ -133,11 +134,13 @@ class SpeedoSweep extends Renderable {
       this._foregroundTextures[STATE_ENUM.DANGER]
     );
     
+    this.gaugeStencil = new PIXI.Graphics();
     this.gaugeStencil.drawRect(0, 0, this.gaugeWidth, this.gaugeHeight);
     this.activeContainer = new PIXI.Container();
     this.activeContainer.addChild(this.foregroundSprite);
     this.activeContainer.mask = this.gaugeStencil; // set foreground stenciling for when guage "grows" and "shrinks"
     this.addChild(this.gaugeStencil, this.activeContainer);
+    this.initialized = true;
   }
 
   update() {
@@ -152,6 +155,8 @@ class SpeedoSweep extends Renderable {
 
   resetTextures() {
     if (this.initialized) {
+      this.renderedValue = null;
+      this.gsapTimeline.clear();
       this._foregroundTextures.forEach(texture => texture.destroy(true));
       this._foregroundTextures = [];
       this.foregroundSprite.destroy({children: true, texture: true, baseTexture: true});

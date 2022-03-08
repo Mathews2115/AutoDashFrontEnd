@@ -37,16 +37,21 @@ export class Renderables extends Array {
   /**
    * @param {import("../appConfig").ThemeData} theme
    */
-  refresh(theme) {
-    this.forEach((renderable) => {
-      renderable.theme = this.theme;
-      renderable.initialize(theme);
-    });
+  refreshAll(theme) {
+    this.theme = theme;
+    for(let i = 0; i < this.length; i++) {
+      this[i].theme = this.theme;
+      this[i].initialize()
+    }
   }
   initializeAll() {
-    this.forEach((renderable) => renderable.initialize());
+    for(let i = 0; i < this.length; i++) {
+      this[i].initialize();
+    }
   }
   updateAll() {
-    this.forEach((renderable) => renderable.update());
+    for(let i = 0; i < this.length; i++) {
+      this[i].update();
+    }
   }
 }

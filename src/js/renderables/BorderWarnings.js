@@ -196,6 +196,7 @@ class BorderWarnings extends Renderable {
   initialize() {
     this.drawBorders();
     this.drawTags();
+    
     if (!this.initialized) {
       // reminder: last added is the last drawn (painters algorithm)
       Object.values(this.tags)
