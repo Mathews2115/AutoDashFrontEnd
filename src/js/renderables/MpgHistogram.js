@@ -14,8 +14,8 @@ const ID = RENDER_KEYS.AVG_MPG_HISTOGRAM;
 class MpgHistogram extends Renderable {
   constructor({ renderer, theme }) {
     super({renderer, theme });
-    this.activeColor = theme.gaugeActiveColor;
-    this.backgroundColor = theme.gaugeBgColor;
+    this.activeColor = this.theme.gaugeActiveColor;
+    this.backgroundColor = this.theme.gaugeBgColor;
     /** @type {RingBuffer | Object} */
     this._value = {};
     this.renderedValue = this._value;
@@ -33,17 +33,20 @@ class MpgHistogram extends Renderable {
   }
 
   set value(newValue) {
-    if (newValue) this._value = newValue;
+    if (newValue != null) this._value = newValue;
   }
 
-  initialize() {
+  initialize() {  
+    this.renderedValue.frontOffset = null;
+    this.activeColor = this.theme.gaugeActiveColor;
+    this.backgroundColor = this.theme.gaugeBgColor;
+
     this.background.clear();
     this.background
       .beginFill(this.backgroundColor)
       .lineStyle(0)
       .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
       .endFill();
-    this.histogram.clear();
   }
 
   update() {
@@ -52,7 +55,7 @@ class MpgHistogram extends Renderable {
       // get points
       let points = [];    
       this._value.buffer.forEach((value, index) => {
-        points.push((index/100) * this.gaugeWidth);// x
+        points.push((index/DATA_KEYS.MAX_AVERAGE_POINTS) * this.gaugeWidth);// x
         points.push( this.gaugeHeight-((Math.min(FUEL_CONFIG.MAX_MPG,value)/FUEL_CONFIG.MAX_MPG) * this.gaugeHeight)); // y
       });
 

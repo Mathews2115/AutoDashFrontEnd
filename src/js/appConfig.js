@@ -70,6 +70,22 @@ export const SPEEDO_CONFIG = {
   SEGMENTS: SPEEDO_SEGMENTS
 }
 
+
+/**
+ * @typedef ThemeData
+ * @type {object}
+ * @property {Number} gaugeBgColor
+ * @property {Number} gaugeActiveColor
+ * @property {Number} dangerColor
+ * @property {Number} warningColor
+ * @property {Number} nominalColor
+ * @property {Number} backgroundColor
+ * @property {Number} id
+ */
+
+/**
+ * @type {ThemeData}
+ */
 export const DARK_THEME = {
   gaugeBgColor: 0x383838,
   gaugeActiveColor: 0xffffff,
@@ -77,8 +93,12 @@ export const DARK_THEME = {
   warningColor: 0xff7c00,
   nominalColor: 0x121be0,
   backgroundColor: 0x0,
+  id: 1
 };
 
+/**
+ * @type {ThemeData}
+ */
 export const LIGHT_THEME = {
   gaugeBgColor: 0xebebeb,
   gaugeActiveColor: 0x414141,
@@ -86,4 +106,5 @@ export const LIGHT_THEME = {
   warningColor: 0xff7c00,
   nominalColor: 0x121be0,
   backgroundColor: 0xffffff,
+  id: 0,
 };
