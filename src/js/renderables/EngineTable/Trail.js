@@ -42,7 +42,7 @@ export default class Trail extends SimpleRope {
     for (let i = 0; i < trailSize; i++) {
       points.push(new Point(0, 0));
     }
-    super(Texture.WHITE, points, 0.5);
+    super(Texture.WHITE, points, 0.2);
 
     this.points = points;
 
