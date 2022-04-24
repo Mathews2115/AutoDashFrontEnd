@@ -12,6 +12,11 @@ export const RENDER_KEYS = {
   MPG_READOUT: 8,
   AVG_MPG_READOUT: 9,
   AVG_MPG_HISTOGRAM: 10,
+  TARGET_AFR_READOUT: 11,
+  AVERAGE_AFR_READOUT: 12,
+  IGN_TIMING_READOUT: 13,
+  IGN_TIMING_MAP: 14,
+  MAP_READOUT: 15,
 };
 
 export class Renderables extends Array {
@@ -51,7 +56,7 @@ export class Renderables extends Array {
   }
   updateAll() {
     for(let i = 0; i < this.length; i++) {
-      this[i].update();
+      this[i].update(Date.now());
     }
   }
 }

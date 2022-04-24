@@ -3,6 +3,7 @@ import layoutManager from "./layoutManager";
 import { DATA_KEYS, WARNING_KEYS } from "./common/dataMap";
 import { GlitchFilter } from "@pixi/filter-glitch";
 import { THEMES } from "./common/theme";
+import { SCREEN } from "./appConfig";
 // import FPSTextField from "./renderables/FPSTextField";
 
 
@@ -41,10 +42,15 @@ export class DashApp {
     renderer.backgroundColor = this.theme.current.backgroundColor;
     this.renderer = renderer;
     this.stage = new PIXI.Container();
+    this.leftScreen = new PIXI.Container();
+    this.rightScreen = new PIXI.Container();
+    this.leftScreen.y += SCREEN.HEIGHT; // screenplacement - make sure this matches up with renderwidth/height as well
+    this.stage.addChild(this.leftScreen, this.rightScreen);
     this.stage.interactiveChildren = false; // dont bother checking anyone for interactions
     this.layoutManager = layoutManager({
-      renderer: renderer,
-      stage: this.stage,
+      renderer: renderer, 
+      auxScreen: this.leftScreen,
+      gaugeScreen: this.rightScreen,
       theme: this.theme.current,
     });
     this.state = (/** @type {Object} */ updatedGaugeData) => {};

@@ -55,5 +55,9 @@ export default class Renderable extends Container {
     this.initialized = true;
   }
 
-  update() {}
+  /**
+   * Time to update the rendering logic!
+   * @param {Number} _timestamp the epoch time update was called
+   */
+  update(_timestamp) {}
 }

@@ -49,6 +49,7 @@ class RPMGauge extends Renderable {
 
     ///////// background shape
     background.tint = this.theme.gaugeBgColor;
+    background.cacheAsBitmap = true;
     this.addChild(background);
 
     ///////// foreground shape

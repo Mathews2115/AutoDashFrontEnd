@@ -25,8 +25,8 @@ ticker.stop();
 // RENDERER and TICKER
 // setup renderer and ticker
 const renderer = new PIXI.Renderer({
-  width: SCREEN.WIDTH,
-  height: SCREEN.HEIGHT,
+  width: SCREEN.WIDTH, // two screens
+  height: SCREEN.HEIGHT*2,
 });
 const dash = new DashApp(renderer);
 const dataWorker = new Worker(new URL('./js/comms/drawDataWorker.js', import.meta.url));
