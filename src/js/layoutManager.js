@@ -54,7 +54,7 @@ const createGauges = ({ renderables }) => {
   renderables.createRenderable(AvgAfrReadout);
   renderables.createRenderable(IgnTimingReadout);
   renderables.createRenderable(MAPReadout);
-  renderables.createRenderable(TimingGraph);
+  renderables.createRenderable(TimingGraph); 
 };
 /**
  *  @param {Object} config
