@@ -4,6 +4,7 @@ import AvgAfrReadout from "./renderables/AvgAfrReadout";
 import BorderWarnings from "./renderables/BorderWarnings";
 import CurrentMpgReadout from "./renderables/CurrentMpgReadout";
 import FuelGauge from "./renderables/FuelGauge";
+import FuelGraph from "./renderables/FuelGraph";
 import IgnTimingReadout from "./renderables/IgnTimingReadout";
 import MAPReadout from "./renderables/MAPReadout";
 import MpgGauge from "./renderables/MpgGauge";
@@ -54,7 +55,9 @@ const createGauges = ({ renderables }) => {
   renderables.createRenderable(AvgAfrReadout);
   renderables.createRenderable(IgnTimingReadout);
   renderables.createRenderable(MAPReadout);
-  renderables.createRenderable(TimingGraph); 
+  renderables.createRenderable(TimingGraph);
+
+  renderables.createRenderable(FuelGraph); 
 };
 /**
  *  @param {Object} config
@@ -97,15 +100,15 @@ export default ({ renderer, auxScreen, gaugeScreen, theme }) => {
       // });
 
       // TEST CODE
-      auxScreen.addChild(renderables[RENDER_KEYS.IGN_TIMING_READOUT]);
+      // auxScreen.addChild(renderables[RENDER_KEYS.IGN_TIMING_READOUT]);
       // auxScreen.addChild(renderables[RENDER_KEYS.AVERAGE_AFR_READOUT]);
       // auxScreen.addChild(renderables[RENDER_KEYS.TARGET_AFR_READOUT]);
-      auxScreen.addChild(renderables[RENDER_KEYS.MAP_READOUT]);
+      // auxScreen.addChild(renderables[RENDER_KEYS.MAP_READOUT]);
       auxScreen.addChild(renderables[RENDER_KEYS.IGN_TIMING_MAP]);
+      auxScreen.addChild(renderables[RENDER_KEYS.FUEL_MAP]);
 
       // renderables[RENDER_KEYS.AVERAGE_AFR_READOUT].x = 400;
-      renderables[RENDER_KEYS.IGN_TIMING_READOUT].x = 600;
-      renderables[RENDER_KEYS.MAP_READOUT].x = 800;
+      renderables[RENDER_KEYS.FUEL_MAP].x = 450;
     },
     /**
      * Refresh all things on screen with the new theme data

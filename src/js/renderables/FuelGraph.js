@@ -2,7 +2,7 @@ import { DATA_KEYS } from "../common/dataMap";
 import EngineTable from "./EngineTable/EngineTable";
 import { RENDER_KEYS } from "./Renderables";
 
-const ID = RENDER_KEYS.IGN_TIMING_MAP;
+const ID = RENDER_KEYS.FUEL_MAP;
 const MAX_RPM = 5000;
 const MAX_KPA = 100;
 const graphOptions = { 
@@ -10,13 +10,14 @@ const graphOptions = {
   maxYValue: MAX_KPA, 
   xKey: DATA_KEYS.RPM, 
   yKey: DATA_KEYS.MAP, 
-  valueKey: DATA_KEYS.IGNITION_TIMING
+  valueKey: DATA_KEYS.AFR_AVERAGE
 };
 const colorOptions = {
   chromaScale: ["red", "yellow", "blue"],
-  chromaDomain: [14, 25, 50]
+  chromaDomain: [10, 14, 20]
 }
-class TimingGraph extends EngineTable {
+
+class FuelGraph extends EngineTable {
   constructor({ renderer, theme }) {
     super({ renderer, theme }, graphOptions, colorOptions);
     this._dashID = ID;
@@ -30,5 +31,5 @@ class TimingGraph extends EngineTable {
   } 
 }
 
-TimingGraph.ID = ID;
-export default TimingGraph;
+FuelGraph.ID = ID;
+export default FuelGraph;

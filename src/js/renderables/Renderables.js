@@ -17,6 +17,7 @@ export const RENDER_KEYS = {
   IGN_TIMING_READOUT: 13,
   IGN_TIMING_MAP: 14,
   MAP_READOUT: 15,
+  FUEL_MAP: 16,
 };
 
 export class Renderables extends Array {

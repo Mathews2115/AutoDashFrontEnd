@@ -116,12 +116,12 @@ const createCellReadout = (i, j, activeColor) => {
 };
 
 class EngineTable extends Renderable {
-  constructor({ renderer, theme }, maxXValue, maxYValue, xKey, yKey, valueKey) {
+  constructor({ renderer, theme }, {maxXValue, maxYValue, xKey, yKey, valueKey}, {chromaScale, chromaDomain}) {
     super({ renderer, theme } );
 
     this.chromaScale = chroma
-      .scale(["red", "yellow", "blue"])
-      .domain([14, 25, 40]);
+      .scale(chromaScale)
+      .domain(chromaDomain);
 
     this.trail = new Trail({ trailSize: 50, historySize: 15, alpha: 0.3 });
 
