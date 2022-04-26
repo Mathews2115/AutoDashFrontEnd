@@ -21,6 +21,10 @@ import rpmClusterControl from "./renderables/static/rpmClusterControl";
 import speedoClusterControl from "./renderables/static/speedoClusterControl";
 import TargetAfrReadout from "./renderables/TargetAfrReadout";
 import TimingGraph from "./renderables/TimingGraph";
+import KPABar from "./renderables/EngineTable/KPAbar";
+import RPMBar from "./renderables/EngineTable/RPMBar";
+import EngineTable from "./renderables/EngineTable/EngineTable";
+import engineGraphsControl from "./renderables/static/engineGraphsControl";
 
 // PLEASE NOTE: all this is magic number stuff because I was in "EFF IT ILL DO IT LIVE" mode...
 // so...dont get all snooty when you look at this hot garbage while thinking "pssh, i cant believe he didn't use ALGORITHM_X to figure out the placement for everything"
@@ -56,7 +60,6 @@ const createGauges = ({ renderables }) => {
   renderables.createRenderable(IgnTimingReadout);
   renderables.createRenderable(MAPReadout);
   renderables.createRenderable(TimingGraph);
-
   renderables.createRenderable(FuelGraph); 
 };
 /**
@@ -78,7 +81,7 @@ export default ({ renderer, auxScreen, gaugeScreen, theme }) => {
   ];
 
   const auxScreenClusters = [
-
+    engineGraphsControl,
   ]
 
   return {
@@ -94,21 +97,10 @@ export default ({ renderer, auxScreen, gaugeScreen, theme }) => {
       });
       gaugeScreen.addChild(renderables[RENDER_KEYS.WARNING_BORDER]);
 
-      // auxScreenClusters.forEach((renderable) => {
-      //   const controls = renderable.create({ stage: auxScreen, renderer, theme, renderables });
-      //   auxScreen.addChild(...controls);
-      // });
-
-      // TEST CODE
-      // auxScreen.addChild(renderables[RENDER_KEYS.IGN_TIMING_READOUT]);
-      // auxScreen.addChild(renderables[RENDER_KEYS.AVERAGE_AFR_READOUT]);
-      // auxScreen.addChild(renderables[RENDER_KEYS.TARGET_AFR_READOUT]);
-      // auxScreen.addChild(renderables[RENDER_KEYS.MAP_READOUT]);
-      auxScreen.addChild(renderables[RENDER_KEYS.IGN_TIMING_MAP]);
-      auxScreen.addChild(renderables[RENDER_KEYS.FUEL_MAP]);
-
-      // renderables[RENDER_KEYS.AVERAGE_AFR_READOUT].x = 400;
-      renderables[RENDER_KEYS.FUEL_MAP].x = 450;
+      auxScreenClusters.forEach((renderable) => {
+        const controls = renderable.create({ stage: auxScreen, renderer, theme, renderables });
+        auxScreen.addChild(...controls);
+      });
     },
     /**
      * Refresh all things on screen with the new theme data
@@ -119,6 +111,9 @@ export default ({ renderer, auxScreen, gaugeScreen, theme }) => {
       clusters.forEach((renderable) => {
         renderable.refresh({ renderer, theme, renderables });
       });
+    },
+    updateAll: () => {
+      renderables.updateAll();
     }
   };
 };

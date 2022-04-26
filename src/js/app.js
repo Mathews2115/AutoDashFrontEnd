@@ -105,7 +105,7 @@ export class DashApp {
       this.onThemeChange();
     }
 
-    this.layoutManager.renderables.updateAll();
+    this.layoutManager.updateAll();
 
     // let commError = updatedGaugeData[DATA_KEYS.WARNINGS] & (128 >> WARNING_KEYS.COMM_ERROR  % 8)
     // if (commError && !this.stage.filters) {
@@ -121,7 +121,7 @@ export class DashApp {
    *  Start of the Dash; shows all gauges but each gauge is maxed out
    */
   stateStartup(_updatedGaugeData) {
-    this.layoutManager.renderables.updateAll();
+    this.layoutManager.updateAll();
   }
 
   stateShutdown(updatedGaugeData) {

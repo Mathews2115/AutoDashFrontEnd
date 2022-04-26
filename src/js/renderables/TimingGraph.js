@@ -21,13 +21,6 @@ class TimingGraph extends EngineTable {
     super({ renderer, theme }, graphOptions, colorOptions);
     this._dashID = ID;
   }
-
-  get gaugeWidth() {
-    return 400;
-  }
-  get gaugeHeight() {
-    return 380;
-  } 
 }
 
 TimingGraph.ID = ID;

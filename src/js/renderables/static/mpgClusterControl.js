@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+import { BitmapText, Container, Graphics } from "pixi.js";
 import { SCREEN } from "../../appConfig";
 import FuelGauge from "../FuelGauge";
 import MpgGauge from "../MpgGauge";
@@ -9,7 +10,7 @@ import speedoClusterControl from "./speedoClusterControl";
 
 const mpgLogoSprite = new PIXI.Sprite();
 /**
- * @type {PIXI.BitmapText}
+ * @type {BitmapText}
  */
 let avgMpgText, currentMpgText;
 let mpgClusterWidth = 0;
@@ -18,32 +19,24 @@ const createMpyLogo = ({ renderer, theme, mpgClusterWidth }) => {
   const totalWidth = mpgClusterWidth;
   const firstEnd = totalWidth * 0.25;
   const secondStart = totalWidth * 0.75;
-  const logo = new PIXI.Graphics();
+  const logo = new Graphics();
   logo
     .beginFill(theme.gaugeActiveColor)
     .drawPolygon([
-      0,
-      0,
-      0,
-      SCREEN.PADDING,
-      firstEnd,
-      SCREEN.PADDING,
-      firstEnd,
-      0,
+      0, 0,
+      0, SCREEN.PADDING,
+      firstEnd,  SCREEN.PADDING,
+      firstEnd, 0,
     ])
     .drawPolygon([
-      secondStart,
-      0,
-      secondStart,
-      SCREEN.PADDING,
-      totalWidth,
-      SCREEN.PADDING,
-      totalWidth,
-      0,
+      secondStart,  0,
+      secondStart, SCREEN.PADDING,
+      totalWidth, SCREEN.PADDING,
+      totalWidth, 0,
     ])
     .endFill();
 
-  const text = new PIXI.BitmapText("MPG", {
+  const text = new BitmapText("MPG", {
     fontName: "Orbitron",
     fontSize: 50,
     align: "left",
@@ -65,7 +58,7 @@ const createMpyLogo = ({ renderer, theme, mpgClusterWidth }) => {
 const mpgClusterControl = {
   /**
    * Creates the Fuel cluster logo
-   * @returns {Array<PIXI.Container>}
+   * @returns {Array<Container>}
    */
   create: ({ stage, renderer, theme, renderables }) => {
     /** @type {FuelGauge} */
@@ -108,7 +101,7 @@ const mpgClusterControl = {
 
     // average
     const averageMpgReadout = renderables[RENDER_KEYS.AVG_MPG_READOUT];
-    avgMpgText = new PIXI.BitmapText("AVERAGE", {
+    avgMpgText = new BitmapText("AVERAGE", {
       fontName: "Orbitron",
       fontSize: 22,
       align: "left",
@@ -124,7 +117,7 @@ const mpgClusterControl = {
 
     // current
     const currentMpgReadout = renderables[RENDER_KEYS.MPG_READOUT];
-    currentMpgText = new PIXI.BitmapText("CURRENT", {
+    currentMpgText = new BitmapText("CURRENT", {
       fontName: "Orbitron",
       fontSize: 24,
       align: "left",

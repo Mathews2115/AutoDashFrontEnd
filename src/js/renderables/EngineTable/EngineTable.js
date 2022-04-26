@@ -11,74 +11,12 @@ import {
 import ActiveDataTable from "./ActiveDataTable";
 import Trail from "./Trail";
 import Renderable from "../Renderable";
+import LabelBar from "./LabelBar";
 
 const cellWidth = 40;
 const cellHeight = 25;
 const animationDuration = 0.5;
 
-function createXLabelBar(totalXCells, xCellUnit, activeColor) {
-  // bar textures
-  const xLabelBarGraphics = new Graphics();
-  // xLabelBarGraphics
-  //   .beginFill(0xFFFFFF)
-  //   .lineStyle(0)
-  //   .drawRect(0, 0,  this.totalXCells*cellWidth, 40)
-  //   .endFill();
-  // draw tick marks every
-  const length = totalXCells / 2;
-  const tickSpace = cellWidth * 2;
-  for (let i = 0; i < length; i++) {
-    if (i % 2 === 0) {
-      const text = new BitmapText(`${i * xCellUnit * 2}`, {
-        fontName: "Orbitron",
-        fontSize: 16,
-        align: "center",
-      });
-      text.anchor.set(0.5, 0);
-      text.x = i * tickSpace;
-      text.y = 20;
-      text.angle = 180;
-      text.tint = activeColor;
-      xLabelBarGraphics.addChild(text);
-      xLabelBarGraphics
-        .beginFill(activeColor)
-        .drawRect(i * tickSpace, 0, 5, 20)
-        .endFill();
-    } else {
-      xLabelBarGraphics
-        .beginFill(activeColor)
-        .drawRect(i * tickSpace, 0, 5, 40)
-        .endFill();
-    }
-  }
-  return xLabelBarGraphics;
-}
-
-function createYLabelBar(totalYCells, yCellUnit, activeColor) {
-  const yLabelBarGraphics = new Graphics();
-
-  // draw tick marks every
-  const length = totalYCells;
-  const tickSpace = cellHeight;
-  for (let i = 0; i < length; i++) {
-    const text = new BitmapText(`${(length - i) * yCellUnit}`, {
-      fontName: "Orbitron",
-      fontSize: 16,
-      align: "center",
-    });
-    text.anchor.set(0, 0.5);
-    text.y = i * tickSpace;
-    text.x = 1;
-    text.angle = 180;
-    text.tint = activeColor;
-    yLabelBarGraphics.addChild(text);
-    yLabelBarGraphics
-      .beginFill(activeColor)
-      .drawRect(30, i * tickSpace, 10, 5)
-      .endFill();
-  }
-  return yLabelBarGraphics;
-}
 
 const createCellSprite = (i, j, startingColor) => {
   const cellSprite = Sprite.from(Texture.WHITE);
@@ -116,15 +54,32 @@ const createCellReadout = (i, j, activeColor) => {
 };
 
 class EngineTable extends Renderable {
-  constructor({ renderer, theme }, {maxXValue, maxYValue, xKey, yKey, valueKey}, {chromaScale, chromaDomain}) {
-    super({ renderer, theme } );
+  static cellWidth = cellWidth;
+  static cellHeight = cellHeight;
 
-    this.chromaScale = chroma
-      .scale(chromaScale)
-      .domain(chromaDomain);
+  constructor(
+    { renderer, theme },
+    { maxXValue, maxYValue, xKey, yKey, valueKey },
+    { chromaScale, chromaDomain }
+  ) {
+    super({ renderer, theme });
 
+    // This is where the label bars will go (if they are attached)
+    this.labelBarsContainer = new Container();
+    // This is where the engine table graph and any other scalables will go
+    this.tableContainer = new Container();
+    // everything in here will be clipped to the rect of this viewport
+    this.viewportContainer = new Container();
+    this._maskReck = new Graphics();
+    this.labelBarsMask = new Graphics();
+
+    // This is how we color the table cells
+    this.chromaScale = chroma.scale(chromaScale).domain(chromaDomain);
+
+    // the lil trail guy that represents where we are in the graph (slight history)
     this.trail = new Trail({ trailSize: 50, historySize: 15, alpha: 0.3 });
 
+    // needed so when cells fade out, they fade to this
     this.background = Sprite.from(Texture.WHITE);
 
     this.maxXValue = maxXValue;
@@ -133,63 +88,76 @@ class EngineTable extends Renderable {
     this.yCellUnit = 4; // 100 / 4 = 25
     this.totalXCells = this.maxXValue / this.xCellUnit;
     this.totalYCells = this.maxYValue / this.yCellUnit;
-    this.tableHeight = this.totalYCells * cellHeight;
-    this.tableWidth = this.totalXCells * cellWidth;
+    this.tableHeight = this.totalYCells * EngineTable.cellHeight;
+    this.tableWidth = this.totalXCells * EngineTable.cellWidth;
 
     this.xValue = 0;
     this.yValue = 0;
     this._value = null;
 
+    // keys to the table data
     this.xKey = xKey;
     this.yKey = yKey;
-    this.valueKey = valueKey;
+    this.valueKey = valueKey; // represents the values in the cell itself
 
-    this.tableContainer = new Container();
+    // table full of cells that will be colored in as they are hit
     this.table = new ParticleContainer(this.totalXCells * this.totalYCells, {
       tint: true,
     });
 
-    this.xLabelBar = null;
-    this.yLabelBar = null;
-    this.xIndicator = null;
-    this.yIndicator = null;
-
+    // animates scaling/position moving on the big tablecontainer
     this.tableAnim = gsap.timeline();
-    this.xlabelbarAnim = gsap.timeline();
-    this.ylabelbarAnim = gsap.timeline();
-    this.xIndicatorAnim = gsap.timeline();
-    this.yIndicatorAnim = gsap.timeline();
-
     this.scaleFactor = 1;
 
+    // A table that holds all the cells that are found in this.table (so we can reference it x/y coords)
     this.lookupTable = [];
+
+    // Where the text values go that display on top of the cells
     this.textValuesLookupTable = new Array(this.totalXCells);
     this.textValuesContainer = new Container();
+
+    // responsible for the fade in/out of the cells and text values
     this.activeCells = new ActiveDataTable();
+
+    // if they dont match, we need to rescale/move the table to fit in the view port
     this.renderedMinMax = this.activeCells.minMax;
+
+    // Label Bars - if they are connected; this Graph will be responsible for updating them (scaling, etc)
+    /** @type {LabelBar} */
+    this._xlabelBar = null;
+    /** @type {LabelBar} */
+    this._yLabelBar = null;
+  }
+  get xLabelBar() {
+    return this._xlabelBar;
+  }
+  set xLabelBar(xLabelBar) {
+    this._xlabelBar = xLabelBar;
+    this.viewportContainer.addChild(xLabelBar);
+  }
+  get yLabelBar() {
+    return this._yLabelBar;
+  }
+  set yLabelBar(ylabelBar) {
+    if (!this._yLabelBar) {
+      // generate mask for the bar
+      this.labelBarsMask
+        .beginFill(0xffffff)
+        .drawRect(0, 0, ylabelBar.width, this.gaugeHeight)
+        .endFill();
+      this.labelBarsContainer.mask = this.labelBarsMask;
+      this.labelBarsContainer.addChild(this.labelBarsMask);
+      this.labelBarsContainer.x = -ylabelBar.width
+    }
+    this._yLabelBar = ylabelBar;
+    this.labelBarsContainer.addChild(ylabelBar);
   }
 
   animateViewport(newX, newY) {
-    this.xlabelbarAnim.clear();
-    this.xlabelbarAnim.to(this.xLabelBar, {
-      pixi: {
-        x: newX,
-        scaleX: this.scaleFactor,
-      },
-      duration: animationDuration,
-    });
-
-    this.ylabelbarAnim.clear();
-    this.ylabelbarAnim.to(this.yLabelBar, {
-      pixi: {
-        y: newY,
-        scaleY: this.scaleFactor,
-      },
-      duration: animationDuration,
-    });
-
+    if (this._xlabelBar) this._xlabelBar.scaleAnimate(newX, newY, this.scaleFactor, animationDuration);
+    if (this._yLabelBar) this._yLabelBar.scaleAnimate(newX, newY, this.scaleFactor, animationDuration);
     this.tableAnim.clear();
-    this.tableAnim.to(this.tableContainer, {
+    this.tableAnim.to(this.tableContainer, { 
       pixi: {
         x: newX,
         y: newY,
@@ -208,6 +176,17 @@ class EngineTable extends Renderable {
   get gaugeHeight() {
     return 380;
   }
+
+  get labelData() {
+    return {
+      theme: this.theme,
+      xCellUnit: this.xCellUnit,
+      yCellUnit: this.yCellUnit,
+      totalXCells: this.totalXCells,
+      totalYCells: this.totalYCells,
+    };
+  }
+
   set value(dataSet) {
     this.xValue = dataSet[this.xKey];
     this.yValue = dataSet[this.yKey];
@@ -233,72 +212,54 @@ class EngineTable extends Renderable {
       this.gaugeHeight / this.background.height
     );
     this.background.tint = this.backgroundColor;
-    this._maskReck = new Graphics();
+    
     this._maskReck
+      .clear()
       .beginFill(0xffffff)
       .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
       .endFill();
 
-    // engine table stuff TABLE
-    // generate background sprite
-    for (let i = 0; i < this.totalXCells; i++) {
-      this.lookupTable.push([]);
-      this.textValuesLookupTable[i] = new Array(this.totalYCells);
-      for (let j = 0; j < this.totalYCells; j++) {
-        const cellSprite = createCellSprite(i, j, this.backgroundColor);
-        this.table.addChild(cellSprite);
-        this.lookupTable[i].push(cellSprite);
-        const cellReadout = createCellReadout(i, j, this.activeColor);
-
-        this.textValuesContainer.addChild(cellReadout);
-        this.textValuesLookupTable[i][j] = cellReadout;
+       // tint cells
+    if (this.initialized) {
+      for (let i = 0; i < this.totalXCells; i++) {
+        for (let j = 0; j < this.totalYCells; j++) {
+          this.lookupTable[i][j].tint = this.backgroundColor;
+          this.textValuesLookupTable[i][j].tint = this.activeColor;
+        }
       }
+    } else {
+      // Initialize data tables
+      this.lookupTable = new Array(this.totalXCells);
+      for (let i = 0; i < this.totalXCells; i++) {
+        this.lookupTable[i] = new Array(this.totalYCells);
+        this.textValuesLookupTable[i] = new Array(this.totalYCells);
+        for (let j = 0; j < this.totalYCells; j++) {
+          const cellSprite = createCellSprite(i, j, this.backgroundColor);
+          this.table.addChild(cellSprite);
+          this.lookupTable[i][j] = cellSprite;
+          const cellReadout = createCellReadout(i, j, this.activeColor);
+
+          this.textValuesContainer.addChild(cellReadout);
+          this.textValuesLookupTable[i][j] = cellReadout;
+        }
+      }
+
+      // these things will scale and move
+      this.tableContainer.addChild(
+        this.table,
+        this.textValuesContainer,
+        this.trail
+      );
+
+      this.viewportContainer.addChild(
+        this._maskReck, // we want our local transforms so this.mask can get the proper world coordinates
+        this.background, 
+        this.tableContainer);
+
+      this.addChild( this.viewportContainer, this.labelBarsContainer);
+      this.viewportContainer.mask = this._maskReck; // dont draw anything outside of area
+      this.initialized = true;
     }
-
-    // Legend side bars and indicators
-    this.xLabelBar = createXLabelBar(
-      this.totalXCells,
-      this.xCellUnit,
-      this.activeColor
-    );
-    this.xIndicator = new Graphics();
-    this.xIndicator
-      .beginFill(this.theme.warningColor)
-      .drawRect(0, 0, 5, 30)
-      .endFill();
-    this.xIndicator.cacheAsBitmap = true;
-
-    this.yLabelBar = createYLabelBar(
-      this.totalYCells,
-      this.yCellUnit,
-      this.activeColor
-    );
-    this.yIndicator = new Graphics();
-    this.yIndicator
-      .beginFill(this.theme.warningColor)
-      .drawRect(0, 0, 25, 5)
-      .endFill();
-    this.yIndicator.cacheAsBitmap = true;
-
-    // move labelbar to bottom of gauge
-    this.xLabelBar.y = this.gaugeHeight - 40;
-
-    // add to container
-    this.xLabelBar.addChild(this.xIndicator);
-    this.yLabelBar.addChild(this.yIndicator);
-    this.tableContainer.addChild(
-      this.table,
-      this.textValuesContainer,
-      this.trail
-    );
-    this.addChild(
-      this._maskReck, // we want our local transforms so this.mask can get the proper world coordinates
-      this.background,
-      this.tableContainer,
-      this.xLabelBar,
-      this.yLabelBar
-    );
-    this.mask = this._maskReck; // dont draw anything outside of area
   }
 
   /**
@@ -314,10 +275,8 @@ class EngineTable extends Renderable {
       this.tableHeight - (this.yValue / this.maxYValue) * this.tableHeight - 1;
 
     this.trail.update(x, y);
-
-    // move indicators on the label bars
-    this.xIndicator.x = x;
-    this.yIndicator.y = y;
+    if(this._xlabelBar) this._xlabelBar.x = x;
+    if(this._yLabelBar) this._yLabelBar.y = y;
 
     // Update the look up tables (add colors, write value to table)
     this.updateTables(x, y, timestamp);

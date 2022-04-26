@@ -21,16 +21,11 @@ const _createTagGeometry = (backgroundColor, lineColor) => {
     .beginFill(backgroundColor)
     .lineStyle({ width: TAG_BORDER_WIDTH, color: lineColor })
     .drawPolygon([
-      0,
-      0, // tag edge
-      tagRctSize,
-      0,
-      tagRctSize,
-      tagRctSize,
-      tagBump,
-      tagRctSize,
-      0,
-      tagRctSize - tagBump,
+      0, 0, // tag edge
+      tagRctSize, 0,
+      tagRctSize, tagRctSize,
+      tagBump, tagRctSize,
+      0,  tagRctSize - tagBump,
     ])
     .endFill();
   return gfx;
