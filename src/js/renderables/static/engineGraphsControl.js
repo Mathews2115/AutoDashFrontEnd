@@ -4,6 +4,7 @@ import KPABar from "../EngineTable/KPAbar";
 import RPMBar from "../EngineTable/RPMBar";
 import { Renderables, RENDER_KEYS } from "../Renderables";
 import { gsap } from "gsap";
+import FPSTextField from "../FPSTextField";
 
 /** @type {KPABar} */
 let kpaBar = null;
@@ -56,15 +57,11 @@ const layoutGraphs = ({renderer, theme, renderables}) => {
   // TESTING STUFF
   testingContainter.x = afrGraph.x + afrGraph.width;
   testingContainter.y = 10;
-  const mask = new Graphics();
-  mask.beginFill(0x000000)
-    .drawRect(0, 0, 300, 400)
-  testingContainter.mask = mask;
 
   testGraphics.beginFill(theme.dangerColor)
-    .drawPolygon([
+    .drawPolygon([ 
       5, 0,
-      0, 15,
+      0, 15, 
       280, 15,
       285, 0,
     ])
@@ -85,7 +82,10 @@ const layoutGraphs = ({renderer, theme, renderables}) => {
   testText.x = 15 
   testText.angle = 180;
   testText.tint = theme.dangerColor;
-  testingContainter.addChild(mask, sprite,sprite2, testText);
+  const fps = new FPSTextField()
+  fps.x = 0;
+  fps.y = 200;
+  testingContainter.addChild(sprite,sprite2, testText, fps);
   const animTest = () => {
     anim.to(testText, {
        alpha: 0,
@@ -106,7 +106,7 @@ const layoutGraphs = ({renderer, theme, renderables}) => {
   
   animTest();
   
-  return [backgroundSprite, afrGraph, timingGraph, testingContainter]
+  return [backgroundSprite, timingGraph, afrGraph, testingContainter]
 }
 
 /**

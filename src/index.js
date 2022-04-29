@@ -25,7 +25,7 @@ ticker.stop();
 // RENDERER and TICKER
 // setup renderer and ticker
 const renderer = new PIXI.Renderer({
-  width: SCREEN.WIDTH, // two screens
+  width: SCREEN.WIDTH,
   height: SCREEN.HEIGHT*2,
 });
 const dash = new DashApp(renderer);

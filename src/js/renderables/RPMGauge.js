@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
 import { RPM_CONFIG, SCREEN } from "../appConfig";
-import { GlowFilter } from "@pixi/filter-glow";
+// import { GlowFilter } from "@pixi/filter-glow";
 import { DATA_KEYS } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
@@ -23,7 +23,7 @@ class RPMGauge extends Renderable {
     this.renderedValue = this._value;
 
     this._foregroundTextures = new Array(3);
-    this._storedfilters = new Array(3);
+    // this._storedfilters = new Array(3);
     this._activeColors = new Array(3);
     this._gaugeDisplayState = STATE_ENUM.DANGER;
   }
@@ -90,28 +90,28 @@ class RPMGauge extends Renderable {
       this._foregroundTextures[STATE_ENUM.DANGER]
     );
 
-    ////////// FILTERS
-    this._storedfilters[STATE_ENUM.NORMAL] = new GlowFilter({
-      distance: 8,
-      outerStrength: 1,
-      innerStrength: 0,
-      color: this._activeColors[STATE_ENUM.NORMAL],
-      quality: 0.2,
-    });
-    this._storedfilters[STATE_ENUM.WARNING] = new GlowFilter({
-      distance: 8,
-      outerStrength: 1,
-      innerStrength: 0,
-      color: this._activeColors[STATE_ENUM.WARNING],
-      quality: 0.2,
-    });
-    this._storedfilters[STATE_ENUM.DANGER] = new GlowFilter({
-      distance: 8,
-      outerStrength: 1,
-      innerStrength: 0,
-      color: this._activeColors[STATE_ENUM.DANGER],
-      quality: 0.2,
-    });
+    // ////////// FILTERS
+    // this._storedfilters[STATE_ENUM.NORMAL] = new GlowFilter({
+    //   distance: 8,
+    //   outerStrength: 1,
+    //   innerStrength: 0,
+    //   color: this._activeColors[STATE_ENUM.NORMAL],
+    //   quality: 0.2,
+    // });
+    // this._storedfilters[STATE_ENUM.WARNING] = new GlowFilter({
+    //   distance: 8,
+    //   outerStrength: 1,
+    //   innerStrength: 0,
+    //   color: this._activeColors[STATE_ENUM.WARNING],
+    //   quality: 0.2,
+    // });
+    // this._storedfilters[STATE_ENUM.DANGER] = new GlowFilter({
+    //   distance: 8,
+    //   outerStrength: 1,
+    //   innerStrength: 0,
+    //   color: this._activeColors[STATE_ENUM.DANGER],
+    //   quality: 0.2,
+    // });
 
     this.gaugeStencil = new PIXI.Graphics();
     this.gaugeStencil.drawRect(0, 0, this.gaugeWidth, this.gaugeHeight);
@@ -139,9 +139,9 @@ class RPMGauge extends Renderable {
     return this._activeColors[this._gaugeDisplayState];
   }
 
-  get activeFilter() {
-    return this._storedfilters[this._gaugeDisplayState];
-  }
+  // get activeFilter() {
+  //   return this._storedfilters[this._gaugeDisplayState];
+  // }
 
   get activeTexture() {
     return this._foregroundTextures[this._gaugeDisplayState];

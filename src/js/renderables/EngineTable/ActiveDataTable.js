@@ -54,7 +54,7 @@ export default class ActiveDataTable extends Array {
     this.minY = Math.min(this.minY, yIndex);
     this.deltaX = this.maxX - this.minX;
     this.deltaY = this.maxY - this.minY;
-    onActivatedFn();
+    onActivatedFn(index === -1);
   }
 
   expireOld(onExpiredFn) {
@@ -64,7 +64,8 @@ export default class ActiveDataTable extends Array {
       if (timeAlive > EXPIRE_TIME_MS) {
         this.splice(i, 1);
         this.minMaxFromCell(c);
-        onExpiredFn(c.xIndex, c.yIndex);
+        onExpiredFn(c.cell, c.xIndex, c.yIndex);
+        c.cell.alpha = 0;
       } else {
         c.cell.alpha = 1- easeInExpo( (timeAlive / EXPIRE_TIME_MS)); 
       }

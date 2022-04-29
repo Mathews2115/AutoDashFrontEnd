@@ -27,7 +27,7 @@ export default class LabelBar extends Container {
     this.indicatorAnim.clear();
     this.indicatorAnim.to(this.indicator, {
       pixi: { y: newY },
-      duration: 0.05,
+      duration: 0.1,
     });
   }
 

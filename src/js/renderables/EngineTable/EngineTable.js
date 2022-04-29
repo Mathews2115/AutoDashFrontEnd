@@ -13,8 +13,8 @@ import Trail from "./Trail";
 import Renderable from "../Renderable";
 import LabelBar from "./LabelBar";
 
-const cellWidth = 40;
-const cellHeight = 25;
+const cellWidth = 32;
+const cellHeight = 24;
 const animationDuration = 0.5;
 
 
@@ -77,7 +77,7 @@ class EngineTable extends Renderable {
     this.chromaScale = chroma.scale(chromaScale).domain(chromaDomain);
 
     // the lil trail guy that represents where we are in the graph (slight history)
-    this.trail = new Trail({ trailSize: 50, historySize: 15, alpha: 0.3 });
+    this.trail = new Trail({ trailSize: 15, historySize: 15, alpha: 0.3 });
 
     // needed so when cells fade out, they fade to this
     this.background = Sprite.from(Texture.WHITE);
@@ -235,7 +235,6 @@ class EngineTable extends Renderable {
         this.textValuesLookupTable[i] = new Array(this.totalYCells);
         for (let j = 0; j < this.totalYCells; j++) {
           const cellSprite = createCellSprite(i, j, this.backgroundColor);
-          this.table.addChild(cellSprite);
           this.lookupTable[i][j] = cellSprite;
           const cellReadout = createCellReadout(i, j, this.activeColor);
 
@@ -316,12 +315,14 @@ class EngineTable extends Renderable {
     const cell = this.lookupTable[xIndex][yIndex];
     cell.tint = this.chromaScale(Math.round(this._value)).num();
 
-    this.activeCells.activate({ cell, xIndex, yIndex, timestamp }, () => {
+    this.activeCells.activate({ cell, xIndex, yIndex, timestamp }, (isNew) => {
+      if (isNew) this.table.addChild(cell);
       this.textValuesLookupTable[xIndex][yIndex].visible = true;
       this.textValuesLookupTable[xIndex][yIndex].text = this._value.toFixed(1);
     });
 
-    this.activeCells.expireOld((i, j) => {
+    this.activeCells.expireOld((cell, i, j) => {
+      this.table.removeChild(cell);
       this.textValuesLookupTable[i][j].visible = false;
     });
   }

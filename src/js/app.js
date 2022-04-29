@@ -4,8 +4,6 @@ import { DATA_KEYS, WARNING_KEYS } from "./common/dataMap";
 import { GlitchFilter } from "@pixi/filter-glitch";
 import { THEMES } from "./common/theme";
 import { SCREEN } from "./appConfig";
-// import FPSTextField from "./renderables/FPSTextField";
-
 
 /**
  * @typedef Theme
@@ -58,7 +56,6 @@ export class DashApp {
 
   initialize() {
     this.layoutManager.createLayout();
-    // this.stage.addChild(new FPSTextField());
     // start rendering
     PIXI.Ticker.shared.addOnce(() => {
       setTimeout(() => {

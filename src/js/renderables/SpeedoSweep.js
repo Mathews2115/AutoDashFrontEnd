@@ -96,6 +96,7 @@ class SpeedoSweep extends Renderable {
 
     ///////// background shape
     this.background.tint = this.theme.gaugeBgColor;
+    this.background.cacheAsBitmap = true;
     this.addChild(this.background);
 
     //////// foreground shape
