@@ -121,21 +121,25 @@ class BorderWarnings extends Renderable {
   drawBorders() {
     // draw initial border geometry
     this.borders[0]
+      .clear()
       .beginFill(0xffffff)
       .lineStyle(0)
       .drawRect(0, 0, this.gaugeWidth, SCREEN.BORDER_WIDTH - 5)
       .endFill();
     this.borders[1]
+      .clear()
       .beginFill(0xffffff)
       .lineStyle(0)
       .drawRect(0, 0, SCREEN.BORDER_WIDTH - 5, this.gaugeHeight)
       .endFill();
     this.borders[2]
+      .clear()
       .beginFill(0xffffff)
       .lineStyle(0)
       .drawRect(0, 0, this.gaugeWidth, SCREEN.BORDER_WIDTH - 5)
       .endFill();
     this.borders[3]
+      .clear()
       .beginFill(0xffffff)
       .lineStyle(0)
       .drawRect(0, 0, SCREEN.BORDER_WIDTH - 5, this.gaugeHeight)
@@ -149,13 +153,11 @@ class BorderWarnings extends Renderable {
     if (this.initialized) {
       Object.values(this.tags)
         .map((d) => d.data.tag)
-        .forEach((g) =>
-          g.destroy({
-            children: true,
-            texture: true,
-            baseTexture: true,
-          })
-        );
+        .forEach((g) => {
+          g.destroy(true);
+          this.removeChild(g);
+          g = null;
+        });
     }
 
     this.tags.gpsError.data = this.createTag(
@@ -189,15 +191,15 @@ class BorderWarnings extends Renderable {
   }
 
   initialize() {
+    this.renderedValue = 0;
     this.drawBorders();
     this.drawTags();
-    
+    // reminder: last added is the last drawn (painters algorithm)
+    Object.values(this.tags)
+      .map((d) => d.data.tag)
+      .reverse()
+      .forEach((g) => this.addChild(g));
     if (!this.initialized) {
-      // reminder: last added is the last drawn (painters algorithm)
-      Object.values(this.tags)
-        .map((d) => d.data.tag)
-        .reverse()
-        .forEach((g) => this.addChild(g));
       this.addChild(...this.borders);
       this.initialized = true;
     }
