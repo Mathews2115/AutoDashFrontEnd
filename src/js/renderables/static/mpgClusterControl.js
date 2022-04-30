@@ -6,6 +6,7 @@ import MpgGauge from "../MpgGauge";
 import MpgHistogram from "../MpgHistogram";
 import { RENDER_KEYS } from "../Renderables";
 import SpeedoSweep from "../SpeedoSweep";
+import { createLogo } from "./commonGraphics";
 import speedoClusterControl from "./speedoClusterControl";
 
 const mpgLogoSprite = new PIXI.Sprite();
@@ -14,43 +15,6 @@ const mpgLogoSprite = new PIXI.Sprite();
  */
 let avgMpgText, currentMpgText;
 let mpgClusterWidth = 0;
-
-const createMpyLogo = ({ renderer, theme, mpgClusterWidth }) => {
-  const totalWidth = mpgClusterWidth;
-  const firstEnd = totalWidth * 0.25;
-  const secondStart = totalWidth * 0.75;
-  const logo = new Graphics();
-  logo
-    .beginFill(theme.gaugeActiveColor)
-    .drawPolygon([
-      0, 0,
-      0, SCREEN.PADDING,
-      firstEnd,  SCREEN.PADDING,
-      firstEnd, 0,
-    ])
-    .drawPolygon([
-      secondStart,  0,
-      secondStart, SCREEN.PADDING,
-      totalWidth, SCREEN.PADDING,
-      totalWidth, 0,
-    ])
-    .endFill();
-
-  const text = new BitmapText("MPG", {
-    fontName: "Orbitron",
-    fontSize: 50,
-    align: "left",
-  });
-  text.angle = 180; // no idea what app is flipped??
-  text.x = firstEnd + 5;
-  text.y = -SCREEN.PADDING;
-  text.tint = theme.gaugeActiveColor;
-  logo.addChild(text);
-
-  const renderedTexture = renderer.generateTexture(logo);
-  logo.destroy(true);
-  return renderedTexture;
-};
 
 /**
  * @returns {StaticObject}
@@ -72,7 +36,8 @@ const mpgClusterControl = {
       speedoCluster.x + speedoSweep.gaugeWidth + 3 * SCREEN.PADDING;
     mpgClusterWidth = fuelGauge.x - mpgClusterX - 3 * SCREEN.PADDING;
 
-    mpgLogoSprite.texture = createMpyLogo({ renderer, theme, mpgClusterWidth });
+    mpgLogoSprite.texture = createLogo(renderer, mpgClusterWidth, "MPG");
+    mpgLogoSprite.tint = theme.gaugeActiveColor;
 
     mpgLogoSprite.x = mpgClusterX;
     mpgLogoSprite.y = SCREEN.PADDING;
@@ -120,7 +85,7 @@ const mpgClusterControl = {
     currentMpgText = new BitmapText("CURRENT", {
       fontName: "Orbitron",
       fontSize: 24,
-      align: "left",
+      align: "center",
     });
     currentMpgText.tint = theme.gaugeActiveColor;
     currentMpgText.angle = 180;
@@ -139,9 +104,7 @@ const mpgClusterControl = {
     ];
   },
   refresh: ({ renderables, theme, renderer }) => {
-    mpgLogoSprite.texture.destroy();
-    mpgLogoSprite.texture = createMpyLogo({ renderer, theme, mpgClusterWidth });
-
+    mpgLogoSprite.tint = theme.gaugeActiveColor;
     avgMpgText.tint = theme.gaugeActiveColor;
     currentMpgText.tint = theme.gaugeActiveColor;
 

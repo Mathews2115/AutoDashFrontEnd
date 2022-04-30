@@ -111,6 +111,9 @@ export default ({ renderer, auxScreen, gaugeScreen, theme }) => {
       clusters.forEach((renderable) => {
         renderable.refresh({ renderer, theme, renderables });
       });
+      auxScreenClusters.forEach((renderable) => {
+        renderable.refresh({ renderer, theme, renderables });
+      });
     },
     updateAll: () => {
       renderables.updateAll();

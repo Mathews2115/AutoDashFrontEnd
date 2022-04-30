@@ -13,8 +13,8 @@ const graphOptions = {
   valueKey: DATA_KEYS.IGNITION_TIMING
 };
 const colorOptions = {
-  chromaScale: ["red", "yellow", "blue"],
-  chromaDomain: [14, 25, 50]
+  chromaScale: ["red", "orange", "blue"],
+  chromaDomain: [10, 25, 50]
 }
 class TimingGraph extends EngineTable {
   constructor({ renderer, theme }) {

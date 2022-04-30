@@ -39,16 +39,19 @@ export default class KPABar extends LabelBar {
 
       for (let i = 0; i < length; i++) {
         if (i === 0) {
+          // top tick
           labelBarGraphics
             .beginFill(theme.gaugeActiveColor)
             .drawRect(TICK_OFFSET, 0, TICK_WIDTH, TICK_HEIGHT)
             .endFill();
         } else if (i == length) {
+          // bottom tick
           labelBarGraphics
             .beginFill(theme.gaugeActiveColor)
             .drawRect(TICK_OFFSET, -(TICK_HEIGHT / 2), TICK_WIDTH, TICK_HEIGHT)
             .endFill();
         } else {
+          // middle ticks
           const text = new BitmapText(`${(length - i) * yCellUnit}`, {
             fontName: "Orbitron",
             fontSize: 16,
@@ -81,8 +84,8 @@ export default class KPABar extends LabelBar {
     this.indicator
       .beginFill(theme.warningColor)
       .drawRect(
-        TICK_WIDTH, -2,
-        NUMBER_PADDING + NUMBER_SPACE + NUMBER_PADDING, TICK_HEIGHT
+        0, -2,
+        BAR_WIDTH, TICK_HEIGHT
       )
       .endFill();
     this.indicator.cacheAsBitmap = true;

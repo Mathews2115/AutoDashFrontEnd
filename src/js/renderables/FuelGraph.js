@@ -13,7 +13,7 @@ const graphOptions = {
   valueKey: DATA_KEYS.AFR_AVERAGE
 };
 const colorOptions = {
-  chromaScale: ["red", "yellow", "blue"],
+  chromaScale: ["red", "orange", "blue"],
   chromaDomain: [10, 14, 20]
 }
 
@@ -22,13 +22,6 @@ class FuelGraph extends EngineTable {
     super({ renderer, theme }, graphOptions, colorOptions);
     this._dashID = ID;
   }
-
-  get gaugeWidth() {
-    return 400;
-  }
-  get gaugeHeight() {
-    return 380;
-  } 
 }
 
 FuelGraph.ID = ID;

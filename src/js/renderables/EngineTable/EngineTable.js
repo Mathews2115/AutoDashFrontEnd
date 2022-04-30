@@ -17,7 +17,6 @@ const cellWidth = 32;
 const cellHeight = 24;
 const animationDuration = 0.5;
 
-
 const createCellSprite = (i, j, startingColor) => {
   const cellSprite = Sprite.from(Texture.WHITE);
   cellSprite.tint = startingColor;
@@ -45,8 +44,8 @@ const createCellReadout = (i, j, activeColor) => {
     align: "center",
   });
   text.anchor.set(0.5, 0.5);
-  text.x = (i * cellWidth) + cellWidth/2;
-  text.y = (j * cellHeight) + cellHeight/2;
+  text.x = i * cellWidth + cellWidth / 2;
+  text.y = j * cellHeight + cellHeight / 2;
   text.angle = 180;
   text.tint = activeColor;
   text.visible = false;
@@ -132,6 +131,10 @@ class EngineTable extends Renderable {
     return this._xlabelBar;
   }
   set xLabelBar(xLabelBar) {
+    if (this._xlabelBar) {
+      this.labelBarsContainer.removeChild(this._xlabelBar);
+      this._xlabelBar.destroy(true);
+    }
     this._xlabelBar = xLabelBar;
     this.viewportContainer.addChild(xLabelBar);
   }
@@ -147,17 +150,32 @@ class EngineTable extends Renderable {
         .endFill();
       this.labelBarsContainer.mask = this.labelBarsMask;
       this.labelBarsContainer.addChild(this.labelBarsMask);
-      this.labelBarsContainer.x = -ylabelBar.width
+      this.labelBarsContainer.x = -ylabelBar.width;
+    } else {
+      this.labelBarsContainer.removeChild(this._yLabelBar);
+      this._yLabelBar.destroy(true);
     }
     this._yLabelBar = ylabelBar;
     this.labelBarsContainer.addChild(ylabelBar);
   }
 
   animateViewport(newX, newY) {
-    if (this._xlabelBar) this._xlabelBar.scaleAnimate(newX, newY, this.scaleFactor, animationDuration);
-    if (this._yLabelBar) this._yLabelBar.scaleAnimate(newX, newY, this.scaleFactor, animationDuration);
+    if (this._xlabelBar)
+      this._xlabelBar.scaleAnimate(
+        newX,
+        newY,
+        this.scaleFactor,
+        animationDuration
+      );
+    if (this._yLabelBar)
+      this._yLabelBar.scaleAnimate(
+        newX,
+        newY,
+        this.scaleFactor,
+        animationDuration
+      );
     this.tableAnim.clear();
-    this.tableAnim.to(this.tableContainer, { 
+    this.tableAnim.to(this.tableContainer, {
       pixi: {
         x: newX,
         y: newY,
@@ -171,10 +189,10 @@ class EngineTable extends Renderable {
   }
 
   get gaugeWidth() {
-    return 400;
+    return 380;
   }
   get gaugeHeight() {
-    return 380;
+    return 330;
   }
 
   get labelData() {
@@ -207,19 +225,9 @@ class EngineTable extends Renderable {
   initialize() {
     this.activeColor = this.theme.gaugeActiveColor;
     this.backgroundColor = this.theme.gaugeBgColor;
-    this.background.scale.set(
-      this.gaugeWidth / this.background.width,
-      this.gaugeHeight / this.background.height
-    );
     this.background.tint = this.backgroundColor;
-    
-    this._maskReck
-      .clear()
-      .beginFill(0xffffff)
-      .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
-      .endFill();
 
-       // tint cells
+    // tint cells
     if (this.initialized) {
       for (let i = 0; i < this.totalXCells; i++) {
         for (let j = 0; j < this.totalYCells; j++) {
@@ -228,6 +236,17 @@ class EngineTable extends Renderable {
         }
       }
     } else {
+      this.background.scale.set(
+        this.gaugeWidth / this.background.width,
+        this.gaugeHeight / this.background.height
+      );
+
+      this._maskReck
+        .clear()
+        .beginFill(0xffffff)
+        .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
+        .endFill();
+
       // Initialize data tables
       this.lookupTable = new Array(this.totalXCells);
       for (let i = 0; i < this.totalXCells; i++) {
@@ -252,10 +271,11 @@ class EngineTable extends Renderable {
 
       this.viewportContainer.addChild(
         this._maskReck, // we want our local transforms so this.mask can get the proper world coordinates
-        this.background, 
-        this.tableContainer);
+        this.background,
+        this.tableContainer
+      );
 
-      this.addChild( this.viewportContainer, this.labelBarsContainer);
+      this.addChild(this.viewportContainer, this.labelBarsContainer);
       this.viewportContainer.mask = this._maskReck; // dont draw anything outside of area
       this.initialized = true;
     }
@@ -274,8 +294,8 @@ class EngineTable extends Renderable {
       this.tableHeight - (this.yValue / this.maxYValue) * this.tableHeight - 1;
 
     this.trail.update(x, y);
-    if(this._xlabelBar) this._xlabelBar.x = x;
-    if(this._yLabelBar) this._yLabelBar.y = y;
+    if (this._xlabelBar) this._xlabelBar.x = x;
+    if (this._yLabelBar) this._yLabelBar.y = y;
 
     // Update the look up tables (add colors, write value to table)
     this.updateTables(x, y, timestamp);

@@ -35,7 +35,6 @@ export default class RPMBar extends LabelBar {
           labelBarGraphics
             .beginFill( theme.gaugeActiveColor)
             .drawRect((i * tickSpace)-2, 0, 4, 8)
-            .drawRect((i * tickSpace)-2, 26, 4, 8)
             .endFill();
         } else {
           labelBarGraphics
@@ -50,9 +49,10 @@ export default class RPMBar extends LabelBar {
     }   
     
     this.indicator
-      .beginFill(theme.warningColor)
+      .beginFill(0xFFFFFF)
       .drawRect(0-2, 0, 4, 30)
-      .endFill(); 
+      .endFill();
+    this.indicator.tint = theme.warningColor 
     this.indicator.cacheAsBitmap = true;
   }
 
