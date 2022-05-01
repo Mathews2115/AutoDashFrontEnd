@@ -39,32 +39,13 @@ class BarGraph extends Renderable {
   }
 
   initialize() {
-    // commented these out for now; my current implementation performs horrid on the RPI
-    // this.gaugeActive.filters = [
-    //   new GlowFilter({
-    //     distance: 8,
-    //     outerStrength: 1,
-    //     innerStrength: 0,
-    //     // color: 0xf0f0f0,
-    //     color: this.gaugeActiveColor,
-    //     quality: 0.2,
-    //   }),
-    // ];
-
-    this.activeColor = this.theme.gaugeActiveColor;
-    this.backgroundColor = this.theme.gaugeBgColor;
-    this.background.tint =  this.backgroundColor;
-    this.gaugeActive.tint = this.activeColor;
+    this.renderedValue = null;
+    this.background.tint =  this.theme.gaugeBgColor;
+    this.gaugeActive.tint = this.theme.gaugeActiveColor;
 
     // set the rotate this puppy so we can scale it up and down
     this.gaugeActive.position.set(this.gaugeWidth, this.gaugeHeight);
     this.gaugeActive.angle = 180;
- 
-    // Filter/Glow functionality
-    // PIXI.Ticker.shared.addOnce(() => {
-    //   // bake in the final transform area
-    //   this.gaugeActive.filterArea = this.getBounds();
-    // });
   }
 
   update() {

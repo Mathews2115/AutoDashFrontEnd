@@ -199,6 +199,7 @@ class BorderWarnings extends Renderable {
       .map((d) => d.data.tag)
       .reverse()
       .forEach((g) => this.addChild(g));
+      
     if (!this.initialized) {
       this.addChild(...this.borders);
       this.initialized = true;

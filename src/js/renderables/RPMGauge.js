@@ -36,9 +36,7 @@ class RPMGauge extends Renderable {
       ])
       .endFill();
 
-    ///////// background shape
-    this.background.tint = this.theme.gaugeBgColor;
-    this.background.cacheAsBitmap = true;
+    ///////// background shape    
     this.addChild(this.background);
 
     // create segmented tecture
@@ -59,6 +57,16 @@ class RPMGauge extends Renderable {
     foreground.destroy(true); // remove grafic ref and cache texture
 
     this.foregroundSprite = new Sprite(texture);
+
+    this.gaugeStencil = new Graphics();
+    this.gaugeStencil.drawRect(0, 0, this.gaugeWidth, this.gaugeHeight);
+    // rotate gauge so it grows from bottom to top
+    this.gaugeStencil.position.set(this.gaugeWidth, this.gaugeHeight);
+    this.gaugeStencil.angle = 180;
+    this.activeContainer = new Container();
+    this.activeContainer.addChild(this.foregroundSprite);
+    this.activeContainer.mask = this.gaugeStencil; // set foreground stenciling for when guage "grows" and "shrinks"
+    this.addChild(this.gaugeStencil, this.activeContainer);
   }
 
   initialize() {
@@ -70,20 +78,8 @@ class RPMGauge extends Renderable {
 
     ///////// background shape
     this.background.tint = this.theme.gaugeBgColor;
-    this.background.cacheAsBitmap = true;
-
-    if (!this.initialized){
-      this.gaugeStencil = new Graphics();
-      this.gaugeStencil.drawRect(0, 0, this.gaugeWidth, this.gaugeHeight);
-      // rotate gauge so it grows from bottom to top
-      this.gaugeStencil.position.set(this.gaugeWidth, this.gaugeHeight);
-      this.gaugeStencil.angle = 180;
-      this.activeContainer = new Container();
-      this.activeContainer.addChild(this.foregroundSprite);
-      this.activeContainer.mask = this.gaugeStencil; // set foreground stenciling for when guage "grows" and "shrinks"
-      this.addChild(this.gaugeStencil, this.activeContainer);
-      this.initialized = true;
-    }
+    this.foregroundSprite.tint = this.activeColor;
+    this.initialized = true;
   }
 
   // the data store values we want to listen too

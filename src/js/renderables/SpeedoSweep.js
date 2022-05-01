@@ -22,7 +22,6 @@ class SpeedoSweep extends Renderable {
     this._value = SPEEDO_CONFIG.MAX;
     this.renderedValue = this._value;
     this.gsapTimeline = gsap.timeline();
-    this.foregroundSprite = null;
     this._activeColors = new Array(3);
     this._gaugeDisplayState = STATE_ENUM.DANGER;
     this.background = new PIXI.Graphics();
@@ -114,8 +113,6 @@ class SpeedoSweep extends Renderable {
     this._activeColors[STATE_ENUM.DANGER] = this.theme.dangerColor;
 
     this.background.tint = this.theme.gaugeBgColor;
-    this.background.cacheAsBitmap = true;
-
     this.foregroundSprite.tint = this._activeColors[STATE_ENUM.DANGER];
     this.initialized = true;
   }
