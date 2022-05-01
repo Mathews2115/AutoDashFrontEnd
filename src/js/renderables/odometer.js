@@ -1,7 +1,7 @@
 import { GlowFilter } from "@pixi/filter-glow";
 import '@pixi/graphics-extras';
 import * as PIXI from "pixi.js";
-import { renderDigitTextures, createDigitSprites, spaceSprites } from "../common/createDigit";
+import { renderDigitTextures, createDigitSprites, formatSprites } from "../common/createDigit";
 import { DATA_KEYS } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
@@ -17,8 +17,7 @@ class Odometer extends Renderable {
     this.bgSprite = null;
     /** @type {PIXI.Texture[]} */
     this.numberTextures = [];
-    /** @type {PIXI.Sprite[]} */
-    this.numberSprites = [];
+    this.numberSprites = createDigitSprites(5);
   }
 
   // the data store values we want to listen too
@@ -33,20 +32,21 @@ class Odometer extends Renderable {
     return 60;
   }
 
-  // MAGIC NUMBERS AHOY LOL - so much pixel chooching.  These numbers also depending on
-  // renderhelpers.js placement.  Maybe I'll come back and make this less dumb...but I doubt it! :D :D :D    :|
   initialize() {
-    this.resetTextures();
-    this.numberTextures = renderDigitTextures(this.appRenderer, this.theme, this.gaugeHeight, 3);
-    this.numberSprites = createDigitSprites(this.numberTextures, 5);
-
-    this.addChild(...this.numberSprites);
-    
-    spaceSprites(this, this.numberSprites, 3);
-    
-    // reverse the order so when iterating them, the index represents least to most significatnt digit
-    this.numberSprites = this.numberSprites.reverse();
-    this.initialized = true;
+    const textureData = renderDigitTextures(
+      this.appRenderer, 
+      this.theme, 
+      this.gaugeHeight, 
+      2);
+    this.numberTextures = textureData.textures;
+    if (!this.initialized) {
+      this.addChild(...this.numberSprites);
+      formatSprites(this, this.numberSprites, textureData);
+      // reverse the order so when iterating them, the index represents least to most significatnt digit
+      this.numberSprites = this.numberSprites.reverse();
+      this.initialized = true;
+    }
+    this.numberSprites.forEach((sprite) => sprite.texture = this.numberTextures[8]);
   }
 
   update() {
@@ -54,22 +54,8 @@ class Odometer extends Renderable {
       this.renderedValue = this._value;
       this.numberSprites.forEach((sprite, i) => {
         const digit = Math.floor(this.renderedValue / Math.pow(10,i)) % 10;
-        sprite.texture = this.numberTextures[digit];
-        
+        sprite.texture = this.numberTextures[digit];       
       });
-    }
-  }
-  resetTextures() {
-    if (this.initialized) {
-      this.renderedValue = null;
-      this.numberTextures.forEach(texture => texture.destroy(true));
-      this.numberTextures = [];
-      this.numberSprites.forEach(sprite => sprite.destroy(true));
-      this.numberSprites = [];
-      this.children.forEach((child) => {
-        child.destroy({children: true, texture: true, baseTexture: true});
-      });
-      this.removeChild(...this.children);
     }
   }
 }

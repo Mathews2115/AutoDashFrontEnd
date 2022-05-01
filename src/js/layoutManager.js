@@ -1,12 +1,12 @@
 import * as PIXI from "pixi.js";
 import AverageMpgReadout from "./renderables/AverageMpgReadout";
-import AvgAfrReadout from "./renderables/AvgAfrReadout";
+import VoltageReadout from "./renderables/VoltageReadout";
 import BorderWarnings from "./renderables/BorderWarnings";
 import CurrentMpgReadout from "./renderables/CurrentMpgReadout";
 import FuelGauge from "./renderables/FuelGauge";
 import FuelGraph from "./renderables/FuelGraph";
 import IgnTimingReadout from "./renderables/IgnTimingReadout";
-import MAPReadout from "./renderables/MAPReadout";
+import CTSReadout from "./renderables/CTSReadout";
 import MpgGauge from "./renderables/MpgGauge";
 import MpgHistogram from "./renderables/MpgHistogram";
 import Odometer from "./renderables/odometer";
@@ -19,12 +19,13 @@ import fuelClusterControl from "./renderables/static/fuelClusterControl";
 import mpgClusterControl from "./renderables/static/mpgClusterControl";
 import rpmClusterControl from "./renderables/static/rpmClusterControl";
 import speedoClusterControl from "./renderables/static/speedoClusterControl";
-import TargetAfrReadout from "./renderables/TargetAfrReadout";
+import OilPressureReadout from "./renderables/OilPressureReadout";
 import TimingGraph from "./renderables/TimingGraph";
 import KPABar from "./renderables/EngineTable/KPAbar";
 import RPMBar from "./renderables/EngineTable/RPMBar";
 import EngineTable from "./renderables/EngineTable/EngineTable";
 import engineGraphsControl from "./renderables/static/engineGraphsControl";
+import testReadOutsControl from "./renderables/static/testReadouts";
 
 // PLEASE NOTE: all this is magic number stuff because I was in "EFF IT ILL DO IT LIVE" mode...
 // so...dont get all snooty when you look at this hot garbage while thinking "pssh, i cant believe he didn't use ALGORITHM_X to figure out the placement for everything"
@@ -55,10 +56,10 @@ const createGauges = ({ renderables }) => {
   /** @type {MpgHistogram} */
   const mpgHistogram = renderables.createRenderable(MpgHistogram);
 
-  renderables.createRenderable(TargetAfrReadout);
-  renderables.createRenderable(AvgAfrReadout);
+  renderables.createRenderable(OilPressureReadout);
+  renderables.createRenderable(VoltageReadout);
   renderables.createRenderable(IgnTimingReadout);
-  renderables.createRenderable(MAPReadout);
+  renderables.createRenderable(CTSReadout);
   renderables.createRenderable(TimingGraph);
   renderables.createRenderable(FuelGraph); 
 };
@@ -82,6 +83,7 @@ export default ({ renderer, auxScreen, gaugeScreen, theme }) => {
 
   const auxScreenClusters = [
     engineGraphsControl,
+    testReadOutsControl
   ]
 
   return {
@@ -107,7 +109,7 @@ export default ({ renderer, auxScreen, gaugeScreen, theme }) => {
      * @param {import("./appConfig").ThemeData} theme 
      */
     refresh: (theme) => {
-      renderables.refreshAll(theme)
+      renderables.refreshAll(theme);
       clusters.forEach((renderable) => {
         renderable.refresh({ renderer, theme, renderables });
       });

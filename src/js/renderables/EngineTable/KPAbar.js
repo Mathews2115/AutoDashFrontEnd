@@ -32,10 +32,10 @@ export default class KPABar extends LabelBar {
       const length = totalYCells;
       const tickSpace = EngineTable.cellHeight;
 
-      labelBarGraphics
-        .beginFill(theme.gaugeBgColorExtra)
-        .drawRect(0, 0, BAR_WIDTH, totalYCells * tickSpace)
-        .endFill();
+      // labelBarGraphics
+        // .beginFill(theme.gaugeBgColorExtra)
+        // .drawRect(0, 0, BAR_WIDTH, totalYCells * tickSpace)
+        // .endFill();
 
       for (let i = 0; i < length; i++) {
         if (i === 0) {

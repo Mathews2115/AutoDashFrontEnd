@@ -1,18 +1,42 @@
- 
-import * as PIXI from "pixi.js";
+
 import { GlowFilter } from "@pixi/filter-glow";
+import { Container, Graphics, Renderer, Resource, Sprite, Texture } from "pixi.js";
+import '@pixi/graphics-extras';
+import { THEMES } from "./theme";
 
 const FILTER_PADDING = 20;
 const PADDING_OFFSET = FILTER_PADDING/2;
 const SEGMENT_SLANT = -0.2;
 
+// dictionary by theme and key
+/**
+ * @typedef StoredTextures
+ * @type {object}
+ * @property {Number} glowSrength
+ * @property {Texture[]} textures - represents textures of digits
+ * @property {Number} rawDigitWidth - the actual width of the digit before the texture bake in
+ * @property {Number} rawDigitHeight - the actual height of the digit before the texture bake in
+ * @property {Number} decimalWidth - the actual width of the decimal point
+ * @property {Number} decimalHeight - the actual height of the decimal point
+*/
+
+/**
+ * @typedef StoredDictionary
+ * @type {object}
+ * @property {StoredTextures} [key] - a string representing the gaugeHeight,glow and createBackground
+ */
+
+// REUSE TEXTURES - An array of StoredTextures dictionaries, indexed by theme, dictionary keyed by a string representing height,glow and background enabled
+/** @type {StoredDictionary[]} */
+const textures = [];
+Object.keys(THEMES).forEach(_ => textures.push({}));
 
 /**
  * Generate the Graphics needed for segments...
  * lmao im doing this the hard way arent i
  * @param {Number} number - The number to create out of segments
  * @param {Number} gaugeHeight - Needed to generate the segments
- * @returns {PIXI.Graphics}
+ * @returns {Graphics}
  */
  export const createDigitGeometry = (number, gaugeHeight) => {
   const segmentWidth = (gaugeHeight / 10.95);
@@ -22,7 +46,7 @@ const SEGMENT_SLANT = -0.2;
   const inset = Math.min(chamfer, Math.min(segmentWidth, segmentLength) / 2);
   const middleSegmentPadding = (insetPadding*3)+inset; // padding the verticals use to fit the middle horizontal in there
   
-  const graphics = new PIXI.Graphics();
+  const graphics = new Graphics();
   graphics.beginFill(0xffffff).lineStyle(0);
   
   // upper left vertical
@@ -88,99 +112,134 @@ const SEGMENT_SLANT = -0.2;
   return graphics;
 };
 
+
 /**
  * Create Render Textures for each digit - used PIXI Sprites
  * MAGIC NUMBERS AHOY LOL - so much pixel chooching.  These numbers also depending on
  * renderhelpers.js placement.  Maybe I'll come back and make this less dumb...but I doubt it! :D :D :D    :|
  *
- * @param {PIXI.Renderer} appRenderer
- * @param {{ gaugeBgColor?: number; gaugeActiveColor: any; dangerColor?: number; warningColor?: number; nominalColor?: number; backgroundColor?: number; }} theme
+ * @param {Renderer} appRenderer
+ * @param {import("../appConfig").ThemeData} theme
  * @param {number} gaugeHeight
+ * @param {number} glowSrength 
+ * @param {Boolean} createBackground 
+ * @returns {StoredTextures}
  */
 export function renderDigitTextures(appRenderer, theme, gaugeHeight, glowSrength = 2, createBackground = false) {
-  /** @type {PIXI.Texture[]} */
-  const backedInTextures = [];
+  /** @type {Texture[]} */
+  let bakedInTextures = [];
 
-   /** @type {PIXI.Graphics} */
-  let numberBackground = null;
+  const key = `${gaugeHeight}_${glowSrength}_${createBackground}`;
 
-  if (createBackground) {
-     // represents "unlit segmentst" for the digitis - we just draw over them
-    numberBackground = createDigitGeometry(8, gaugeHeight);
-  }
+  if (!textures[theme.id][key]) {
+    // represents "unlit segmentst" for the digitis - we just draw over them
+    const numberBackground = createDigitGeometry(8, gaugeHeight);
+    const rawDigitWidth = numberBackground.width;
+    const rawDigitHeight = numberBackground.height;
+    
+    // create each number texture
+    for (let i = 0; i <= 10; i++) {
+      const digitContainer = new Container();
 
-  // create each number texture
-  for (let i = 0; i <= 10; i++) {
-    const digitContainer = new PIXI.Container();
+      if (createBackground) {
+        const background = new Graphics(numberBackground.geometry);
+        background.tint = theme.gaugeBgColor;
+        digitContainer.addChild(background);
+      }
 
-    if (numberBackground) {
-      const background = new PIXI.Graphics(numberBackground.geometry);
-      background.tint = theme.gaugeBgColor;
-      digitContainer.addChild(background);
+      if (i != 10) {
+        // create number graphics
+        const numberGraphics = createDigitGeometry(i, gaugeHeight);
+        numberGraphics.tint = theme.gaugeActiveColor;
+
+        // make the digit GLOW like everything else
+        numberGraphics.filters = [new GlowFilter({
+          distance: glowSrength, 
+          outerStrength: 1,
+          innerStrength: 0,
+          color: theme.gaugeActiveColor,
+          quality: 1,
+        })];
+
+        digitContainer.addChild(numberGraphics)
+      }
+
+      // we need room for the glow before we render this to the texture...
+      // so lets add some padding - there is probably a better way of doing this but whatevs, here we are
+      const container = new Container();
+      const emptySpace = new Graphics();
+      emptySpace.drawRect(0,0, digitContainer.width+FILTER_PADDING, digitContainer.height+FILTER_PADDING);
+      digitContainer.x = PADDING_OFFSET;
+      digitContainer.y = PADDING_OFFSET;
+      container.addChild(emptySpace, digitContainer);
+
+      const bakedInTexture = appRenderer.generateTexture(container);
+      // bake everything into a texture (background, glowing digit, blank border)
+      bakedInTextures.push(bakedInTexture);
+      container.destroy(true); // clean up
     }
 
-    if (i != 10) {
-      // create number graphics
-      const numberGraphics = createDigitGeometry(i, gaugeHeight);
-      numberGraphics.tint = theme.gaugeActiveColor;
+    // make decimal point texture
+    const decimal = new Graphics();
+    decimal.beginFill(theme.gaugeActiveColor)
+      .lineStyle(0)
+      .drawChamferRect(0, 0, gaugeHeight*0.12, gaugeHeight*0.12,(gaugeHeight / 7.33))
+      .endFill();
+    const decimalHeight = decimal.height;
+    const decimalWidth = decimal.width;
+    const bakedInDecimal = appRenderer.generateTexture(decimal);
+    bakedInTextures.push(bakedInDecimal);
+    decimal.destroy(true); // clean up
+    
+    if (numberBackground) numberBackground.destroy(true); // cleanup
 
-      // make the digit GLOW like everything else
-      numberGraphics.filters = [new GlowFilter({
-        distance: glowSrength, 
-        outerStrength: 1,
-        innerStrength: 0,
-        color: theme.gaugeActiveColor,
-        quality: 1,
-      })];
-
-      digitContainer.addChild(numberGraphics)
-    }
-
-    // we need room for the glow before we render this to the texture...
-    // so lets add some padding - there is probably a better way of doing this but whatevs, here we are
-    const container = new PIXI.Container();
-    const emptySpace = new PIXI.Graphics();
-    emptySpace.drawRect(0,0, digitContainer.width+FILTER_PADDING, digitContainer.height+FILTER_PADDING);
-    digitContainer.x = PADDING_OFFSET;
-    digitContainer.y = PADDING_OFFSET;
-    container.addChild(emptySpace, digitContainer);
-
-    const bakedInTexture = appRenderer.generateTexture(container);
-    // bake everything into a texture (background, glowing digit, blank border)
-    backedInTextures.push(bakedInTexture);
-    container.destroy(true); // clean up
+    textures[theme.id][key] = {textures: bakedInTextures, 
+      rawDigitWidth, 
+      rawDigitHeight, 
+      glowSrength, 
+      decimalHeight, 
+      decimalWidth};
   }
-
-  if (numberBackground) numberBackground.destroy(true); // cleanup
-  return backedInTextures;
+  return textures[theme.id][key];
 }
 
 /**
- * @param {PIXI.Texture<PIXI.Resource>[]} numberTextures - textures representing each digit
  * @param {number} readoutSize - Number of sprites to create
+ * @return {Sprite[]}
  */
-export function createDigitSprites(numberTextures, readoutSize) {
+export function createDigitSprites(readoutSize) {
   const digitSprites = [];
   // create number sprites
   for (let i = 0; i < readoutSize; i++) {
-    digitSprites.push(new PIXI.Sprite(numberTextures[8]));
+    digitSprites.push(new Sprite());
   }
   return digitSprites;
 }
 
-
 /**
- * @param {PIXI.Container} container
- * @param {PIXI.Sprite[]} numberSprites
- * @param {number} fudge - lol MAGIC NUMBERS
+ * @param {Container} container
+ * @param {Sprite[]} numberSprites
+ * @param {StoredTextures} textureData
  */
-export function spaceSprites(container, numberSprites, fudge=15) {
-  numberSprites.forEach((sprite, i) => {
-    sprite.y = -2; // offset magic number; i did some dumb math while creating render textures
-    if (i > 0) {
-      sprite.x = ((sprite.width/2+fudge)*i);  
+const spriteSpacing = 1;
+export function formatSprites(container, numberSprites, textureData, decimalPlaces = null, decimalSprite = null) {
+  const {rawDigitWidth, rawDigitHeight, textures, glowSrength, decimalHeight, decimalWidth} = textureData;
+  const digitWidth = rawDigitWidth+glowSrength
+  const decimalSpot = numberSprites.length - decimalPlaces;
+
+  for (let i = 0; i < numberSprites.length; i++) {
+    const sprite = numberSprites[i];
+
+    if (!decimalPlaces || i < decimalSpot) {
+      sprite.x = (digitWidth+spriteSpacing)*i; 
+    } else if (decimalPlaces && i === decimalSpot) {
+      decimalSprite.x = (digitWidth+spriteSpacing)*i + decimalSprite.width;
+      decimalSprite.y = rawDigitHeight + (decimalSprite.height/2)  ;
+      sprite.x = (digitWidth+spriteSpacing)*i + decimalSprite.width; 
+    } else {
+      sprite.x = (digitWidth+spriteSpacing)*i + decimalSprite.width; 
     }
-  });
+  }
   // give us a bit of a lean on the numbers
   container.setTransform(0,0,1,1,0, SEGMENT_SLANT, 0,0,0);
 }

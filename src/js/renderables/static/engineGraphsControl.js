@@ -3,8 +3,6 @@ import EngineTable from "../EngineTable/EngineTable";
 import KPABar from "../EngineTable/KPAbar";
 import RPMBar from "../EngineTable/RPMBar";
 import { Renderables, RENDER_KEYS } from "../Renderables";
-import { gsap } from "gsap";
-import FPSTextField from "../FPSTextField";
 import { SCREEN } from "../../appConfig";
 import { createLogo } from "./commonGraphics";
 
@@ -14,12 +12,7 @@ let kpaBar = null;
 let rpmBarForIgn = null;
 /** @type {RPMBar} */
 let rpmBarForAfr = null;
-
-const testingContainter = new Container();
 const backgroundSprite = Sprite.from(Texture.WHITE);
-/** @type {BitmapText} */
-let testText = null;
-const testGraphics = new Graphics();
 let afrLogo = new Sprite();
 let timingLogo = new Sprite();
 
@@ -52,10 +45,10 @@ const layoutGraphs = ({renderer, theme, renderables}) => {
   createBars({renderer, renderables});
 
   // draw border around graphs
-  const totalWidth = afrGraph.width+timingGraph.width+10;
+  const totalWidth = afrGraph.gaugeWidth+timingGraph.width+10;
   const totalHeight = afrGraph.height+10;
   backgroundSprite.scale.set(totalWidth/backgroundSprite.width, totalHeight/backgroundSprite.height);
-  backgroundSprite.tint = theme.gaugeBgColorExtra;
+  backgroundSprite.tint = theme.gaugeActiveColor;
 
   const top = SCREEN.HEIGHT - afrGraph.height - 15;
   const left = 15;
@@ -63,7 +56,7 @@ const layoutGraphs = ({renderer, theme, renderables}) => {
   backgroundSprite.x = left;
   backgroundSprite.y = top;
   timingGraph.x = 5 + backgroundSprite.x;
-  afrGraph.x = timingGraph.x + afrGraph.width;
+  afrGraph.x = timingGraph.x + afrGraph.gaugeWidth;
   timingGraph.y = 5 + backgroundSprite.y;
   afrGraph.y = 5 + backgroundSprite.y;
 
@@ -76,61 +69,8 @@ const layoutGraphs = ({renderer, theme, renderables}) => {
   timingLogo.y = 5;
   afrLogo.x = afrGraph.x + 5;
   afrLogo.y = 5;
-
-  const anim = gsap.timeline();
-  // TESTING STUFF
-  testingContainter.x = afrGraph.x + afrGraph.width;
-  testingContainter.y = 10;
-
-  testGraphics.beginFill(theme.dangerColor)
-    .drawPolygon([ 
-      5, 0,
-      0, 15, 
-      280, 15,
-      285, 0,
-    ])
-    .endFill();
-  const texture = renderer.generateTexture(testGraphics);
-  testGraphics.destroy(true);
-  const sprite = new Sprite(texture);
-  const sprite2 = new Sprite(texture);
-  sprite2.y = 70;
   
-
-  testText = new BitmapText("TESTING", {
-    fontName: "Orbitron",
-    fontSize: 48,
-    align: "center",
-  });
-  testText.y = 10
-  testText.x = 15 
-  testText.angle = 180;
-  testText.tint = theme.dangerColor;
-  const fps = new FPSTextField()
-  fps.x = 0;
-  fps.y = 200;
-  testingContainter.addChild(sprite,sprite2, testText, fps);
-  const animTest = () => {
-    anim.to(testText, {
-       alpha: 0,
-      
-      duration: 1,
-      ease: "power2.inOut",
-      onComplete: () => {
-        anim.to(testText, {
-          alpha: 1,
-          
-          duration: 1,
-          ease: "power2.inOut",
-          onComplete: animTest,
-        });
-      }
-    });
-  }
-  
-  animTest();
-  
-  return [backgroundSprite, timingGraph, afrGraph, testingContainter, timingLogo, afrLogo]
+  return [backgroundSprite, timingGraph, afrGraph, timingLogo, afrLogo]
 }
 
 /**

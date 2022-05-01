@@ -1,11 +1,9 @@
-import * as PIXI from "pixi.js";
-import '@pixi/graphics-extras';
-// import { GlowFilter } from "@pixi/filter-glow";
 import { SCREEN, SPEEDO_CONFIG } from "../appConfig";
 import { DATA_KEYS } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
-import { renderDigitTextures, createDigitSprites, spaceSprites } from "../common/createDigit";
+import { renderDigitTextures, createDigitSprites, formatSprites } from "../common/createDigit";
+import { Texture } from "pixi.js";
 
 const NO_DISPLAY = 10;
 
@@ -14,14 +12,12 @@ class SpeedoReadout extends Renderable {
   constructor({ renderer, theme }) {
     super({ renderer, theme });
     this._dashID = ID;
-
     this._value = SPEEDO_CONFIG.MAX;
     this.renderedValue = this._value;
     this.bgSprite = null;
-    /** @type {PIXI.Texture[]} */
+    /** @type {Texture[]} */
     this.numberTextures = [];
-    /** @type {PIXI.Sprite[]} */
-    this.numberSprites = [];
+    this.numberSprites = createDigitSprites(2);
   }
 
   // the data store values we want to listen too
@@ -42,15 +38,18 @@ class SpeedoReadout extends Renderable {
     return SCREEN.SPEEDO_READOUT_HEIGHT;
   }
 
-  initialize() {
-    this.resetTextures();
-    this.numberTextures = renderDigitTextures(this.appRenderer, this.theme, this.gaugeHeight, 20, true);
-    this.numberSprites = createDigitSprites(this.numberTextures, 2);
+  initialize() {    
+    this.renderedValue = SPEEDO_CONFIG.MAX;
+    const textureData = renderDigitTextures(this.appRenderer, this.theme, this.gaugeHeight, 5, true);
+    this.numberTextures = textureData.textures;
 
-    this.addChild(...this.numberSprites);
-    
-    spaceSprites(this, this.numberSprites, this.numberSprites[0].width/3 + SCREEN.PADDING);
-    this.initialized = true;
+    if (!this.initialized) {
+      this.addChild(...this.numberSprites);
+      formatSprites(this, this.numberSprites, textureData);
+      this.initialized = true;
+    }
+
+    this.numberSprites.forEach((sprite) => sprite.texture = this.numberTextures[8]);
   }
 
   update() {
@@ -60,20 +59,6 @@ class SpeedoReadout extends Renderable {
 
       const tenthsDigit = Math.floor(this.renderedValue/10) || NO_DISPLAY
       this.numberSprites[0].texture = this.numberTextures[tenthsDigit]
-    }
-  }
-
-  resetTextures() {
-    if (this.initialized) {
-      this.renderedValue = null;
-      this.numberTextures.forEach(texture => texture.destroy(true));
-      this.numberTextures = [];
-      this.numberSprites.forEach(sprite => sprite.destroy({children: true, texture: true, baseTexture: true}));
-      this.numberSprites = [];
-      this.children.forEach((child) => {
-        child.destroy({children: true, texture: true, baseTexture: true});
-      });
-      this.removeChild(...this.children);
     }
   }
 }

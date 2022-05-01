@@ -143,14 +143,15 @@ class EngineTable extends Renderable {
   }
   set yLabelBar(ylabelBar) {
     if (!this._yLabelBar) {
+      const yHeight = this._xlabelBar.height ? this._xlabelBar.height : 30
       // generate mask for the bar
       this.labelBarsMask
         .beginFill(0xffffff)
-        .drawRect(0, 0, ylabelBar.width, this.gaugeHeight)
+        .drawRect(0, yHeight, ylabelBar.width, this.gaugeHeight-yHeight)
         .endFill();
       this.labelBarsContainer.mask = this.labelBarsMask;
       this.labelBarsContainer.addChild(this.labelBarsMask);
-      this.labelBarsContainer.x = -ylabelBar.width;
+      this.labelBarsContainer.x = -ylabelBar.width/2;
     } else {
       this.labelBarsContainer.removeChild(this._yLabelBar);
       this._yLabelBar.destroy(true);
@@ -224,7 +225,7 @@ class EngineTable extends Renderable {
 
   initialize() {
     this.activeColor = this.theme.gaugeActiveColor;
-    this.backgroundColor = this.theme.gaugeBgColor;
+    this.backgroundColor = this.theme.backgroundColor;
     this.background.tint = this.backgroundColor;
 
     // tint cells
