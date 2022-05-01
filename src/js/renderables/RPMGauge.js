@@ -1,6 +1,5 @@
-import * as PIXI from "pixi.js";
+import { Container, Graphics, Sprite } from "pixi.js";
 import { RPM_CONFIG, SCREEN } from "../appConfig";
-// import { GlowFilter } from "@pixi/filter-glow";
 import { DATA_KEYS } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
@@ -22,21 +21,11 @@ class RPMGauge extends Renderable {
     // What value the gauge rendered last
     this.renderedValue = this._value;
 
-    this._foregroundTextures = new Array(3);
-    // this._storedfilters = new Array(3);
     this._activeColors = new Array(3);
     this._gaugeDisplayState = STATE_ENUM.DANGER;
-  }
 
-  initialize() {
-    this.renderedValue = null;
-    // colors
-    this._activeColors[STATE_ENUM.NORMAL] = this.theme.gaugeActiveColor;
-    this._activeColors[STATE_ENUM.WARNING] = this.theme.warningColor;
-    this._activeColors[STATE_ENUM.DANGER] = this.theme.dangerColor;
-
-    const background = new PIXI.Graphics();
-    background
+    this.background = new Graphics();
+    this.background
       .beginFill(0xffffff)
       .lineStyle(0)
       .drawPolygon([
@@ -48,12 +37,12 @@ class RPMGauge extends Renderable {
       .endFill();
 
     ///////// background shape
-    background.tint = this.theme.gaugeBgColor;
-    background.cacheAsBitmap = true;
-    this.addChild(background);
+    this.background.tint = this.theme.gaugeBgColor;
+    this.background.cacheAsBitmap = true;
+    this.addChild(this.background);
 
-    ///////// foreground shape
-    const foreground = new PIXI.Graphics();
+    // create segmented tecture
+    const foreground = new Graphics();
     const segments = RPM_CONFIG.SEGMENTS;
     let segmentHeight = this.gaugeHeight / segments;
     foreground.beginFill(0xffffff).lineStyle(0);
@@ -64,70 +53,37 @@ class RPMGauge extends Renderable {
       );
     }
     foreground.endFill();
-    foreground.mask = new PIXI.Graphics(background.geometry);
-
-    // create normal sprite
-    foreground.tint = this.theme.gaugeActiveColor;
-    this._foregroundTextures[STATE_ENUM.NORMAL] = this.appRenderer.generateTexture(
-      foreground
-    );
-
-    // create warning sprite
-    foreground.tint = this.theme.warningColor;
-    this._foregroundTextures[
-      STATE_ENUM.WARNING
-    ] = this.appRenderer.generateTexture(foreground);
-
-    // create danger sprite
-    foreground.tint = this.theme.dangerColor;
-    this._foregroundTextures[STATE_ENUM.DANGER] = this.appRenderer.generateTexture(
-      foreground
-    );
+    foreground.mask = new Graphics(this.background.geometry);
+    const texture = this.appRenderer.generateTexture(foreground);
     foreground.mask.destroy(true);
     foreground.destroy(true); // remove grafic ref and cache texture
 
-    this.foregroundSprite = new PIXI.Sprite(
-      this._foregroundTextures[STATE_ENUM.DANGER]
-    );
+    this.foregroundSprite = new Sprite(texture);
+  }
 
-    // ////////// FILTERS
-    // this._storedfilters[STATE_ENUM.NORMAL] = new GlowFilter({
-    //   distance: 8,
-    //   outerStrength: 1,
-    //   innerStrength: 0,
-    //   color: this._activeColors[STATE_ENUM.NORMAL],
-    //   quality: 0.2,
-    // });
-    // this._storedfilters[STATE_ENUM.WARNING] = new GlowFilter({
-    //   distance: 8,
-    //   outerStrength: 1,
-    //   innerStrength: 0,
-    //   color: this._activeColors[STATE_ENUM.WARNING],
-    //   quality: 0.2,
-    // });
-    // this._storedfilters[STATE_ENUM.DANGER] = new GlowFilter({
-    //   distance: 8,
-    //   outerStrength: 1,
-    //   innerStrength: 0,
-    //   color: this._activeColors[STATE_ENUM.DANGER],
-    //   quality: 0.2,
-    // });
+  initialize() {
+    this.renderedValue = null;
+    // colors
+    this._activeColors[STATE_ENUM.NORMAL] = this.theme.gaugeActiveColor;
+    this._activeColors[STATE_ENUM.WARNING] = this.theme.warningColor;
+    this._activeColors[STATE_ENUM.DANGER] = this.theme.dangerColor;
 
-    this.gaugeStencil = new PIXI.Graphics();
-    this.gaugeStencil.drawRect(0, 0, this.gaugeWidth, this.gaugeHeight);
-    // rotate gauge so it grows from bottom to top
-    this.gaugeStencil.position.set(this.gaugeWidth, this.gaugeHeight);
-    this.gaugeStencil.angle = 180;
-    this.activeContainer = new PIXI.Container();
-    this.activeContainer.addChild(this.foregroundSprite);
-    this.activeContainer.mask = this.gaugeStencil; // set foreground stenciling for when guage "grows" and "shrinks"
+    ///////// background shape
+    this.background.tint = this.theme.gaugeBgColor;
+    this.background.cacheAsBitmap = true;
 
-    this.addChild(this.gaugeStencil, this.activeContainer);
-
-    PIXI.Ticker.shared.addOnce(() => {
-      // bake in the final transform area
-      this.activeContainer.filterArea = this.getBounds(); // optimize and save off filtered area
-    });
+    if (!this.initialized){
+      this.gaugeStencil = new Graphics();
+      this.gaugeStencil.drawRect(0, 0, this.gaugeWidth, this.gaugeHeight);
+      // rotate gauge so it grows from bottom to top
+      this.gaugeStencil.position.set(this.gaugeWidth, this.gaugeHeight);
+      this.gaugeStencil.angle = 180;
+      this.activeContainer = new Container();
+      this.activeContainer.addChild(this.foregroundSprite);
+      this.activeContainer.mask = this.gaugeStencil; // set foreground stenciling for when guage "grows" and "shrinks"
+      this.addChild(this.gaugeStencil, this.activeContainer);
+      this.initialized = true;
+    }
   }
 
   // the data store values we want to listen too
@@ -137,14 +93,6 @@ class RPMGauge extends Renderable {
 
   get activeColor() {
     return this._activeColors[this._gaugeDisplayState];
-  }
-
-  // get activeFilter() {
-  //   return this._storedfilters[this._gaugeDisplayState];
-  // }
-
-  get activeTexture() {
-    return this._foregroundTextures[this._gaugeDisplayState];
   }
 
   get gaugeWidth() {
@@ -174,11 +122,8 @@ class RPMGauge extends Renderable {
 
   update() {
     if (this._value != this.renderedValue) {
-      //this.activeContainer.filters = [this.activeFilter];
-      this.foregroundSprite.texture = this.activeTexture;
-
+      this.foregroundSprite.tint = this.activeColor;
       this.gaugeStencil.scale.set(1, this._value / RPM_CONFIG.MAX);
-
       this.renderedValue = this._value;
     }
   }

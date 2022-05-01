@@ -22,7 +22,12 @@ class BarGraph extends Renderable {
     this.maxValue = maxValue;
     this.gsapTimeline = gsap.timeline();
     this.background = new Graphics();
-    this.gaugeActive = new Graphics();
+    this.background
+      .beginFill(0xFFFFFF)
+      .lineStyle(0)
+      .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
+      .endFill();
+    this.gaugeActive = new Graphics(this.background.geometry);
     this.addChild(this.background, this.gaugeActive);
   }
 
@@ -48,16 +53,8 @@ class BarGraph extends Renderable {
 
     this.activeColor = this.theme.gaugeActiveColor;
     this.backgroundColor = this.theme.gaugeBgColor;
-    this.background
-      .beginFill(this.backgroundColor)
-      .lineStyle(0)
-      .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
-      .endFill();
-    this.gaugeActive
-      .beginFill(this.activeColor)
-      .lineStyle(0)
-      .drawRect(0, 0, this.gaugeWidth, this.gaugeHeight)
-      .endFill();
+    this.background.tint =  this.backgroundColor;
+    this.gaugeActive.tint = this.activeColor;
 
     // set the rotate this puppy so we can scale it up and down
     this.gaugeActive.position.set(this.gaugeWidth, this.gaugeHeight);

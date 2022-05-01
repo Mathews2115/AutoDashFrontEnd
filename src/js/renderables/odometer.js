@@ -33,6 +33,7 @@ class Odometer extends Renderable {
   }
 
   initialize() {
+    this.renderedValue = 0;
     const textureData = renderDigitTextures(
       this.appRenderer, 
       this.theme, 
