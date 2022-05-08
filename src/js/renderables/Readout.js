@@ -41,9 +41,16 @@ class Readout extends Renderable {
     return Math.round(value * Math.pow(10, this.decimalPlaces));
   }
 
+  /**
+   * @param {Number} newValue
+   */
   set value(newValue) {
     if (newValue) this._value = this.convertToNonDecimal(newValue);
   }
+
+  /**
+   * @return {Number}
+   */
   get gaugeHeight() {
     return 60; // override this for different number sizes
   }
@@ -79,8 +86,8 @@ class Readout extends Renderable {
     if (this._value != this.renderedValue) {
       this.renderedValue = this._value;
       this.numberSprites.forEach((sprite, i) => {
-        this.currentDigit = Math.round(this.renderedValue / Math.pow(10, i)) % 10;
-        
+        this.currentDigit = Math.floor(this.renderedValue / Math.pow(10, i)) % 10;
+
         if (this.currentDigit === 0 && i >= this.firstNonDecimal) {
           this.hideCurrentDigit = this.renderedValue < Math.pow(10, i+1)
           sprite.texture = this.numberTextures[this.hideCurrentDigit ? Readout.NO_DISPLAY : this.currentDigit];
