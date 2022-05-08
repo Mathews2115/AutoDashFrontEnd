@@ -27,6 +27,13 @@ class Readout extends Renderable {
     this.createBackground = createBackground;
     this.decimalPlaces = decimalPlaces;
     this.decimalSprite = new Sprite();
+    this.digits = digits;
+    this.firstNonDecimal = decimalPlaces ? digits - decimalPlaces : 1;
+
+    // cache holders - i dont have proof (yet) but to prevent GC stuff; (creating objects mid function, we just assign it here)
+    // this might be super pointless but it's worth a try
+    this.currentDigit = 0;
+    this.hideCurrentDigit = false;
   }
 
   convertToNonDecimal(value) {
@@ -72,8 +79,14 @@ class Readout extends Renderable {
     if (this._value != this.renderedValue) {
       this.renderedValue = this._value;
       this.numberSprites.forEach((sprite, i) => {
-        const digit = Math.floor(this.renderedValue / Math.pow(10, i)) % 10;
-        sprite.texture = this.numberTextures[i && !digit ? Readout.NO_DISPLAY : digit];
+        this.currentDigit = Math.round(this.renderedValue / Math.pow(10, i)) % 10;
+        
+        if (this.currentDigit === 0 && i >= this.firstNonDecimal) {
+          this.hideCurrentDigit = this.renderedValue < Math.pow(10, i+1)
+          sprite.texture = this.numberTextures[this.hideCurrentDigit ? Readout.NO_DISPLAY : this.currentDigit];
+        } else {
+          sprite.texture = this.numberTextures[this.currentDigit];
+        }
       });
     }
   }
