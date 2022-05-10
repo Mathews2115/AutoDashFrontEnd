@@ -1,9 +1,7 @@
-import * as PIXI from "pixi.js";
-import { GlowFilter } from "@pixi/filter-glow";
+import chroma from "chroma-js";
 import Renderable from "./Renderable";
 import { gsap } from "gsap";
-//Aliases
-let Graphics = PIXI.Graphics;
+import { Graphics } from "pixi.js";
 
 const BAR_MAX = 100;
 const BAR_MIN = 0;
@@ -13,13 +11,14 @@ const BAR_MIN = 0;
  */
 class BarGraph extends Renderable {
 
-  constructor({ renderer, theme, width, height, maxValue=BAR_MAX}) {
+  constructor({ renderer, theme, width, height, minValue=BAR_MIN, maxValue=BAR_MAX}) {
     super({ renderer, theme });
     this._value = maxValue;
     this.renderedValue = this._value;
     this.gaugeHeight = height;
     this.gaugeWidth = width;
     this.maxValue = maxValue;
+    this.minValue = minValue
     this.gsapTimeline = gsap.timeline();
     this.background = new Graphics();
     this.background
@@ -29,13 +28,24 @@ class BarGraph extends Renderable {
       .endFill();
     this.gaugeActive = new Graphics(this.background.geometry);
     this.addChild(this.background, this.gaugeActive);
+    this.tintUpdate = () => {};
+  }
+
+  /**
+   * @param {{ colors?: Array<string | chroma.Color>; chromaDomain: number[]; }} colors
+   */
+  set colors(colors) {
+    this.chromaScale = chroma.scale(colors.colors).domain(colors.chromaDomain);
+    this.tintUpdate = () => {
+      this.gaugeActive.tint = this.chromaScale(Math.round(this._value)).num();
+    }
   }
 
   /**
    * @param {Number} newValue
    */
   set value(newValue) {
-    this._value = Math.min(Math.max(newValue || BAR_MIN), this.maxValue);
+    this._value = Math.min(Math.max(newValue, this.minValue), this.maxValue);
   }
 
   initialize() {
@@ -53,6 +63,7 @@ class BarGraph extends Renderable {
       this.gsapTimeline.clear();
       this.gsapTimeline.to(this.gaugeActive.scale, {duration: 0.15, y: this._value / this.maxValue})
       this.renderedValue = this._value;
+      this.tintUpdate();
     }
   }
 }

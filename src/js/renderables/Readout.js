@@ -1,4 +1,4 @@
-import { Sprite, Texture } from "pixi.js";
+import { Graphics, Sprite, Texture } from "pixi.js";
 import {
   createDigitSprites,
   renderDigitTextures,
@@ -13,12 +13,13 @@ class Readout extends Renderable {
     {
       digits = 2,
       glowStrength = 2,
-      createBackground = false,
+      createBackground = false, // makes it look like there are unlit LED segments
       decimalPlaces = 0,
+      createSolidBackground = false, // creates asolid plain behind humber
     }
   ) {
     super({ renderer, theme });
-    this._value = 0;
+    this._value = 88;
     this.renderedValue = null;
     /** @type {Texture[]} */
     this.numberTextures = [];
@@ -29,11 +30,13 @@ class Readout extends Renderable {
     this.decimalSprite = new Sprite();
     this.digits = digits;
     this.firstNonDecimal = decimalPlaces ? digits - decimalPlaces : 1;
+    if (createSolidBackground) this.backgroundPlane = new Graphics();
 
     // cache holders - i dont have proof (yet) but to prevent GC stuff; (creating objects mid function, we just assign it here)
     // this might be super pointless but it's worth a try
     this.currentDigit = 0;
     this.hideCurrentDigit = false;
+    this._height = 60;
   }
 
   convertToNonDecimal(value) {
@@ -45,14 +48,17 @@ class Readout extends Renderable {
    * @param {Number} newValue
    */
   set value(newValue) {
-    if (newValue) this._value = this.convertToNonDecimal(newValue);
+    if (newValue != null) this._value = this.convertToNonDecimal(newValue);
   }
 
   /**
    * @return {Number}
    */
   get gaugeHeight() {
-    return 60; // override this for different number sizes
+    return this._height; // override this for different number sizes
+  }
+  set gaugeHeight(value) {
+    this._height = value;
   }
 
   initialize() {
@@ -66,20 +72,31 @@ class Readout extends Renderable {
     );
     this.numberTextures = textureData.textures;
     this.numberSprites.forEach((sprite) => (sprite.texture = this.numberTextures[8]));
+    
     if (this.decimalPlaces) {
       this.decimalSprite.texture = this.numberTextures[this.numberTextures.length - 1];
     }
 
     if (!this.initialized) {
-      this.addChild(...this.numberSprites);
-      if (this.decimalPlaces) {
-        this.addChild(this.decimalSprite);
-      }
-      // reverse the order so when iterating them, the index represents least to most significatnt digit
-      formatSprites(this, this.numberSprites, textureData, this.decimalPlaces, this.decimalSprite);
       this.initialized = true;
+      this.addChild(...this.numberSprites);
+      if (this.decimalPlaces) this.addChild(this.decimalSprite);
+      formatSprites(this, this.numberSprites, textureData, this.decimalPlaces, this.decimalSprite);
+      
+      // so we can reference the sprites nicely in a forloop from least to msb
       this.numberSprites = this.numberSprites.reverse();
+
+      if (this.backgroundPlane) {
+        this.backgroundPlane
+          .beginFill(0xffffff)
+          .drawRect(0, 0, this.width, this.height)
+          .endFill();
+        this.addChildAt(this.backgroundPlane, 0);
+        this.backgroundPlane.cacheAsBitmap = true;
+      }
     }
+
+    if (this.backgroundPlane) this.backgroundPlane.tint = this.theme.gaugeBgColor;
   }
 
   update() {
@@ -88,7 +105,7 @@ class Readout extends Renderable {
       this.numberSprites.forEach((sprite, i) => {
         this.currentDigit = Math.floor(this.renderedValue / Math.pow(10, i)) % 10;
 
-        if (this.currentDigit === 0 && i >= this.firstNonDecimal) {
+        if (i && this.currentDigit === 0 && i >= this.firstNonDecimal) {
           this.hideCurrentDigit = this.renderedValue < Math.pow(10, i+1)
           sprite.texture = this.numberTextures[this.hideCurrentDigit ? Readout.NO_DISPLAY : this.currentDigit];
         } else {

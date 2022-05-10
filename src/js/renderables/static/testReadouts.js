@@ -3,59 +3,10 @@ import { Renderables, RENDER_KEYS } from "../Renderables";
 import { gsap } from "gsap";
 import FPSTextField from "../FPSTextField";
 
-let oilLogo = null;
-let ctsLogo = null;
-let voltLogo = null;
 const testingContainter = new Container();
 /** @type {BitmapText} */
 let testText = null;
 const testGraphics = new Graphics();
-
-const createOilPressure = (renderer, theme, renderables, x, y) => {
-  const oilPressureReadout = renderables[RENDER_KEYS.OIL_PRESSURE];
-  oilLogo = new BitmapText("OIL", {
-    fontName: "Orbitron",
-    fontSize: 48,
-    align: "center",
-  });
-  oilLogo.angle = 180;
-  oilLogo.x = x;
-  oilLogo.y = y+10;
-  oilLogo.tint = theme.gaugeActiveColor;
-  oilPressureReadout.x = x + oilLogo.width + 235;
-  oilPressureReadout.y = oilLogo.y;
-  return [oilLogo, oilPressureReadout];
-}
-const createCTS = (renderer, theme, renderables, x, y) => {
-  const readout = renderables[RENDER_KEYS.CTS_READOUT];
-  let logo  = new BitmapText("COOLANT", {
-    fontName: "Orbitron",
-    fontSize: 48,
-    align: "center",
-  });
-  logo.angle = 180;
-  logo.x = x;
-  logo.y = y+10;
-  logo.tint = theme.gaugeActiveColor;
-  readout.x = logo.x + logo.width + 47; 
-  readout.y = logo.y
-  return [logo, readout];
-}
-const createVolt = (renderer, theme, renderables, x, y) => {
-  const readout = renderables[RENDER_KEYS.VOLTAGE_READOUT];
-  let logo = new BitmapText("VOLTAGE", {
-    fontName: "Orbitron",
-    fontSize: 48,
-    align: "center",
-  });
-  logo.angle = 180;
-  logo.x = x;
-  logo.y = y+10;
-  logo.tint = theme.gaugeActiveColor;
-  readout.x = logo.x + logo.width + 30; 
-  readout.y = logo.y
-  return [logo, readout];
-}
 /**
  * 
  * @param {Object} options 
@@ -119,13 +70,19 @@ const testingArea = ({renderer, theme, renderables}) => {
   
   animTest();
 
-  const oilStuff = createOilPressure(renderer, theme, renderables, testingContainter.x, testingContainter.height + testingContainter.y)
-  const ctsStuff = createCTS(renderer, theme, renderables, oilStuff[0].x, oilStuff[0].height + oilStuff[0].y)
-  const voltageStuff = createVolt(renderer, theme, renderables, ctsStuff[0].x, ctsStuff[0].height + ctsStuff[0].y)
-  
-  ctsLogo = ctsStuff[0];
-  voltLogo = voltageStuff[0];
-  return [testingContainter, ...oilStuff, ...ctsStuff, ...voltageStuff  ];
+  const oilPressureReadout = renderables[RENDER_KEYS.OIL_PRESSURE];
+  oilPressureReadout.x = testingContainter.x
+  oilPressureReadout.y = testingContainter.y + testingContainter.height + 10;
+
+  const volt = renderables[RENDER_KEYS.VOLTAGE_READOUT];
+  volt.x = oilPressureReadout.x;
+  volt.y = oilPressureReadout.y + oilPressureReadout.gaugeHeight + 10;
+
+    const cts = renderables[RENDER_KEYS.CTS_READOUT];
+  cts.x = volt.x;
+  cts.y = volt.y + volt.gaugeHeight + 10;
+
+  return [testingContainter, oilPressureReadout, volt, cts];
 }
 
 /**
@@ -140,9 +97,6 @@ const testReadOutsControl = {
      return testingArea({renderer, theme, renderables});
    },
    refresh: ({ renderables, theme, renderer }) => {
-      oilLogo.tint = theme.gaugeActiveColor;
-      ctsLogo.tint = theme.gaugeActiveColor;
-      voltLogo.tint = theme.gaugeActiveColor;
    },
 };
 
