@@ -1,4 +1,3 @@
-import chroma from "chroma-js";
 import { Sprite } from "pixi.js";
 import { SCREEN } from "../appConfig";
 import BarGraph from "./BarGraph";
@@ -13,6 +12,7 @@ class SideReadout extends Renderable {
     voltage: {textureName: "battery.png", decimalPlaces: 1, maxValue: 16, minValue: 10.0},
     oil: {textureName: "oil.png", decimalPlaces: 0, minValue: 0, maxValue: 99},
     coolant: {textureName: "temp.png", decimalPlaces: 0, minValue: 120, maxValue: 250},
+    mat: {textureName: "tempair.png", decimalPlaces: 0, minValue: 120, maxValue: 250},
   }
   constructor({ renderer, theme }, {readoutOptions}) {
     super({ renderer, theme });

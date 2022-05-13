@@ -82,7 +82,11 @@ const testingArea = ({renderer, theme, renderables}) => {
   cts.x = volt.x;
   cts.y = volt.y + volt.gaugeHeight + 10;
 
-  return [testingContainter, oilPressureReadout, volt, cts];
+  const mat = renderables[RENDER_KEYS.MAT_READOUT];
+  mat.x = volt.x;
+  mat.y = cts.y + cts.gaugeHeight + 10;
+
+  return [testingContainter, oilPressureReadout, volt, cts, mat];
 }
 
 /**

@@ -5,7 +5,7 @@ import BorderWarnings from "./renderables/BorderWarnings";
 import CurrentMpgReadout from "./renderables/CurrentMpgReadout";
 import FuelGauge from "./renderables/FuelGauge";
 import FuelGraph from "./renderables/FuelGraph";
-import IgnTimingReadout from "./renderables/IgnTimingReadout";
+import MATReadout from "./renderables/MATReadout";
 import CTSReadout from "./renderables/CTSReadout";
 import MpgGauge from "./renderables/MpgGauge";
 import MpgHistogram from "./renderables/MpgHistogram";
@@ -58,7 +58,7 @@ const createGauges = ({ renderables }) => {
 
   renderables.createRenderable(OilPressureReadout);
   renderables.createRenderable(VoltageReadout);
-  renderables.createRenderable(IgnTimingReadout);
+  renderables.createRenderable(MATReadout);
   renderables.createRenderable(CTSReadout);
   renderables.createRenderable(TimingGraph);
   renderables.createRenderable(FuelGraph); 
