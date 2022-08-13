@@ -1,4 +1,5 @@
-import { Sprite } from "pixi.js";
+
+import { BitmapText, Sprite } from "pixi.js";
 import { SCREEN } from "../appConfig";
 import BarGraph from "./BarGraph";
 import Readout from "./Readout";
@@ -7,13 +8,27 @@ import Renderable from "./Renderable";
 const GAUGE_HEIGHT = 200;
 const GAUGE_WIDTH = SCREEN.BAR_WIDTH;
 
+function createText(msg) {
+  const text = new BitmapText(msg, {
+    fontName: "Orbitron",
+    fontSize: 24,
+    align: "left",
+  });
+  text.angle = 180; // no idea what app is flipped??
+
+  return text;
+}
 class SideReadout extends Renderable {
   static ReadoutOptions = {
     voltage: {textureName: "battery.png", decimalPlaces: 1, maxValue: 16, minValue: 10.0},
     oil: {textureName: "oil.png", decimalPlaces: 0, minValue: 0, maxValue: 99},
     coolant: {textureName: "temp.png", decimalPlaces: 0, minValue: 120, maxValue: 250},
     mat: {textureName: "tempair.png", decimalPlaces: 0, minValue: 120, maxValue: 250},
+    ign: {text: "Ign", decimalPlaces: 1, minValue: 0, maxValue: 50},
+    vac: {text: "inHg", decimalPlaces: 1, minValue: 0, maxValue: 30},
   }
+  static FIXED_WIDTH = GAUGE_WIDTH;
+  static FIXED_LENGTH = GAUGE_HEIGHT;
   constructor({ renderer, theme }, {readoutOptions}) {
     super({ renderer, theme });
     this.readout = new Readout(
@@ -47,7 +62,7 @@ class SideReadout extends Renderable {
     this.bargraph.initialize();
     if (!this.initialized) {
       // create label icon, scale it to size and position it
-      this.icon = Sprite.from(this.options.textureName);
+      this.icon = this.options.text ? createText(this.options.text) : Sprite.from(this.options.textureName);
       this.icon.anchor.set(0, 0.5);
       const scale = this.bargraph.gaugeWidth / this.icon.width;
       this.icon.scale.set(scale);

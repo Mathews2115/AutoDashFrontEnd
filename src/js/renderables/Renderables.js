@@ -18,6 +18,11 @@ export const RENDER_KEYS = {
   IGN_TIMING_MAP: 14,
   CTS_READOUT: 15,
   FUEL_MAP: 16,
+  FULL_SCREEN_WARNING: 17,
+  IGN_TIMING_READOUT: 18,
+  MAP_READOUT: 19,
+  // CLOSED_LOOP_READOUT: 19,
+  // CLOSED_LOOP_COMP_READOUT: 20,
 };
 
 export class Renderables extends Array {

@@ -111,3 +111,13 @@ export const LIGHT_THEME = {
   backgroundColor: 0xffffff,
   id: 0,
 };
+
+export const ENGINE_GRAPH_TYPES = {
+  AFR: 'AFR',
+  BOTH: 'BOTH'
+}
+
+export const app_settings = {
+  dual_screen: true,
+  engine_gragh_type: ENGINE_GRAPH_TYPES.AFR,
+}
