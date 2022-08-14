@@ -59,7 +59,7 @@ class Offline extends Renderable {
   }
 
   set value(dataSet) {
-    this._value  = valueOf(dataSet[DATA_KEYS.WARNINGS], WARNING_KEYS.ECU_COMM | WARNING_KEYS.COMM_ERROR);
+    this._value  = valueOf(dataSet[DATA_KEYS.WARNINGS], WARNING_KEYS.ECU_COMM) || valueOf(dataSet[DATA_KEYS.WARNINGS], WARNING_KEYS.ECU_COMM);
   }
 
   update() {
