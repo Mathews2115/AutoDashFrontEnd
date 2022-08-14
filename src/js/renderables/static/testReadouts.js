@@ -22,8 +22,8 @@ const testingArea = ({renderer, theme, renderables}) => {
   const anim = gsap.timeline();
   // TESTING STUFF
 
-  const padding = 25;
-  const vert_padding = 50;
+  const padding = 60;
+  const vert_padding = 60;
   const gaugeContainer = new Container();
   const width = SideReadout.FIXED_LENGTH * 2 + padding;
   const oilPressureReadout = renderables[RENDER_KEYS.OIL_PRESSURE];
@@ -62,7 +62,7 @@ const testingArea = ({renderer, theme, renderables}) => {
 
 
   gaugeContainer.addChild(readoutLogo, oilPressureReadout, volt, cts, mat, ign, vacReadout, readoutLogo);
-  const x = afrGraph.x + afrGraph.width + 25;
+  const x = afrGraph.x + afrGraph.width + 50;
   gaugeContainer.x = x;
   gaugeContainer.y = 5;
 

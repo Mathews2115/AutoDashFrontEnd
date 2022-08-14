@@ -5,7 +5,7 @@ import BarGraph from "./BarGraph";
 import Readout from "./Readout";
 import Renderable from "./Renderable";
 
-const GAUGE_HEIGHT = 200;
+const GAUGE_HEIGHT = 250;
 const GAUGE_WIDTH = SCREEN.BAR_WIDTH;
 
 function createText(msg) {

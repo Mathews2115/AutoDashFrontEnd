@@ -190,7 +190,7 @@ class EngineTable extends Renderable {
   }
 
   get gaugeWidth() {
-    return 400;
+    return 420;
   }
   get gaugeHeight() {
     return 330;
