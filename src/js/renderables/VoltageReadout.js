@@ -1,18 +1,34 @@
+import chroma from "chroma-js";
 import { DATA_KEYS } from "../common/dataMap";
-import Readout from "./Readout";
 import { RENDER_KEYS } from "./Renderables";
+import SideReadout from "./SideReadout";
 
 const ID = RENDER_KEYS.VOLTAGE_READOUT;
-class VoltageReadout extends Readout {
+class VoltageReadout extends SideReadout {
   constructor({ renderer, theme }) {
-    super({ renderer, theme}, {digits:3, glowStrength: 1, decimalPlaces: 1});
+    super(
+      { renderer, theme },
+      {
+        readoutOptions: SideReadout.ReadoutOptions.voltage,
+      }
+    );
     this._dashID = ID;
   }
+
   get dataKey() {
     return DATA_KEYS.BATT_VOLTAGE;
   }
-  get gaugeHeight() {
-    return 60;
+  
+  initialize() {
+    this._initialize();
+    this.bargraph.colors = {
+      colors: [
+        chroma(this.theme.dangerColor),
+        chroma(this.theme.warningColor),
+        chroma(this.theme.gaugeActiveColor),
+      ],
+      chromaDomain: [10, 11, 12],
+    };
   }
 }
 

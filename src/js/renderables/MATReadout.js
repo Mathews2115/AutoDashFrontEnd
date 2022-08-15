@@ -1,15 +1,14 @@
-import { DATA_KEYS } from "../common/dataMap";
 import chroma from "chroma-js";
-import SideReadout from "./SideReadout";
+import { DATA_KEYS } from "../common/dataMap";
 import { RENDER_KEYS } from "./Renderables";
-
-const ID = RENDER_KEYS.IGN_TIMING_READOUT;
-class IgnTimingReadout extends SideReadout {
+import SideReadout from "./SideReadout";
+const ID = RENDER_KEYS.MAT_READOUT;
+class MATReadout extends SideReadout {
   constructor({ renderer, theme }) {
     super(
       { renderer, theme },
       {
-        readoutOptions: SideReadout.ReadoutOptions.ign,
+        readoutOptions: SideReadout.ReadoutOptions.mat,
       }
     );
     this._dashID = ID;
@@ -18,21 +17,22 @@ class IgnTimingReadout extends SideReadout {
     this._initialize();
     this.bargraph.colors = {
       colors: [
-        chroma(this.theme.dangerColor),
-        chroma(this.theme.warningColor),
+        chroma("blue"),
+        chroma(this.theme.gaugeActiveColor),
         chroma(this.theme.gaugeActiveColor),
         chroma(this.theme.warningColor),
         chroma(this.theme.dangerColor),
       ],
-      chromaDomain: [0, 10, 20, 25, 50],
+      chromaDomain: [40, 160, 190, 204, 230],
     };
   }
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.IGNITION_TIMING;
+    return DATA_KEYS.MAT;
   }
 }
 
-IgnTimingReadout.ID = ID;
-export default IgnTimingReadout;
+MATReadout.ID = ID;
+export default MATReadout;
+

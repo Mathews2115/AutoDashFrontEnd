@@ -2,60 +2,13 @@ import { BitmapText, Container, Graphics, Renderer, Sprite, Texture } from "pixi
 import { Renderables, RENDER_KEYS } from "../Renderables";
 import { gsap } from "gsap";
 import FPSTextField from "../FPSTextField";
+import { SCREEN } from "../../appConfig";
+import { createLogo } from "./commonGraphics";
+import SideReadout from "../SideReadout";
 
-let oilLogo = null;
-let ctsLogo = null;
-let voltLogo = null;
 const testingContainter = new Container();
 /** @type {BitmapText} */
 let testText = null;
-const testGraphics = new Graphics();
-
-const createOilPressure = (renderer, theme, renderables, x, y) => {
-  const oilPressureReadout = renderables[RENDER_KEYS.OIL_PRESSURE];
-  oilLogo = new BitmapText("OIL", {
-    fontName: "Orbitron",
-    fontSize: 48,
-    align: "center",
-  });
-  oilLogo.angle = 180;
-  oilLogo.x = x;
-  oilLogo.y = y+10;
-  oilLogo.tint = theme.gaugeActiveColor;
-  oilPressureReadout.x = x + oilLogo.width + 235;
-  oilPressureReadout.y = oilLogo.y;
-  return [oilLogo, oilPressureReadout];
-}
-const createCTS = (renderer, theme, renderables, x, y) => {
-  const readout = renderables[RENDER_KEYS.CTS_READOUT];
-  let logo  = new BitmapText("COOLANT", {
-    fontName: "Orbitron",
-    fontSize: 48,
-    align: "center",
-  });
-  logo.angle = 180;
-  logo.x = x;
-  logo.y = y+10;
-  logo.tint = theme.gaugeActiveColor;
-  readout.x = logo.x + logo.width + 47; 
-  readout.y = logo.y
-  return [logo, readout];
-}
-const createVolt = (renderer, theme, renderables, x, y) => {
-  const readout = renderables[RENDER_KEYS.VOLTAGE_READOUT];
-  let logo = new BitmapText("VOLTAGE", {
-    fontName: "Orbitron",
-    fontSize: 48,
-    align: "center",
-  });
-  logo.angle = 180;
-  logo.x = x;
-  logo.y = y+10;
-  logo.tint = theme.gaugeActiveColor;
-  readout.x = logo.x + logo.width + 30; 
-  readout.y = logo.y
-  return [logo, readout];
-}
 /**
  * 
  * @param {Object} options 
@@ -68,64 +21,52 @@ const testingArea = ({renderer, theme, renderables}) => {
   const afrGraph = renderables[RENDER_KEYS.FUEL_MAP];
   const anim = gsap.timeline();
   // TESTING STUFF
-  testingContainter.x = afrGraph.x + afrGraph.width;
-  testingContainter.y = 10;
 
-  testGraphics.beginFill(theme.dangerColor)
-    .drawPolygon([ 
-      5, 0,
-      0, 15, 
-      390, 15,
-      395, 0,
-    ])
-    .endFill();
-  const texture = renderer.generateTexture(testGraphics);
-  testGraphics.destroy(true);
-  const sprite = new Sprite(texture);
-  const sprite2 = new Sprite(texture);
-  sprite2.y = 70;
+  const padding = 60;
+  const vert_padding = 60;
+  const gaugeContainer = new Container();
+  const width = SideReadout.FIXED_LENGTH * 2 + padding;
+  const oilPressureReadout = renderables[RENDER_KEYS.OIL_PRESSURE];
+  const vacReadout = renderables[RENDER_KEYS.MAP_READOUT];
+  const ign = renderables[RENDER_KEYS.IGN_TIMING_READOUT];
+  const volt = renderables[RENDER_KEYS.VOLTAGE_READOUT];
+  const cts = renderables[RENDER_KEYS.CTS_READOUT];
+  const mat = renderables[RENDER_KEYS.MAT_READOUT];
   
 
-  testText = new BitmapText("  TEST MODE", {
-    fontName: "Orbitron",
-    fontSize: 48,
-    align: "center",
-  });
-  testText.y = 10
-  testText.x = 15 
-  testText.angle = 180;
-  testText.tint = theme.dangerColor;
+  let readoutLogo = new Sprite();
+  readoutLogo.tint = theme.gaugeActiveColor;
+  readoutLogo.texture = createLogo(renderer,
+    oilPressureReadout.width * 2 + padding,
+    "ENGINE"
+  );
+
+
+
   const fps = new FPSTextField()
-  fps.x = sprite.x + sprite.width + 10;
-  fps.y = sprite.y;
-  testingContainter.addChild(sprite,sprite2, testText, fps);
-  const animTest = () => {
-    anim.to(testText, {
-       alpha: 0,
-      
-      duration: 1,
-      ease: "power2.inOut",
-      onComplete: () => {
-        anim.to(testText, {
-          alpha: 1,
-          
-          duration: 1,
-          ease: "power2.inOut",
-          onComplete: animTest,
-        });
-      }
-    });
-  }
+  fps.x = SCREEN.WIDTH - 60;
+  fps.y = SCREEN.HEIGHT - fps.height - 10;
   
-  animTest();
+  oilPressureReadout.y = readoutLogo.height + vert_padding;
+  vacReadout.y = oilPressureReadout.y + oilPressureReadout.height + vert_padding;
+  ign.y = vacReadout.y + vacReadout.gaugeHeight + vert_padding;
 
-  const oilStuff = createOilPressure(renderer, theme, renderables, testingContainter.x, testingContainter.height + testingContainter.y)
-  const ctsStuff = createCTS(renderer, theme, renderables, oilStuff[0].x, oilStuff[0].height + oilStuff[0].y)
-  const voltageStuff = createVolt(renderer, theme, renderables, ctsStuff[0].x, ctsStuff[0].height + ctsStuff[0].y)
-  
-  ctsLogo = ctsStuff[0];
-  voltLogo = voltageStuff[0];
-  return [testingContainter, ...oilStuff, ...ctsStuff, ...voltageStuff  ];
+  volt.x = oilPressureReadout.x + oilPressureReadout.width + padding;
+  volt.y = oilPressureReadout.y;
+
+  cts.x = volt.x;
+  cts.y = volt.y + volt.gaugeHeight + vert_padding;
+
+  mat.x = volt.x;
+  mat.y = cts.y + cts.gaugeHeight + vert_padding;
+
+
+  gaugeContainer.addChild(readoutLogo, oilPressureReadout, volt, cts, mat, ign, vacReadout, readoutLogo);
+  const x = afrGraph.x + afrGraph.width + 50;
+  gaugeContainer.x = x;
+  gaugeContainer.y = 5;
+
+  return [fps, gaugeContainer];
 }
 
 /**
@@ -140,9 +81,6 @@ const testReadOutsControl = {
      return testingArea({renderer, theme, renderables});
    },
    refresh: ({ renderables, theme, renderer }) => {
-      oilLogo.tint = theme.gaugeActiveColor;
-      ctsLogo.tint = theme.gaugeActiveColor;
-      voltLogo.tint = theme.gaugeActiveColor;
    },
 };
 

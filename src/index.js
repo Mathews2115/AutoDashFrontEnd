@@ -27,6 +27,7 @@ ticker.stop();
 const renderer = new PIXI.Renderer({
   width: SCREEN.WIDTH,
   height: SCREEN.HEIGHT*2,
+  resolution: window.devicePixelRatio,
 });
 const dash = new DashApp(renderer);
 const dataWorker = new Worker(new URL('./js/comms/drawDataWorker.js', import.meta.url));

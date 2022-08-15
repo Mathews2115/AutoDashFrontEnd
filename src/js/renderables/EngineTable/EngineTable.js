@@ -151,7 +151,7 @@ class EngineTable extends Renderable {
         .endFill();
       this.labelBarsContainer.mask = this.labelBarsMask;
       this.labelBarsContainer.addChild(this.labelBarsMask);
-      this.labelBarsContainer.x = -ylabelBar.width/2;
+      // this.labelBarsContainer.x = -ylabelBar.width/2; // inset the bar by half
     } else {
       this.labelBarsContainer.removeChild(this._yLabelBar);
       this._yLabelBar.destroy(true);
@@ -190,7 +190,7 @@ class EngineTable extends Renderable {
   }
 
   get gaugeWidth() {
-    return 380;
+    return 420;
   }
   get gaugeHeight() {
     return 330;
@@ -314,8 +314,8 @@ class EngineTable extends Renderable {
       );
 
       const minCell =
-        this.lookupTable[Math.max(this.activeCells.minX - 1, 0)][
-          Math.max(this.activeCells.minY - 1, 0)
+        this.lookupTable[Math.max(this.activeCells.minX - 2, 0)][
+          Math.max(this.activeCells.minY -1 , 0)
         ];
       const minX = -(minCell.x * this.scaleFactor);
       const minY = -(minCell.y * this.scaleFactor);

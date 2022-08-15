@@ -5,7 +5,7 @@ import BorderWarnings from "./renderables/BorderWarnings";
 import CurrentMpgReadout from "./renderables/CurrentMpgReadout";
 import FuelGauge from "./renderables/FuelGauge";
 import FuelGraph from "./renderables/FuelGraph";
-import IgnTimingReadout from "./renderables/IgnTimingReadout";
+import MATReadout from "./renderables/MATReadout";
 import CTSReadout from "./renderables/CTSReadout";
 import MpgGauge from "./renderables/MpgGauge";
 import MpgHistogram from "./renderables/MpgHistogram";
@@ -21,11 +21,15 @@ import rpmClusterControl from "./renderables/static/rpmClusterControl";
 import speedoClusterControl from "./renderables/static/speedoClusterControl";
 import OilPressureReadout from "./renderables/OilPressureReadout";
 import TimingGraph from "./renderables/TimingGraph";
-import KPABar from "./renderables/EngineTable/KPAbar";
-import RPMBar from "./renderables/EngineTable/RPMBar";
-import EngineTable from "./renderables/EngineTable/EngineTable";
 import engineGraphsControl from "./renderables/static/engineGraphsControl";
 import testReadOutsControl from "./renderables/static/testReadouts";
+import { app_settings } from "./appConfig";
+import FullScreenWarnings from "./renderables/FullScreenWarning";
+import IgnTimingReadout from "./renderables/IgnTimingReadout";
+import VacuumReadout from "./renderables/VacuumReadout";
+import Offline from "./renderables/Offline";
+
+const auxScreenClusters = []
 
 // PLEASE NOTE: all this is magic number stuff because I was in "EFF IT ILL DO IT LIVE" mode...
 // so...dont get all snooty when you look at this hot garbage while thinking "pssh, i cant believe he didn't use ALGORITHM_X to figure out the placement for everything"
@@ -55,13 +59,20 @@ const createGauges = ({ renderables }) => {
   const averageMpgReadout = renderables.createRenderable(AverageMpgReadout);
   /** @type {MpgHistogram} */
   const mpgHistogram = renderables.createRenderable(MpgHistogram);
+  const fullScreenWarnings = renderables.createRenderable(FullScreenWarnings);
 
-  renderables.createRenderable(OilPressureReadout);
-  renderables.createRenderable(VoltageReadout);
-  renderables.createRenderable(IgnTimingReadout);
-  renderables.createRenderable(CTSReadout);
-  renderables.createRenderable(TimingGraph);
-  renderables.createRenderable(FuelGraph); 
+  // AUX STUFF
+  if (app_settings.dual_screen) {
+    renderables.createRenderable(OilPressureReadout);
+    renderables.createRenderable(VoltageReadout);
+    renderables.createRenderable(MATReadout);
+    renderables.createRenderable(CTSReadout);
+    renderables.createRenderable(TimingGraph);
+    renderables.createRenderable(FuelGraph); 
+    renderables.createRenderable(IgnTimingReadout);
+    renderables.createRenderable(VacuumReadout);
+    renderables.createRenderable(Offline);
+  }
 };
 /**
  *  @param {Object} config
@@ -81,10 +92,10 @@ export default ({ renderer, auxScreen, gaugeScreen, theme }) => {
     mpgClusterControl
   ];
 
-  const auxScreenClusters = [
-    engineGraphsControl,
-    testReadOutsControl
-  ]
+  if (app_settings.dual_screen) {
+    auxScreenClusters.push(engineGraphsControl);
+    auxScreenClusters.push(testReadOutsControl);
+  }
 
   return {
     renderables,
@@ -98,14 +109,16 @@ export default ({ renderer, auxScreen, gaugeScreen, theme }) => {
         gaugeScreen.addChild(...controls);
       });
       gaugeScreen.addChild(renderables[RENDER_KEYS.WARNING_BORDER]);
+      // gaugeScreen.addChild(renderables[RENDER_KEYS.FULL_SCREEN_WARNING]);
 
       auxScreenClusters.forEach((renderable) => {
         const controls = renderable.create({ stage: auxScreen, renderer, theme, renderables });
         auxScreen.addChild(...controls);
-      });
+        auxScreen.addChild(renderables[RENDER_KEYS.OFFLINE]);
+        });
     },
     /**
-     * Refresh all things on screen with the new theme data
+     * Refresh all things on screen with the new theme data (light/dark switch)
      * @param {import("./appConfig").ThemeData} theme 
      */
     refresh: (theme) => {

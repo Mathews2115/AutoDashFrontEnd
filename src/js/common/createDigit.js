@@ -216,12 +216,12 @@ export function createDigitSprites(readoutSize) {
   return digitSprites;
 }
 
+const spriteSpacing = 1;
 /**
  * @param {Container} container
  * @param {Sprite[]} numberSprites
  * @param {StoredTextures} textureData
  */
-const spriteSpacing = 1;
 export function formatSprites(container, numberSprites, textureData, decimalPlaces = null, decimalSprite = null) {
   const {rawDigitWidth, rawDigitHeight, textures, glowSrength, decimalHeight, decimalWidth} = textureData;
   const digitWidth = rawDigitWidth+glowSrength
@@ -240,6 +240,8 @@ export function formatSprites(container, numberSprites, textureData, decimalPlac
       sprite.x = (digitWidth+spriteSpacing)*i + decimalSprite.width; 
     }
   }
+  // give us a bit of a lean on the numbers 
+  // numberSprites.forEach((s) => s.skew.set(SEGMENT_SLANT, 0));
   // give us a bit of a lean on the numbers
   container.setTransform(0,0,1,1,0, SEGMENT_SLANT, 0,0,0);
 }
