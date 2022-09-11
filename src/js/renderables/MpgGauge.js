@@ -1,8 +1,8 @@
 import { SCREEN, FUEL_CONFIG } from "../appConfig";
 import { RENDER_KEYS } from "./Renderables";
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import BarGraph from "./BarGraph";
-
+const CURRENT_MPG_KEY = DATA_MAP.CURRENT_MPG.id;
 const ID = RENDER_KEYS.MPG_GAUGE;
 /**
  * Creates a new MpgGauge.
@@ -20,7 +20,7 @@ class MpgGauge extends BarGraph {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.CURRENT_MPG;
+    return CURRENT_MPG_KEY;
   }
 }
 

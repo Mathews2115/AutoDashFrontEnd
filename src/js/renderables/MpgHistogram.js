@@ -1,9 +1,10 @@
 import { FUEL_CONFIG, SCREEN } from "../appConfig";
 import { RENDER_KEYS } from "./Renderables";
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP, MAX_AVERAGE_POINTS } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { Graphics } from "pixi.js";
 import RingBuffer from "../common/ringBuffer";
+const AVERAGE_MPG_KEY = DATA_MAP.AVERAGE_MPG_POINTS.id;
 
 const ID = RENDER_KEYS.AVG_MPG_HISTOGRAM;
 /**
@@ -29,7 +30,7 @@ class MpgHistogram extends Renderable {
   }
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.AVERAGE_MPG_POINTS;
+    return AVERAGE_MPG_KEY;
   }
 
   set value(newValue) {
@@ -55,7 +56,7 @@ class MpgHistogram extends Renderable {
       // get points
       let points = [];    
       this._value.buffer.forEach((value, index) => {
-        points.push((index/DATA_KEYS.MAX_AVERAGE_POINTS) * this.gaugeWidth);// x
+        points.push((MAX_AVERAGE_POINTS) * this.gaugeWidth);// x
         points.push( this.gaugeHeight-((Math.min(FUEL_CONFIG.MAX_MPG,value)/FUEL_CONFIG.MAX_MPG) * this.gaugeHeight)); // y
       });
 

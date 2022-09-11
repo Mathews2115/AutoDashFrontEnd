@@ -1,7 +1,7 @@
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import MediumReadout from "./MediumReadout";
 import { RENDER_KEYS } from "./Renderables";
-
+const CURRENT_MPG_KEY = DATA_MAP.CURRENT_MPG.id;
 const ID = RENDER_KEYS.MPG_READOUT;
 class CurrentMpgReadout extends MediumReadout {
   constructor({ renderer, theme }) {
@@ -11,7 +11,7 @@ class CurrentMpgReadout extends MediumReadout {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.CURRENT_MPG;
+    return CURRENT_MPG_KEY;
   }
 }
 

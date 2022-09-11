@@ -1,8 +1,8 @@
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import chroma from "chroma-js";
 import SideReadout from "./SideReadout";
 import { RENDER_KEYS } from "./Renderables";
-
+const IGN_KEY = DATA_MAP.IGNITION_TIMING.id;
 const ID = RENDER_KEYS.IGN_TIMING_READOUT;
 class IgnTimingReadout extends SideReadout {
   constructor({ renderer, theme }) {
@@ -30,7 +30,7 @@ class IgnTimingReadout extends SideReadout {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.IGNITION_TIMING;
+    return IGN_KEY;
   }
 }
 

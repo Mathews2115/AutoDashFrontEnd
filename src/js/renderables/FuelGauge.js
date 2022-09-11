@@ -1,7 +1,8 @@
 import { SCREEN } from "../appConfig";
 import { RENDER_KEYS } from "./Renderables";
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import BarGraph from "./BarGraph";
+const FUEL_GAUGE_KEY = DATA_MAP.FUEL_LEVEL.id;
 
 const ID = RENDER_KEYS.FUEL_GAUGE;
 /**
@@ -16,7 +17,7 @@ class FuelGauge extends BarGraph {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.FUEL_LEVEL;
+    return FUEL_GAUGE_KEY;
   }
 }
 

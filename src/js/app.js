@@ -1,10 +1,11 @@
 import * as PIXI from "pixi.js";
 import layoutManager from "./layoutManager";
-import { DATA_KEYS, WARNING_KEYS } from "./common/dataMap";
+import { DATA_MAP } from "./common/dataMap";
 import { GlitchFilter } from "@pixi/filter-glitch";
 import { THEMES } from "./common/theme";
 import { app_settings, SCREEN } from "./appConfig";
 
+const LOW_LIGHT_DETECTED = DATA_MAP.LOW_LIGHT_DETECTED.id;
 /**
  * @typedef Theme
  * @type {object}
@@ -78,11 +79,11 @@ export class DashApp {
 
   update(updatedGaugeData) {
     if (
-      updatedGaugeData[DATA_KEYS.LOW_LIGHT_DETECTED] != null &&
-      this.theme.current.id != updatedGaugeData[DATA_KEYS.LOW_LIGHT_DETECTED]
+      updatedGaugeData[LOW_LIGHT_DETECTED] != null &&
+      this.theme.current.id != updatedGaugeData[LOW_LIGHT_DETECTED]
     ) {
       //currently, using the IDs 0 and 1 to represent true/false if LOW LIGHT MODE
-      this.theme.changeRequested = updatedGaugeData[ DATA_KEYS.LOW_LIGHT_DETECTED] ? THEMES.dark : THEMES.light;
+      this.theme.changeRequested = updatedGaugeData[LOW_LIGHT_DETECTED] ? THEMES.dark : THEMES.light;
     }
 
     this.state(updatedGaugeData);
@@ -94,7 +95,6 @@ export class DashApp {
    * @param {Array} updatedGaugeData
    */
   stateRunning(updatedGaugeData) {
-    DATA_KEYS;
     this.layoutManager.renderables.forEach((renderable) => {
       renderable.value =
         renderable.dataKey != undefined

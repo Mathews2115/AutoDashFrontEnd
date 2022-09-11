@@ -1,8 +1,8 @@
 import chroma from "chroma-js";
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import { RENDER_KEYS } from "./Renderables";
 import SideReadout from "./SideReadout";
-
+const VOLT_KEY = DATA_MAP.BATT_VOLTAGE.id;
 const ID = RENDER_KEYS.VOLTAGE_READOUT;
 class VoltageReadout extends SideReadout {
   constructor({ renderer, theme }) {
@@ -16,7 +16,7 @@ class VoltageReadout extends SideReadout {
   }
 
   get dataKey() {
-    return DATA_KEYS.BATT_VOLTAGE;
+    return VOLT_KEY;
   }
   
   initialize() {

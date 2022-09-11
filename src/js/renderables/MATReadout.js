@@ -1,8 +1,9 @@
 import chroma from "chroma-js";
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import { RENDER_KEYS } from "./Renderables";
 import SideReadout from "./SideReadout";
 const ID = RENDER_KEYS.MAT_READOUT;
+const MAT_KEY = DATA_MAP.MAT.id;
 class MATReadout extends SideReadout {
   constructor({ renderer, theme }) {
     super(
@@ -29,7 +30,7 @@ class MATReadout extends SideReadout {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.MAT;
+    return MAT_KEY;
   }
 }
 

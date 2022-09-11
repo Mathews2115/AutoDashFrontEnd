@@ -1,7 +1,6 @@
 // https://github.com/nathanboktae/robust-websocket#usage
 import RobustWebSocket from "robust-websocket";
-import { createDataStore, DATA_KEYS, WARNING_KEYS } from "../common/dataMap";
-import RingBuffer from "../common/ringBuffer";
+import { createDataStore, WARNING_KEYS } from "../common/dataMap";
 
 const dataStore = createDataStore();
 
@@ -44,30 +43,9 @@ const createWS = () => {
  * These Byte offsets MUST match PacketEntry.js from AutoDashBackEnd
  * @param {DataView} data 
  */
-const parseData = (data) => {
+ const parseData = (data) => {
   try {
-    dataStore.set(DATA_KEYS.PEDAL_POSITION, data.getInt8(0)); // xxx percent
-    dataStore.set(DATA_KEYS.RPM, data.getInt16(1));          // xx,xxx
-    dataStore.set(DATA_KEYS.FUEL_FLOW, data.getInt16(3));    // Fuel Flow  x,xxx pounds/hour
-    dataStore.set(DATA_KEYS.TARGET_AFR, data.getFloat32(5)); // xx.x A/F
-    dataStore.set(DATA_KEYS.AFR_AVERAGE, data.getFloat32(9));// xx.x A/F
-    dataStore.set(DATA_KEYS.IGNITION_TIMING, data.getFloat32(13)); // xx.x degrees
-    dataStore.set(DATA_KEYS.MAP, data.getInt16(17)); // xxx kPa
-    dataStore.set(DATA_KEYS.MAT, data.getInt16(19));// xxx F
-    dataStore.set(DATA_KEYS.CTS, data.getInt16(21));// xxx F
-    dataStore.set(DATA_KEYS.BAR_PRESSURE, data.getFloat32(23));// xxx.x kPa
-    dataStore.set(DATA_KEYS.OIL_PRESSURE, data.getInt16(27));// xxx   psi
-    dataStore.set(DATA_KEYS.BATT_VOLTAGE, data.getFloat32(29));// xx.x volts
-    dataStore.set(DATA_KEYS.WARNINGS, data.getUint8(33));
-
-    dataStore.set(DATA_KEYS.ODOMETER, data.getInt16(34));
-    dataStore.set(DATA_KEYS.TRIP_ODOMETER, data.getInt16(36));//its gonna roll over early, lol - ill fix this at some point
-    dataStore.set(DATA_KEYS.GPS_SPEEED, data.getInt16(38));
-    dataStore.set(DATA_KEYS.FUEL_LEVEL, data.getInt8(40));
-    dataStore.set(DATA_KEYS.CURRENT_MPG, data.getFloat32(41));
-    dataStore.set(DATA_KEYS.AVERAGE_MPG, data.getFloat32(45));
-    dataStore.set(DATA_KEYS.AVERAGE_MPG_POINTS, new RingBuffer(data.buffer, 49, 100, data.getInt8(149)));
-    dataStore.set(DATA_KEYS.LOW_LIGHT_DETECTED, data.getInt8(150));
+    dataStore.deserialize(data);
   } catch (error) {
     console.error(error);
   }

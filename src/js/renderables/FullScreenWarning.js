@@ -2,10 +2,8 @@ import {BitmapText, Graphics} from "pixi.js";
 import { SCREEN } from "../appConfig";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
-import { DATA_KEYS, WARNING_KEYS } from "../common/dataMap";
-import { gsap } from "gsap";
-
-
+import { DATA_MAP } from "../common/dataMap";
+const RPM_KEY = DATA_MAP.RPM.id;
 const ID = RENDER_KEYS.FULL_SCREEN_WARNING;
 
 class FullScreenWarnings extends Renderable {
@@ -57,7 +55,7 @@ class FullScreenWarnings extends Renderable {
   set value(dataSet) {
     // ALL THE DATA
     this._value = dataSet;
-    this.rpm = this._value[DATA_KEYS.RPM];
+    this.rpm = this._value[RPM_KEY];
   }
 
   initialize() {

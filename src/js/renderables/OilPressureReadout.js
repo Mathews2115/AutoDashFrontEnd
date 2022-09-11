@@ -1,8 +1,9 @@
 import chroma from "chroma-js";
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import { RENDER_KEYS } from "./Renderables";
 import SideReadout from "./SideReadout";
 const ID = RENDER_KEYS.OIL_PRESSURE;
+const OIL_PRESSURE_KEY = DATA_MAP.OIL_PRESSURE.id;
 class OilPressureReadout extends SideReadout {
   constructor({ renderer, theme }) {
     super(
@@ -27,7 +28,7 @@ class OilPressureReadout extends SideReadout {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.OIL_PRESSURE;
+    return OIL_PRESSURE_KEY;
   }
 }
 

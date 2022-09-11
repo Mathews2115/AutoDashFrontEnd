@@ -1,8 +1,8 @@
 import chroma from "chroma-js";
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import { RENDER_KEYS } from "./Renderables";
 import SideReadout from "./SideReadout";
-
+const CST_KEY =  DATA_MAP.CTS.id;
 const ID = RENDER_KEYS.CTS_READOUT;
 class CTSReadout extends SideReadout {
   constructor({ renderer, theme }) {
@@ -16,7 +16,7 @@ class CTSReadout extends SideReadout {
   }
 
   get dataKey() {
-    return DATA_KEYS.CTS;
+    return CST_KEY;
   } 
 
   initialize() {

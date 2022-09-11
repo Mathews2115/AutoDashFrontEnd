@@ -1,8 +1,9 @@
 import { Container, Graphics, Sprite } from "pixi.js";
 import { RPM_CONFIG, SCREEN } from "../appConfig";
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
+const RPM_KEY = DATA_MAP.RPM.id;
 const ID = RENDER_KEYS.RPM_GAUGE;
 const STATE_ENUM = {
   DANGER: 0,
@@ -84,7 +85,7 @@ class RPMGauge extends Renderable {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.RPM;
+    return RPM_KEY;
   }
 
   get activeColor() {

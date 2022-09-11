@@ -2,8 +2,9 @@ import * as PIXI from "pixi.js";
 import { SCREEN } from "../appConfig";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
-import { DATA_KEYS, WARNING_KEYS } from "../common/dataMap";
+import { DATA_MAP, WARNING_KEYS } from "../common/dataMap";
 import { gsap } from "gsap";
+const WARNING_KEY = DATA_MAP.WARNINGS.id;
 
 //Aliases
 let Graphics = PIXI.Graphics;
@@ -88,7 +89,7 @@ class BorderWarnings extends Renderable {
   }
 
   set value(dataSet) {
-    this._value = dataSet[DATA_KEYS.WARNINGS];
+    this._value = dataSet[WARNING_KEY];
   }
 
   /**
