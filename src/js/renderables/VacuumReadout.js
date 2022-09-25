@@ -1,8 +1,8 @@
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import chroma from "chroma-js";
 import SideReadout from "./SideReadout";
 import { RENDER_KEYS } from "./Renderables";
-
+const MAP_KEY = DATA_MAP.MAP.id;
 const ID = RENDER_KEYS.MAP_READOUT;
 class VacuumReadout extends SideReadout {
   constructor({ renderer, theme }) {
@@ -28,7 +28,7 @@ class VacuumReadout extends SideReadout {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.MAP;
+    return MAP_KEY;
   }
 
   set value(newValue) {

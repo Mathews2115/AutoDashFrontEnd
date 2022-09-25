@@ -1,8 +1,8 @@
 import { SCREEN } from "../appConfig";
 import { RENDER_KEYS } from "./Renderables";
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import BarGraph from "./BarGraph";
-
+const PEDAL_KEY = DATA_MAP.PEDAL_POSITION.id;
 const ID = RENDER_KEYS.PEDAL_GAUGE;
 /**
  * Creates a new PedalGauge.
@@ -16,7 +16,7 @@ class PedalGauge extends BarGraph {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.PEDAL_POSITION;
+    return PEDAL_KEY;
   }
 }
 

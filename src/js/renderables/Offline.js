@@ -2,10 +2,9 @@ import {BitmapText, Graphics, Sprite, Texture} from "pixi.js";
 import { SCREEN } from "../appConfig";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
-import { DATA_KEYS, WARNING_KEYS } from "../common/dataMap";
+import { DATA_MAP, WARNING_KEYS } from "../common/dataMap";
 import { gsap } from "gsap";
-
-
+const WARNING_KEY = DATA_MAP.WARNINGS.id;
 const ID = RENDER_KEYS.OFFLINE;
 
 const valueOf = (data, mask) => {
@@ -59,13 +58,14 @@ class Offline extends Renderable {
   }
 
   set value(dataSet) {
-    this._value  = valueOf(dataSet[DATA_KEYS.WARNINGS], WARNING_KEYS.ECU_COMM) || valueOf(dataSet[DATA_KEYS.WARNINGS], WARNING_KEYS.ECU_COMM);
+    this._value  = valueOf(dataSet[WARNING_KEY], WARNING_KEYS.ECU_COMM) || valueOf(dataSet[WARNING_KEY], WARNING_KEYS.COMM_ERROR);
   }
 
   update() {
     if (this._value != this.renderedValue) {
       if (this._value) {
         this.visible = true;
+        this.textAnim.clear();
         this.textAnim
           .to(this.text, {
             alpha: 0,

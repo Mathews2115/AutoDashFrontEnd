@@ -2,10 +2,10 @@ import { GlowFilter } from "@pixi/filter-glow";
 import '@pixi/graphics-extras';
 import * as PIXI from "pixi.js";
 import { renderDigitTextures, createDigitSprites, formatSprites } from "../common/createDigit";
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
-
+const ODOMETER_KEY = DATA_MAP.ODOMETER.id;
 const ID = RENDER_KEYS.ODOMETER;
 class Odometer extends Renderable {
   constructor({ renderer, theme }) {
@@ -22,7 +22,7 @@ class Odometer extends Renderable {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.ODOMETER;
+    return ODOMETER_KEY;
   }
 
   set value(newValue) {

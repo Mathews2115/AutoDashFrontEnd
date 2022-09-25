@@ -1,4 +1,4 @@
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import EngineTable from "./EngineTable/EngineTable";
 import { RENDER_KEYS } from "./Renderables";
 
@@ -8,9 +8,9 @@ const MAX_KPA = 100;
 const graphOptions = { 
   maxXValue: MAX_RPM, 
   maxYValue: MAX_KPA, 
-  xKey: DATA_KEYS.RPM, 
-  yKey: DATA_KEYS.MAP, 
-  valueKey: DATA_KEYS.AFR_AVERAGE
+  xKey: DATA_MAP.RPM.id, 
+  yKey: DATA_MAP.MAP.id, 
+  valueKey: DATA_MAP.AFR_AVERAGE.id
 };
 const colorOptions = {
   chromaScale: ["red", "orange", "blue"],

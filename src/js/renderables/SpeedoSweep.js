@@ -1,11 +1,11 @@
 import * as PIXI from "pixi.js";
 // import { GlowFilter } from "@pixi/filter-glow";
 import { SCREEN, SPEEDO_CONFIG } from "../appConfig";
-import { DATA_KEYS } from "../common/dataMap";
+import { DATA_MAP } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
 import { gsap } from "gsap";
-
+const GPS_KEY = DATA_MAP.GPS_SPEEED.id;
 const SEGEMENT_PADDING = 4;
 const ID = RENDER_KEYS.SPEEDO_SWEEP;
 const STATE_ENUM = {
@@ -72,7 +72,7 @@ class SpeedoSweep extends Renderable {
 
   // the data store values we want to listen too
   get dataKey() {
-    return DATA_KEYS.GPS_SPEEED;
+    return GPS_KEY;
   }
 
   /**
