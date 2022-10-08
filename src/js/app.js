@@ -43,6 +43,8 @@ export class DashApp {
     this.stage = new PIXI.Container();
     if (app_settings.dual_screen) {
       this.leftScreen = new PIXI.Container();
+      // HACK for now
+      this.leftScreen.x = 100;
       this.leftScreen.y += SCREEN.HEIGHT; // screenplacement - make sure this matches up with renderwidth/height as well
       this.stage.addChild(this.leftScreen);
     }
@@ -65,7 +67,7 @@ export class DashApp {
     PIXI.Ticker.shared.addOnce(() => {
       setTimeout(() => {
         this.state = this.stateRunning;
-      }, 1000);
+      }, 2000);
     });
     this.state = this.stateStartup;
   }
