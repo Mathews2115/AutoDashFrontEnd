@@ -44,7 +44,7 @@ export class DashApp {
     if (app_settings.dual_screen) {
       this.leftScreen = new PIXI.Container();
       // HACK for now
-      this.leftScreen.x = 100;
+      this.leftScreen.x = 50;
       this.leftScreen.y += SCREEN.HEIGHT; // screenplacement - make sure this matches up with renderwidth/height as well
       this.stage.addChild(this.leftScreen);
     }
