@@ -56,7 +56,7 @@ class MpgHistogram extends Renderable {
       // get points
       let points = [];    
       this._value.buffer.forEach((value, index) => {
-        points.push((MAX_AVERAGE_POINTS) * this.gaugeWidth);// x
+        points.push((index/MAX_AVERAGE_POINTS) * this.gaugeWidth);// x
         points.push( this.gaugeHeight-((Math.min(FUEL_CONFIG.MAX_MPG,value)/FUEL_CONFIG.MAX_MPG) * this.gaugeHeight)); // y
       });
 

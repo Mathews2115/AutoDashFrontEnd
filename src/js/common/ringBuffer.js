@@ -7,9 +7,9 @@ class RingBuffer {
    * @param {number} frontOffset
    */
     constructor(buffer, offset, length, frontOffset) {
-      this.buffer = new Uint8Array(buffer, offset, length);
+      const _buf = new Uint8Array(buffer, offset, length);
       this.frontOffset = frontOffset;
-      this.buffer = new Uint8Array([...(this.buffer.subarray(this.frontOffset)), ...(this.buffer.subarray(0, this.frontOffset))]);
+      this.buffer = new Uint8Array([...(_buf.subarray(this.frontOffset)), ...(_buf.subarray(0, this.frontOffset))]);
     }
 
     get front() {
