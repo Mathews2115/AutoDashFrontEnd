@@ -155,10 +155,10 @@ const layoutGraphs = ({ renderer, theme, renderables }) => {
     firstGraphWidget.y = 5 + backgroundSprite.y;
   }
 
-  const childrenToAdd = [ backgroundSprite, firstGraphWidget, firstGraphLogo];
+  const childrenToAdd = new Container();
+  childrenToAdd.addChild(backgroundSprite, firstGraphWidget, firstGraphLogo);
   if (usingBothGraphs) {
-    childrenToAdd.push(secondGraphWidget);
-    childrenToAdd.push(secondGraphLogo);
+    childrenToAdd.addChild(secondGraphWidget, secondGraphLogo);
   }
   return childrenToAdd;
 };
@@ -172,7 +172,7 @@ const engineGraphsControl = {
    * @returns {Array<Container>}
    */
   create: ({ renderer, theme, renderables }) => {
-    return layoutGraphs({ renderer, theme, renderables });
+    return [layoutGraphs({ renderer, theme, renderables })];
   },
   refresh: ({ renderables, theme, renderer }) => {
     backgroundSprite.tint = theme.gaugeBgColorExtra;

@@ -41,12 +41,6 @@ const testingArea = ({renderer, theme, renderables}) => {
     "ENGINE"
   );
 
-
-
-  const fps = new FPSTextField()
-  fps.x = SCREEN.WIDTH - 60;
-  fps.y = SCREEN.HEIGHT - fps.height - 10;
-  
   oilPressureReadout.y = readoutLogo.height + vert_padding;
   vacReadout.y = oilPressureReadout.y + oilPressureReadout.height + vert_padding;
   ign.y = vacReadout.y + vacReadout.gaugeHeight + vert_padding;
@@ -62,9 +56,13 @@ const testingArea = ({renderer, theme, renderables}) => {
 
 
   gaugeContainer.addChild(readoutLogo, oilPressureReadout, volt, cts, mat, ign, vacReadout, readoutLogo);
-  const x = afrGraph.x + afrGraph.width + 50;
+  const x = afrGraph.x + afrGraph.width + 150;
   gaugeContainer.x = x;
   gaugeContainer.y = 5;
+
+  const fps = new FPSTextField()
+  fps.x = gaugeContainer.x + gaugeContainer.width;
+  fps.y = SCREEN.HEIGHT - fps.height - 10;
 
   return [fps, gaugeContainer];
 }
