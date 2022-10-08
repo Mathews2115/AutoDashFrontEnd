@@ -2,11 +2,9 @@ import { SCREEN, SPEEDO_CONFIG } from "../appConfig";
 import { DATA_MAP } from "../common/dataMap";
 import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
-import { renderDigitTextures, createDigitSprites, formatSprites } from "../common/createDigit";
+import { NO_DISPLAY, WARNING_DASH, renderDigitTextures, createDigitSprites, formatSprites } from "../common/createDigit";
 import { Texture } from "pixi.js";
 const GPS_KEY = DATA_MAP.GPS_SPEEED.id;
-const NO_DISPLAY = 10;
-
 const ID = RENDER_KEYS.SPEEDO_READOUT;
 class SpeedoReadout extends Renderable {
   constructor({ renderer, theme }) {
@@ -27,7 +25,7 @@ class SpeedoReadout extends Renderable {
 
   set value(newValue) {
     if (newValue == null || newValue < SPEEDO_CONFIG.MIN) {
-      this._value = SPEEDO_CONFIG.MIN;
+      this._value = -1;
     } else if (newValue > SPEEDO_CONFIG.MAX) {
       this._value = SPEEDO_CONFIG.MAX;
     } else {
@@ -55,10 +53,13 @@ class SpeedoReadout extends Renderable {
   update() {
     if (this._value != this.renderedValue) {
       this.renderedValue = this._value;
-      this.numberSprites[1].texture = this.numberTextures[this.renderedValue%10]
-
-      const tenthsDigit = Math.floor(this.renderedValue/10) || NO_DISPLAY
-      this.numberSprites[0].texture = this.numberTextures[tenthsDigit]
+      if (this.renderedValue == -1) {
+        this.numberSprites.forEach((sprite) => sprite.texture = this.numberTextures[WARNING_DASH]);
+      } else {
+        this.numberSprites[1].texture = this.numberTextures[this.renderedValue%10]
+        const tenthsDigit = Math.floor(this.renderedValue/10) || NO_DISPLAY
+        this.numberSprites[0].texture = this.numberTextures[tenthsDigit]
+      }
     }
   }
 }

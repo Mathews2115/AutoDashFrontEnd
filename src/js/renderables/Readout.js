@@ -1,5 +1,6 @@
 import { Graphics, Sprite, Texture } from "pixi.js";
 import {
+  NO_DISPLAY,
   createDigitSprites,
   renderDigitTextures,
   formatSprites,
@@ -7,7 +8,6 @@ import {
 import Renderable from "./Renderable";
 
 class Readout extends Renderable {
-  static NO_DISPLAY = 10;
   constructor(
     { renderer, theme },
     {
@@ -107,7 +107,7 @@ class Readout extends Renderable {
 
         if (i && this.currentDigit === 0 && i >= this.firstNonDecimal) {
           this.hideCurrentDigit = this.renderedValue < Math.pow(10, i+1)
-          sprite.texture = this.numberTextures[this.hideCurrentDigit ? Readout.NO_DISPLAY : this.currentDigit];
+          sprite.texture = this.numberTextures[this.hideCurrentDigit ? NO_DISPLAY : this.currentDigit];
         } else {
           sprite.texture = this.numberTextures[this.currentDigit];
         }

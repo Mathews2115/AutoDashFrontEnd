@@ -8,6 +8,11 @@ const FILTER_PADDING = 20;
 const PADDING_OFFSET = FILTER_PADDING/2;
 const SEGMENT_SLANT = -0.2;
 
+export const DASH = 10;
+export const WARNING_DASH = 11;
+export const NO_DISPLAY = 12;
+const TOTAL_GRAPHICS = NO_DISPLAY;
+
 // dictionary by theme and key
 /**
  * @typedef StoredTextures
@@ -39,6 +44,11 @@ Object.keys(THEMES).forEach(_ => textures.push({}));
  * @returns {Graphics}
  */
  export const createDigitGeometry = (number, gaugeHeight) => {
+  if (number === DASH) {
+    number = -1;
+  } else if (number === WARNING_DASH) {
+    number = -2;
+  }
   const segmentWidth = (gaugeHeight / 10.95);
   const chamfer = (gaugeHeight / 7.33);
   const insetPadding = gaugeHeight / 73;
@@ -50,7 +60,7 @@ Object.keys(THEMES).forEach(_ => textures.push({}));
   graphics.beginFill(0xffffff).lineStyle(0);
   
   // upper left vertical
-  if (number != 1 && number != 2 && number != 3 && number != 7) {
+  if (number >= 0 && number != 1 && number != 2 && number != 3 && number != 7) {
     graphics.drawChamferRect(
       0, inset + insetPadding,
       segmentWidth, segmentLength,
@@ -59,7 +69,7 @@ Object.keys(THEMES).forEach(_ => textures.push({}));
   }
 
   // lower left vertical
-  if (number == 8 || number == 6 || number == 2 || number === 0) {
+  if (number >= 0 && number == 8 || number == 6 || number == 2 || number === 0) {
     graphics.drawChamferRect(
       0, middleSegmentPadding + segmentLength,
       segmentWidth, segmentLength,
@@ -68,7 +78,7 @@ Object.keys(THEMES).forEach(_ => textures.push({}));
   }
 
   // upper right vertical
-  if (number != 5 && number != 6) {
+  if (number >= 0 && number != 5 && number != 6) {
     graphics.drawChamferRect(
       segmentLength, inset + insetPadding,
       segmentWidth, segmentLength,
@@ -77,7 +87,7 @@ Object.keys(THEMES).forEach(_ => textures.push({}));
   }
 
   // loewr right vertical
-  if (number != 2) {
+  if (number >= 0 && number != 2) {
     graphics.drawChamferRect(
       segmentLength,  middleSegmentPadding + segmentLength,
       segmentWidth, segmentLength,
@@ -86,12 +96,12 @@ Object.keys(THEMES).forEach(_ => textures.push({}));
   }
 
   // upper horizontals
-  if (number != 4 && number != 1) {
+  if (number >= 0 && number != 4 && number != 1) {
     graphics.drawChamferRect(inset, 0, segmentLength, segmentWidth, chamfer);
   }
 
   // middle horizontal
-  if (number != 0 && number != 1 && number != 7) {
+  if (number < 0 || (number != 1 && number != 7)) {
     graphics.drawChamferRect(
       inset,          (insetPadding*2) + segmentLength,
       segmentLength,  segmentWidth,
@@ -100,7 +110,7 @@ Object.keys(THEMES).forEach(_ => textures.push({}));
   }
 
   // lower horizontal
-  if (number != 1 && number != 4 && number != 7) {
+  if (number >= 0 && number != 1 && number != 4 && number != 7) {
     graphics.drawChamferRect(
       inset, inset + 1 + segmentLength + segmentLength, //x,y
       segmentLength, segmentWidth, // width, height
@@ -138,7 +148,7 @@ export function renderDigitTextures(appRenderer, theme, gaugeHeight, glowSrength
     const rawDigitHeight = numberBackground.height;
     
     // create each number texture
-    for (let i = 0; i <= 10; i++) {
+    for (let i = 0; i <= TOTAL_GRAPHICS; i++) {
       const digitContainer = new Container();
 
       if (createBackground) {
@@ -147,17 +157,18 @@ export function renderDigitTextures(appRenderer, theme, gaugeHeight, glowSrength
         digitContainer.addChild(background);
       }
 
-      if (i != 10) {
+      if (i < NO_DISPLAY) {
         // create number graphics
         const numberGraphics = createDigitGeometry(i, gaugeHeight);
-        numberGraphics.tint = theme.gaugeActiveColor;
+        const color = i == WARNING_DASH ? theme.warningColor : theme.gaugeActiveColor;
+        numberGraphics.tint = color;
 
         // make the digit GLOW like everything else
         numberGraphics.filters = [new GlowFilter({
           distance: glowSrength, 
           outerStrength: 1,
           innerStrength: 0,
-          color: theme.gaugeActiveColor,
+          color: color,
           quality: 1,
         })];
 
