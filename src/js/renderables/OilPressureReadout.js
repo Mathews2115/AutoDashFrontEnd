@@ -25,6 +25,13 @@ class OilPressureReadout extends SideReadout {
       chromaDomain: [0, 20, 25],
     };
   }
+  
+  set value(newValue) {
+    if (newValue < 0) {
+      newValue = 0;
+    }
+    this.updateValue(newValue);
+  }
 
   // the data store values we want to listen too
   get dataKey() {

@@ -4,6 +4,7 @@ import {
   createDigitSprites,
   renderDigitTextures,
   formatSprites,
+  DASH,
 } from "../common/createDigit";
 import Renderable from "./Renderable";
 
@@ -20,7 +21,7 @@ class Readout extends Renderable {
   ) {
     super({ renderer, theme });
     this._value = 88;
-    this.renderedValue = null;
+    this.renderedValue = 88;
     /** @type {Texture[]} */
     this.numberTextures = [];
     this.numberSprites = createDigitSprites(digits);
@@ -62,7 +63,7 @@ class Readout extends Renderable {
   }
 
   initialize() {
-    this.renderedValue = null;
+    this.renderedValue = 88;
     const textureData = renderDigitTextures(
       this.appRenderer,
       this.theme,
@@ -102,16 +103,20 @@ class Readout extends Renderable {
   update() {
     if (this._value != this.renderedValue) {
       this.renderedValue = this._value;
-      this.numberSprites.forEach((sprite, i) => {
-        this.currentDigit = Math.floor(this.renderedValue / Math.pow(10, i)) % 10;
+      if (this.renderedValue === 0) {
+        this.numberSprites.forEach((sprite) => sprite.texture = this.numberTextures[DASH]);
+      } else {
+        this.numberSprites.forEach((sprite, i) => {
+          this.currentDigit = Math.floor(this.renderedValue / Math.pow(10, i)) % 10;
 
-        if (i && this.currentDigit === 0 && i >= this.firstNonDecimal) {
-          this.hideCurrentDigit = this.renderedValue < Math.pow(10, i+1)
-          sprite.texture = this.numberTextures[this.hideCurrentDigit ? NO_DISPLAY : this.currentDigit];
-        } else {
-          sprite.texture = this.numberTextures[this.currentDigit];
-        }
-      });
+          if (i && this.currentDigit === 0 && i >= this.firstNonDecimal) {
+            this.hideCurrentDigit = this.renderedValue < Math.pow(10, i+1)
+            sprite.texture = this.numberTextures[this.hideCurrentDigit ? NO_DISPLAY : this.currentDigit];
+          } else {
+            sprite.texture = this.numberTextures[this.currentDigit];
+          }
+        });
+      }
     }
   }
 }

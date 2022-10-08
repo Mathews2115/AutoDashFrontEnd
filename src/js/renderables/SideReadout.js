@@ -54,10 +54,16 @@ class SideReadout extends Renderable {
     return this.width;
   }
   set value(newValue) {
+   this.updateValue(newValue);
+  }
+  
+  updateValue(newValue) {
     this.readout.value = newValue;
     this.bargraph.value = newValue;
   }
+
   _initialize() {
+    this.bargraph.theme = this.theme;
     this.readout.initialize();
     this.bargraph.initialize();
     if (!this.initialized) {

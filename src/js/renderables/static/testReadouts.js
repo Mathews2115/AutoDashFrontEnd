@@ -9,6 +9,8 @@ import SideReadout from "../SideReadout";
 const testingContainter = new Container();
 /** @type {BitmapText} */
 let testText = null;
+
+let readoutLogo = new Sprite();
 /**
  * 
  * @param {Object} options 
@@ -33,8 +35,6 @@ const testingArea = ({renderer, theme, renderables}) => {
   const cts = renderables[RENDER_KEYS.CTS_READOUT];
   const mat = renderables[RENDER_KEYS.MAT_READOUT];
   
-
-  let readoutLogo = new Sprite();
   readoutLogo.tint = theme.gaugeActiveColor;
   readoutLogo.texture = createLogo(renderer,
     oilPressureReadout.width * 2 + padding,
@@ -79,6 +79,7 @@ const testReadOutsControl = {
      return testingArea({renderer, theme, renderables});
    },
    refresh: ({ renderables, theme, renderer }) => {
+    readoutLogo.tint = theme.gaugeActiveColor;
    },
 };
 
