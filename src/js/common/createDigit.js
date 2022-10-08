@@ -101,7 +101,7 @@ Object.keys(THEMES).forEach(_ => textures.push({}));
   }
 
   // middle horizontal
-  if (number < 0 || (number != 1 && number != 7)) {
+  if (number < 0 || (number != 0 && number != 1 && number != 7)) {
     graphics.drawChamferRect(
       inset,          (insetPadding*2) + segmentLength,
       segmentLength,  segmentWidth,
