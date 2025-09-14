@@ -30,6 +30,7 @@ class SideReadout extends Renderable {
   }
   static FIXED_WIDTH = GAUGE_WIDTH;
   static FIXED_LENGTH = GAUGE_HEIGHT;
+
   constructor({ renderer, theme }, {readoutOptions}) {
     super({ renderer, theme });
     this.readout = new Readout(

@@ -8,12 +8,11 @@ import RingBuffer from "../common/ringBuffer";
  */
 
 class Histogram extends Renderable {
-  constructor({ renderer, theme, maxPoints, maxVal, }) {
+  constructor({ renderer, theme, maxPoints, maxVal }) {
     super({renderer, theme });
     this.activeColor = this.theme.gaugeActiveColor;
     this.backgroundColor = this.theme.gaugeBgColor;
-    /** @type {RingBuffer | Object} */
-    this._value = {};
+    this._value = new RingBuffer({ arrayBuffer: new Uint8Array(), frontOffset: 0 });
     this.renderedValue = this._value;
     this.gaugeHeight = 0;
     this.gaugeWidth = 0;
@@ -24,8 +23,18 @@ class Histogram extends Renderable {
     this.maxVal = maxVal;
   }
 
-  set value(newValue) {
-    if (newValue != null) this._value = newValue;
+  /**
+   * @param {RingBuffer | Object} ringBuffer
+   */
+  set value(ringBuffer) {
+    if (ringBuffer != null) this._value = new RingBuffer(ringBuffer);
+  }
+
+  /**
+   * @returns {RingBuffer}
+   */
+  get buffer() {
+    return this._value;
   }
 
   initialize() {
