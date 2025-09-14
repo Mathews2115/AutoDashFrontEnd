@@ -39,14 +39,14 @@ export default class Renderable extends Container {
   }
 
   /**
-   * @returns {number}
+   * @returns {number | Object}
    */
   get value() {
     return this._value;
   }
 
   /**
-   * @param {number} newValue
+   * @param {number | Array} newValue
    */
   set value(newValue) {}
 

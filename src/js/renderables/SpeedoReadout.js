@@ -5,6 +5,8 @@ import { RENDER_KEYS } from "./Renderables";
 import { renderDigitTextures, createDigitSprites, formatSprites } from "../common/createDigit";
 import { Texture } from "pixi.js";
 const GPS_KEY = DATA_MAP.GPS_SPEEED.id;
+const SPEEDO_KEY = DATA_MAP.SPEEDO.id;
+const SPEEDO_MODE_KEY = DATA_MAP.SPEEDO_MODE.id;
 const NO_DISPLAY = 10;
 
 const ID = RENDER_KEYS.SPEEDO_READOUT;
@@ -20,25 +22,39 @@ class SpeedoReadout extends Renderable {
     this.numberSprites = createDigitSprites(2);
   }
 
-  // the data store values we want to listen too
-  get dataKey() {
-    return GPS_KEY;
+  // // the data store values we want to listen too
+  // get dataKey() {
+  //   debugger
+  //   return SPEEDO_MODE_KEY === 0 ? SPEEDO_KEY : GPS_KEY;
+  // }
+
+  /**
+   * @param {array | number} dataMap
+   * @returns {number}
+   */
+  getSpeed(dataMap){
+    return dataMap[SPEEDO_MODE_KEY] === 0? dataMap[SPEEDO_KEY] : dataMap[GPS_KEY];
   }
 
+  /**
+   * @param {array | number} newValue
+   */
   set value(newValue) {
-    if (newValue == null || newValue < SPEEDO_CONFIG.MIN) {
+    const speed = this.getSpeed(newValue);
+    if (speed == null || speed < SPEEDO_CONFIG.MIN) {
       this._value = SPEEDO_CONFIG.MIN;
-    } else if (newValue > SPEEDO_CONFIG.MAX) {
+    } else if (speed > SPEEDO_CONFIG.MAX) {
       this._value = SPEEDO_CONFIG.MAX;
     } else {
-      this._value = Math.floor(newValue);
+      this._value = Math.floor(speed);
     }
   }
+
   get gaugeHeight() {
     return SCREEN.SPEEDO_READOUT_HEIGHT;
   }
 
-  initialize() {    
+  initialize() {
     this.renderedValue = SPEEDO_CONFIG.MAX;
     const textureData = renderDigitTextures(this.appRenderer, this.theme, this.gaugeHeight, 5, true);
     this.numberTextures = textureData.textures;

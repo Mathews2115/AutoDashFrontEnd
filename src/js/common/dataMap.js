@@ -45,7 +45,7 @@ export const DATA_MAP = {
   IGNITION_TIMING: { id: keygen(), byteType: TYPES.FLOAT }, // units 1 == 1 degree
   MAP: { id: keygen(), byteType: TYPES.INT16 }, // units 1 === 1 (PRESSURE_TYPE) (defaults to kpa if not set)
   KNOCK_RETARD: { id: keygen(), byteType: TYPES.INT16 },
-  MAT: { id: keygen(), byteType: TYPES.INT16 }, //manifold temp 
+  MAT: { id: keygen(), byteType: TYPES.INT16 }, //manifold temp
   TPS: { id: keygen(), byteType: TYPES.INT8 },
   BAR_PRESSURE: { id: keygen(), byteType: TYPES.FLOAT },// xxx.x kPa
   CTS: { id: keygen(), byteType: TYPES.INT16 },  // coolant (defaults to F if TEMP_TYPE isnt set )
@@ -70,8 +70,11 @@ export const DATA_MAP = {
   PRESSURE_TYPE: { id: keygen(), byteType: TYPES.INT8 }, // 0 for PSI, 1 for kpa
   TEMP_TYPE: { id: keygen(), byteType: TYPES.INT8 }, // 0 for F, 1 for C
 
+  UNUSED: { id: keygen(), byteType: TYPES.FLOAT }, // unused
+
+  SPEEDO_MODE: { id: keygen(), byteType: TYPES.INT8 }, // 0 for CAN, 1 for GPS
   ///
-  SOME_NEW_VALUE: { id: keygen(), byteType: TYPES.UINT32 },
+  // SOME_NEW_VALUE: { id: keygen(), byteType: TYPES.UINT32 },
 };
 
 export const MAX_AVERAGE_POINTS = 100;
@@ -159,7 +162,10 @@ export const createDataStore = () => {
         deserializer[value.id] = (data) => data.getUint8(value.byteOffset);
         break;
       case TYPES.SPECIAL_ARRAY:
-        deserializer[value.id] = (data) => new RingBuffer(data.buffer, value.byteOffset, 100, data.getInt8(value.byteOffset + 100));
+        deserializer[value.id] = (data) => {
+          const arrayBuffer = new Uint8Array(data.buffer, value.byteOffset, 100);
+          return new RingBuffer({ arrayBuffer, frontOffset: data.getInt8(value.byteOffset + 100) });
+        };
         break;
       default:
         throw new Error(`Unknown type ${value.byteType}`);
@@ -169,7 +175,7 @@ export const createDataStore = () => {
   /**
    *
    * @param {DataMapEntry} dataMapKey - key from DATA_KEYS
-   * @returns
+   * @returns {Number|any[]|RingBuffer|null}
    */
   const getData = (dataMapKey) => {
     return dataStore[dataMapKey.id];
@@ -185,18 +191,18 @@ export const createDataStore = () => {
   };
 
   /**
-   * 
-   * @param {DataMapEntry} dataMapKey 
-   * @param {*} data 
+   *
+   * @param {DataMapEntry} dataMapKey
+   * @param {*} data
    */
   const setData = (dataMapKey, data) => {
     dataStore[dataMapKey.id] = data;
   };
 
   /**
-   * 
-   * @param {Number} bit 
-   * @param {Boolean} value 
+   *
+   * @param {Number} bit
+   * @param {Boolean} value
    */
   const setWarningBit = (bit, value) => {
     if (bit > 7) throw "I screwed up: error - bit field key cannot be > 7";
@@ -211,17 +217,29 @@ export const createDataStore = () => {
     }
   };
 
+  /**
+   * @description
+   * This function takes a dataView as an input, and returns a data object that
+   * contains all of the data from the dataView. Each key of the data object
+   * corresponds to a key in the dataMap, and the value of the data object is the
+   * value of that key in the dataView.
+   *
+   * @param {DataView} data - The dataView to deserialize
+   * @returns - The deserialized data object
+   */
+  const deserialize = (data) => {
+    // this is dumb, and a waste of cpu cycles to do this everytime, will optimize later
+    for (const [_key, dataMapKey] of Object.entries(DATA_MAP)) {
+      dataStore[dataMapKey.id] = deserializer[dataMapKey.id](data);
+    }
+  };
+
   return {
     get: getData,
     getWarning: getWarning,
     set: setData,
     setWarning: setWarningBit,
-    deserialize: (/** @type {DataView} */ data) => {
-      // this is dumb, and a waste of cpu cycles to do this everytime, will optimize later
-      for (const [_key, dataMapKey] of Object.entries(DATA_MAP)) {
-        dataStore[dataMapKey.id] = deserializer[dataMapKey.id](data);
-      }
-    },
+    deserialize: deserialize,
     data: dataStore,
   };
 };

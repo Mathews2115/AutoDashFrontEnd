@@ -18,6 +18,7 @@ function createText(msg) {
 
   return text;
 }
+
 class SideReadout extends Renderable {
   static ReadoutOptions = {
     voltage: {textureName: "battery.png", decimalPlaces: 1, maxValue: 16, minValue: 10.0},
@@ -74,7 +75,7 @@ class SideReadout extends Renderable {
       this.readout.x = (this.bargraph.gaugeHeight/2)-(this.readout.width*.2)
       this.readout.y = (this.bargraph.gaugeWidth/2) - (this.readout.height/2)
 
-   
+
       this.bargraph.rotation = Math.PI / 2;
 
       this.addChild(

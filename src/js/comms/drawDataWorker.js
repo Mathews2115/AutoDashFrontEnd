@@ -41,7 +41,7 @@ const createWS = () => {
 
 /**
  * These Byte offsets MUST match PacketEntry.js from AutoDashBackEnd
- * @param {DataView} data 
+ * @param {DataView} data
  */
  const parseData = (data) => {
   try {

@@ -6,6 +6,8 @@ import Renderable from "./Renderable";
 import { RENDER_KEYS } from "./Renderables";
 import { gsap } from "gsap";
 const GPS_KEY = DATA_MAP.GPS_SPEEED.id;
+const SPEEDO_KEY = DATA_MAP.SPEEDO.id;
+const SPEEDO_MODE_KEY = DATA_MAP.SPEEDO_MODE.id;
 const SEGEMENT_PADDING = 4;
 const ID = RENDER_KEYS.SPEEDO_SWEEP;
 const STATE_ENUM = {
@@ -39,7 +41,7 @@ class SpeedoSweep extends Renderable {
         SCREEN.SPEEDO_SWEEP_SIZE*2-SEGEMENT_PADDING, SCREEN.SPEEDO_SWEEP_SIZE, // angle up
         this.gaugeWidth, SCREEN.SPEEDO_SWEEP_SIZE, // bottom right end
         this.gaugeWidth, 0,
-        this.gaugeWidth * 0.3-SEGEMENT_PADDING, 0, 
+        this.gaugeWidth * 0.3-SEGEMENT_PADDING, 0,
       ])
       .endFill();
       this.addChild(this.background);
@@ -49,7 +51,7 @@ class SpeedoSweep extends Renderable {
     foreground.beginFill(0xffffff).lineStyle(0);
     for (let index = 0; index < segments; index++) {
       foreground.drawRect(
-        SCREEN.SPEEDO_SEGMENT_WIDTH * index, 0, 
+        SCREEN.SPEEDO_SEGMENT_WIDTH * index, 0,
         SCREEN.SPEEDO_SEGMENT_WIDTH - (index == segments - 1 ? 0 : SEGEMENT_PADDING), this.gaugeHeight
       );
     }
@@ -71,23 +73,33 @@ class SpeedoSweep extends Renderable {
   }
 
   // the data store values we want to listen too
-  get dataKey() {
-    return GPS_KEY;
+  // get dataKey() {
+  //   return SPEEDO_MODE_KEY === 0 ? SPEEDO_KEY : GPS_KEY;
+  // }
+
+
+  /**
+   * @param {array | number} dataMap
+   * @returns {number}
+   */
+  getSpeed(dataMap){
+    return dataMap[SPEEDO_MODE_KEY] === 0? dataMap[SPEEDO_KEY] : dataMap[GPS_KEY];
   }
 
   /**
-   * @param {number} newValue
+   * @param {array | number} newValue
    */
   set value(newValue) {
-    if (newValue == null || newValue < SPEEDO_CONFIG.MIN) {
+    const speed = this.getSpeed(newValue);
+    if (speed == null || speed < SPEEDO_CONFIG.MIN) {
       this._value = SPEEDO_CONFIG.MIN;
     } else {
-      this._value = newValue;
+      this._value = speed;
     }
-    
+
     if (this._value >= SPEEDO_CONFIG.DANGER_HIGH) {
       this._gaugeDisplayState = STATE_ENUM.DANGER;
-      if (newValue > SPEEDO_CONFIG.MAX) this._value = SPEEDO_CONFIG.MAX; // cap the max
+      if (speed > SPEEDO_CONFIG.MAX) this._value = SPEEDO_CONFIG.MAX; // cap the max
     } else if (this._value >= SPEEDO_CONFIG.WARNING_HIGH) {
       this._gaugeDisplayState = STATE_ENUM.WARNING;
     } else {

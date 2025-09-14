@@ -49,9 +49,9 @@ export class DashApp {
     this.rightScreen = new PIXI.Container();
     this.stage.addChild(this.rightScreen);
     this.stage.interactiveChildren = false; // dont bother checking anyone for interactions
-    
+
     this.layoutManager = layoutManager({
-      renderer: renderer, 
+      renderer: renderer,
       auxScreen: this.leftScreen,
       gaugeScreen: this.rightScreen,
       theme: this.theme.current,
@@ -92,6 +92,7 @@ export class DashApp {
 
   /**
    * Main state of the app; shows all the gauges
+   * If no datakey defined - it will use the entire updatedGaugeData object
    * @param {Array} updatedGaugeData
    */
   stateRunning(updatedGaugeData) {
